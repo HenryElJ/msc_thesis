@@ -34,11 +34,21 @@ from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
 
+# Langchain
 from langchain import OpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
 from langchain_azure_ai.chat_models import AzureAIChatCompletionsModel
-from langchain.chains import ConversationChain
+# Conversational Chatbot
+from langchain_core.messages import HumanMessage, AIMessage
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import START, MessagesState, StateGraph
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from typing import Sequence
+from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
+from typing_extensions import Annotated, TypedDict
+
 
 # API Keys
 load_dotenv()
@@ -55,6 +65,39 @@ clients = {
     "mistral": Mistral(api_key = api_keys["mistral"])
 }
 
+params = {
+        "chatgpt": {
+            "model": "openai/gpt-4.1",
+            "temperature": 1,
+            "top_p": 1,
+            "max_tokens": 800,
+        },
+        "deepseek": {
+            "model": "deepseek/DeepSeek-V3-0324",
+            "temperature": 0.8,
+            "top_p": 0.1,
+            "max_tokens": 2048,
+        },
+        "llama": {
+            "model": "meta/Llama-4-Scout-17B-16E-Instruct",
+            "temperature": 0.8,
+            "top_p": 0.1,
+            "max_tokens": 2048,
+        },
+        "mistral-large": {
+            "model": "Mistral-large-2411",
+            "temperature": 0.8,
+            "top_p": 0.1,
+            "max_tokens": 2048,
+        },
+        "microsoft": {
+            "model": "microsoft/MAI-DS-R1",
+            "temperature": None,
+            "top_p": None,
+            "max_tokens": 2048,
+        }
+    }
+
 # Custom functions
 def prettyDescribe(data):
     return (data
@@ -67,3 +110,6 @@ def prettyDescribe(data):
 
 # Import data
 df = pd.read_excel("Data/publichealth_v10i1e47979_app2.xlsx")
+
+with open('fig_data.pickle', 'rb') as file:
+    fig_data = pickle.load(file)
