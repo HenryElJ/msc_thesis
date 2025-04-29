@@ -99,6 +99,52 @@ params = {
     }
 
 # Custom functions
+def select_model(model_name: str):
+    if model_name == "google":
+        # https://python.langchain.com/docs/integrations/chat/google_generative_ai/
+        return ChatGoogleGenerativeAI(
+            model = "gemini-2.0-flash",
+            temperature = 0,
+            max_tokens = None,
+            timeout = None,
+            max_retries = 2)
+        
+    elif model_name == "mistral":
+        # https://python.langchain.com/docs/integrations/chat/mistralai/
+        return ChatMistralAI(
+            model = "mistral-small-latest",
+            temperature = 0,
+            max_retries = 2)
+        
+    else:
+        # https://python.langchain.com/docs/integrations/chat/azure_ai/
+        return AzureAIChatCompletionsModel(
+            model_name  = params[model_name]["model"],
+            temperature = params[model_name]["temperature"],
+            max_tokens  = params[model_name]["max_tokens"],
+            max_retries = 2)
+
+
+# System message
+def system_message(user: dict):
+    return f'''
+    You are part of an interface helping to guide human users through explanations for an artificial intelligence system. 
+
+    This system generates binary predictions on whether someone gets the covid vaccine or not.
+
+    The user works in the field of {user["domain"]}. Rating their skillset on a scale of ["None", "Limited", "Moderate", "Good", "Excellent"]:
+    Data analysis: {user["data_analysis"]}. Machine learning: {user["machine_learning"]}. Statistics: {user["statistics"]}. Healthcare: {user["healthcare"]}.
+
+    Provide comprehensive, but concise text-based explanations. Do not provide or recommend any code, unless explicity asked.
+
+    Your explanations should cater to their domain and skillset level, and be relevant to the artificial intelligence system. 
+
+    Only answer questions relating to questions about the artificial intelligence system.
+
+    Always recommend follow-up, clarifying questions the user could ask to help aid their understanding. 
+    '''
+
+
 def prettyDescribe(data):
     return (data
             .describe()
@@ -108,35 +154,9 @@ def prettyDescribe(data):
             [["min", "mean", "max", "std", "25%", "50%", "75%"]]
             )
 
+
 # Import data
 df = pd.read_excel("Data/publichealth_v10i1e47979_app2.xlsx")
 
-with open("fig_data.pickle", "rb") as file:
-    fig_data = pickle.load(file)
-
-# User 
-user = {
-    "domain": "data science",
-    "machine_learning": 6,
-    "statistics": 6,
-    "healthcare": 1,
-}
-
-# System message
-system_message = f'''
-You are part of an interface helping to guide human users through explanations for an artificial intelligence system. 
-
-This system generates binary predictions on whether someone gets the covid vaccine or not.
-
-The user works in the field of {user["domain"]}. Rating their skillset out of 10:
-
-Machine learning: {user["machine_learning"]}. Statistics: {user["statistics"]}. Healthcare: {user["healthcare"]}.
-
-Provide comprehensive, but concise text-based explanations. Do not provide or recommend any code, unless explicity asked.
-
-Your explanations should cater to their domain and skillset level, and be relevant to the artificial intelligence system. 
-
-Only answer questions relating to questions about the artificial intelligence system.
-
-Always recommend follow-up, clarifying questions the user could ask to help aid their understanding. 
-'''
+# with open("fig_data.pickle", "rb") as file:
+#     fig_data = pickle.load(file)
