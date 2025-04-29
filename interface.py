@@ -1,18 +1,16 @@
 # conda activate thesis_3.11 && cd github/msc_thesis && streamlit run interface.py
 
-import streamlit as st, pickle, re
-from dotenv import load_dotenv
+import streamlit as st, pickle
+# from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
 from langchain_azure_ai.chat_models import AzureAIChatCompletionsModel
 
 # Conversational Chatbot
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from typing import Sequence
-from typing_extensions import Annotated, TypedDict
 
 # from initialise import select_model, system_message, params
 
