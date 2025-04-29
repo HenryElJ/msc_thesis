@@ -1,6 +1,6 @@
 # conda activate thesis_3.11 && cd github/msc_thesis && streamlit run interface.py
 
-import streamlit as st
+import streamlit as st, pickle
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
@@ -16,9 +16,12 @@ from typing_extensions import Annotated, TypedDict
 
 from initialise import select_model, system_message, params
 
-st.set_page_config(layout = "wide")
-
 load_dotenv()
+
+with open("explanations_output.pickle", "rb") as file:
+    explanations_output = pickle.load(file)
+
+st.set_page_config(layout = "wide")
 
 st.sidebar.markdown('''<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
                     <span class="material-symbols-rounded" style="font-size: 48px; color: #e3e3e3;">cognition</span>''', 
@@ -49,7 +52,7 @@ system_message = system_message(
     )
 
 selectbox_buffer = 0.2
-selectbox_col, _ = st.columns([selectbox_buffer, 1 - selectbox_buffer])
+_, selectbox_col = st.columns([1 - selectbox_buffer, selectbox_buffer])
 
 with selectbox_col:
     model_selection = st.selectbox(label = "Select the LLM you want to use:",
@@ -105,11 +108,16 @@ def stream_output(stream):
 
 
 chatbox_buffer = 0.5
-chatbox_col, _ = st.columns([chatbox_buffer, 1 - chatbox_buffer])
+viz_col, chatbox_col = st.columns([chatbox_buffer, 1 - chatbox_buffer])
+
+with viz_col:
+    with st.container(height = 750):
+        st.plotly_chart(explanations_output["confusion_matrix"])
+        st.plotly_chart(explanations_output["feature_importance"])
+        st.plotly_chart(explanations_output["roc_auc"])
 
 with chatbox_col:
     chat_container = st.container(height = 600, border = True)
-
     with chat_container:
         for message in st.session_state.messages:
             with st.chat_message(name = message["name"], avatar =  message["avatar"]):

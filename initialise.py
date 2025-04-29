@@ -20,7 +20,8 @@ px.defaults.template = "plotly"
 px.defaults.width = 800; px.defaults.height = 500
 
 # Explanations Toolkit
-import holisticai, dalex, explainerdashboard, raiwidgets
+from sklearn import metrics
+import shap, holisticai, dalex, explainerdashboard, raiwidgets
 
 
 # LLM APIs
@@ -144,6 +145,7 @@ def system_message(user: dict):
     Always recommend follow-up, clarifying questions the user could ask to help aid their understanding. 
     '''
 
+# When explaining a plot, you should aim to give insights. Do not describe.
 
 def prettyDescribe(data):
     return (data
