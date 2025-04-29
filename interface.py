@@ -1,6 +1,6 @@
 # conda activate thesis_3.11 && cd github/msc_thesis && streamlit run interface.py
 
-import streamlit as st, pickle
+import streamlit as st, pickle, re
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
@@ -121,9 +121,19 @@ with chatbox_col:
     with chat_container:
         for message in st.session_state.messages:
             with st.chat_message(name = message["name"], avatar =  message["avatar"]):
-                st.markdown(message["content"])
+                st.write(message["content"])
 
     if query := st.chat_input("Ask me a question!", accept_file = False, file_type = ["txt", "csv", "xlsx", "jpg", "jpeg", "png", "pdf"]):
+        
+        # Hacky just for proof of concept
+        # if re.search("confusion matrix", query.lower()) is not None:
+        #     query += explanations_output["confusion_matrix"].data[0].to_json()
+        # elif re.search("feature importance", query.lower()) is not None:
+        #     query += explanations_output["feature_importance"].data[0].to_json()
+        # elif re.search("roc auc", query.lower()) is not None:
+        #     query += explanations_output["roc_auc"].data[0].to_json()
+
+
         user_avatar = ":material/cognition:"; ai_avatar = f"Images/{model_selection}.png"
         
         with chat_container:
