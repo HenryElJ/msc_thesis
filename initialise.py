@@ -111,5 +111,32 @@ def prettyDescribe(data):
 # Import data
 df = pd.read_excel("Data/publichealth_v10i1e47979_app2.xlsx")
 
-with open('fig_data.pickle', 'rb') as file:
+with open("fig_data.pickle", "rb") as file:
     fig_data = pickle.load(file)
+
+# User 
+user = {
+    "domain": "data science",
+    "machine_learning": 6,
+    "statistics": 6,
+    "healthcare": 1,
+}
+
+# System message
+system_message = f'''
+You are part of an interface helping to guide human users through explanations for an artificial intelligence system. 
+
+This system generates binary predictions on whether someone gets the covid vaccine or not.
+
+The user works in the field of {user["domain"]}. Rating their skillset out of 10:
+
+Machine learning: {user["machine_learning"]}. Statistics: {user["statistics"]}. Healthcare: {user["healthcare"]}.
+
+Provide comprehensive, but concise text-based explanations. Do not provide or recommend any code, unless explicity asked.
+
+Your explanations should cater to their domain and skillset level, and be relevant to the artificial intelligence system. 
+
+Only answer questions relating to questions about the artificial intelligence system.
+
+Always recommend follow-up, clarifying questions the user could ask to help aid their understanding. 
+'''

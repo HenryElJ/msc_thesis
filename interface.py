@@ -1,18 +1,18 @@
+# conda activate thesis_3.11 && cd github/msc_thesis && streamlit run interface.py
+
 import streamlit as st
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
 from langchain_azure_ai.chat_models import AzureAIChatCompletionsModel
+
 # Conversational Chatbot
 from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from typing import Sequence
-from langchain_core.messages import BaseMessage
-from langgraph.graph.message import add_messages
 from typing_extensions import Annotated, TypedDict
-from langchain_core.messages import SystemMessage
 
 from initialise import params
 
@@ -20,32 +20,7 @@ st.set_page_config(layout = "wide")
 
 load_dotenv()
 
-user = {
-    "domain": "data science",
-    "machine_learning": 6,
-    "statistics": 6,
-    "healthcare": 1,
-}
-
-system_message = f'''
-You are part of an interface helping to guide human users through explanations for an artificial intelligence system. 
-
-This system generates binary predictions on whether someone gets the covid vaccine or not.
-
-The user works in the field of {user["domain"]}. Rating their skillset out of 10:
-
-Machine learning: {user["machine_learning"]}. Statistics: {user["statistics"]}. Healthcare: {user["healthcare"]}.
-
-Provide comprehensive, but concise text-based explanations. Do not provide or recommend any code, unless explicity asked.
-
-Your explanations should cater to their domain and skillset level, and be relevant to the artificial intelligence system. 
-
-Only answer questions relating to questions about the artificial intelligence system.
-
-Always recommend follow-up, clarifying questions the user could ask to help aid their understanding. 
-'''
-
-system_message = "Answer shortly"
+system_message = "Answer in 30 words"
 
 def select_model(model_name: str):
     if model_name == "google":
@@ -72,8 +47,10 @@ def select_model(model_name: str):
             max_tokens  = params[model_name]["max_tokens"],
             max_retries = 2)
 
-col1, _, _ = st.columns([0.2, (1 - 0.2) / 2, (1 - 0.2) / 2])
-with col1:
+selectbox_buffer = 0.2
+selectbox_col, _ = st.columns([selectbox_buffer, 1 - selectbox_buffer])
+
+with selectbox_col:
     model_selection = st.selectbox(label = "Select the LLM you want to use:",
                                options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
                                format_func = lambda x: {"google": "Gemini", 
@@ -121,28 +98,47 @@ if ("app" not in st.session_state) | (st.session_state.model_selection != model_
     _ = st.session_state.app.update_state(config, {"messages": st.session_state.responses})
 
 
-# def stream_output(stream):
-#     for chunk, _ in stream:
-#         yield chunk.content
+def stream_output(stream):
+    for chunk, _ in stream:
+        yield chunk.content
 
-for message in st.session_state.messages:
-    with st.chat_message(name = message["name"], avatar =  message["avatar"]):
-        st.write(message["content"])
 
-if query := st.chat_input("Ask me a question!"):
-    user_avatar = ":material/cognition:"; ai_avatar = f"Images/{model_selection}.png"
-    
-    with st.chat_message(name = "user", avatar = user_avatar):
-        st.session_state.messages.append({"name": "user", "avatar": user_avatar, "content": query})
-        st.write(query)
+chatbox_buffer = 0.5
+chatbox_col, _ = st.columns([chatbox_buffer, 1 - chatbox_buffer])
 
-    with st.chat_message(name = "assistant", avatar = ai_avatar):
-        # responses = st.session_state.app.stream({"messages": [HumanMessage(query)]}, config, stream_mode = "messages")
-        # response = st.write_stream(stream_output(responses))
+with chatbox_col:
 
-        responses = st.session_state.app.invoke({"messages": [HumanMessage(query)]}, config,)["messages"]
-        st.session_state.responses = responses
-        st.session_state.messages.append({"name": "assistant", "avatar": ai_avatar, "content": responses[-1].content})
-        st.write(responses[-1].content)
+    chat_container = st.container(height = 600, border = True)
+
+    with chat_container:
+        for message in st.session_state.messages:
+            with st.chat_message(name = message["name"], avatar =  message["avatar"]):
+                st.markdown(message["content"])
+
+    if query := st.chat_input("Ask me a question!"):
+        user_avatar = ":material/cognition:"; ai_avatar = f"Images/{model_selection}.png"
+        
+        with chat_container:
+            with st.chat_message(name = "user", avatar = user_avatar):
+                st.session_state.messages.append({"name": "user", "avatar": user_avatar, "content": query})
+                st.write(query)
+
+        stream = True
+        with chat_container:
+            with st.chat_message(name = "assistant", avatar = ai_avatar):
+                if stream:
+                    responses = st.session_state.app.stream({"messages": [HumanMessage(query)]}, config, stream_mode = "messages")    
+                    st.write_stream(stream_output(responses))
+
+                    st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
+                    st.session_state.messages.append({"name": "assistant", "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
+
+                else:
+                    responses = st.session_state.app.invoke({"messages": [HumanMessage(query)]}, config,)["messages"]
+                    with chat_container:            
+                        st.write(responses[-1].content)
+
+                    st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
+                    st.session_state.messages.append({"name": "assistant", "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
 
 ####
