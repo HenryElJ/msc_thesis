@@ -153,10 +153,3 @@ def prettyDescribe(data):
             .T
             [["min", "mean", "max", "std", "25%", "50%", "75%"]]
             )
-
-
-# Import data
-df = pd.read_excel("Data/publichealth_v10i1e47979_app2.xlsx")
-
-# with open("fig_data.pickle", "rb") as file:
-#     fig_data = pickle.load(file)

@@ -37,6 +37,7 @@ stats_rating = st.sidebar.select_slider(label = "Statistics", options = slider_o
 healthcare_rating = st.sidebar.select_slider(label = "Healthcare", options = slider_options, value = "Moderate")
 st.sidebar.divider()
 
+# This needs to also be updated in the model when it's updated in the interface
 system_message = system_message(
     {
         "domain": domain,
