@@ -15,6 +15,22 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from initialise import select_model, system_message, params, api_keys
 
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+if "model_selection" not in st.session_state:
+    st.session_state.model_selection = None
+
+if "responses" not in st.session_state:
+    st.session_state.responses = []
+
+# Token usage not tracked in streaming for `AzureAIChatCompletionsModel(...)`
+# if ("usage_metadata" not in st.session_state):
+#     st.session_state.usage_metadata = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+
+if "user_skillset" not in st.session_state:
+    st.session_state.user_skillset = {}
+
 load_dotenv()
 
 with open("explanations_output.pickle", "rb") as file:
@@ -45,26 +61,23 @@ healthcare_rating = st.sidebar.select_slider(label = "Healthcare", options = sli
 st.sidebar.divider()
 st.sidebar.markdown("<center><h5>Henry El-Jawhari, 2025</h5></center>", unsafe_allow_html = True)
 
+user_skillset = {
+    "domain": domain,
+    "data_analysis": analysis_rating,
+    "machine_learning": ml_rating,
+    "statistics": stats_rating,
+    "healthcare": healthcare_rating
+    }
+
 # This needs to also be updated in the model when it's updated in the interface
-# system_message = system_message(
-#     {
-#         "domain": domain,
-#         "data_analysis": analysis_rating,
-#         "machine_learning": ml_rating,
-#         "statistics": stats_rating,
-#         "healthcare": healthcare_rating
-#     }
-#     )
+system_message = system_message(user_skillset)
 
-system_message = "Answer in 100 words or less"
-
-select_llm_buffer = 0.2
-_, select_llm_col = st.columns([1 - select_llm_buffer, select_llm_buffer])
+_, token_col, select_llm_col = st.columns([0.5, 0.3, 0.2], vertical_alignment = "center")
 
 with select_llm_col:
     model_selection = st.selectbox(label = "Select the LLM you want to use:",
                                    options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
-                                   index = 2,
+                                   index = 0,
                                    format_func = lambda x: {"google": "Gemini", 
                                                             "chatgpt": "ChatGPT", 
                                                             "mistral": "Mistral-Small",
@@ -75,18 +88,9 @@ with select_llm_col:
 
 model = select_model(model_selection)
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+config = {"configurable": {"thread_id": "conversational_explainer"}}
 
-if "model_selection" not in st.session_state:
-    st.session_state.model_selection = None
-
-if "responses" not in st.session_state:
-    st.session_state.responses = []
-
-config = {"configurable": {"thread_id": "conversation_1"}}
-
-if ("app" not in st.session_state) | (st.session_state.model_selection != model_selection):
+if ("app" not in st.session_state) | (st.session_state.model_selection != model_selection) | (st.session_state.user_skillset != user_skillset):
 
     st.session_state.model_selection = model_selection
 
@@ -108,7 +112,6 @@ if ("app" not in st.session_state) | (st.session_state.model_selection != model_
     
     st.session_state.app = workflow.compile(checkpointer = memory)
     _ = st.session_state.app.update_state(config, {"messages": st.session_state.responses})
-
 
 def stream_output(stream):
     for chunk, _ in stream:
@@ -153,11 +156,12 @@ with chatbox_col:
                     message_input += [{"type": "image", "source_type": "base64", "mime_type": "image/jpg", "data": image_data}]
 
                 if stream:
-                    responses = st.session_state.app.stream({"messages": [HumanMessage(message_input)]}, config, stream_mode = "messages")    
+                    responses = st.session_state.app.stream({"messages": [HumanMessage(message_input)]}, config, stream_mode = "messages") 
                     st.write_stream(stream_output(responses))
 
                     st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
                     st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
+                    # st.session_state.usage_metadata = st.session_state.app.get_state(config)[3]["writes"]["model"]["usage_metadata"]
 
                 else:
                     responses = st.session_state.app.invoke({"messages": [HumanMessage(message_input)]}, config,)["messages"]
@@ -166,6 +170,7 @@ with chatbox_col:
 
                     st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
                     st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
+                    # st.session_state.usage_metadata = st.session_state.app.get_state(config)[3]["writes"]["model"]["usage_metadata"]
 
     warning_col, download_col = st.columns([0.8, 0.2])
     warning_col.info("Large language models can make mistakes. Please verify information before you make decisions.", icon = ":material/info:")
@@ -180,4 +185,6 @@ with chatbox_col:
             icon = ":material/download:"
         )
 
-# st.write(st.session_state.messages)
+# with token_col:
+#     text = " | ".join([f"{x}: {y:,}" for x, y in st.session_state.usage_metadata.items()])
+#     st.markdown(f'''<center><font size="2">{text}</font></center>''', unsafe_allow_html = True)

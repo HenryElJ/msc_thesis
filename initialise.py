@@ -99,6 +99,8 @@ params = {
         }
     }
 
+
+
 # Custom functions
 def select_model(model_name: str):
     if model_name == "google":
@@ -134,7 +136,7 @@ def select_model(model_name: str):
             max_tokens  = params[model_name]["max_tokens"],
             max_retries = 2)
 
-Mistral(api_key=api_keys["github"],server_url="https://models.inference.ai.azure.com")
+
 # System message
 def system_message(user: dict):
     return f'''
