@@ -1,6 +1,8 @@
 # conda activate thesis_3.11 && cd github/msc_thesis && streamlit run interface_sandbox.py
 
 import streamlit as st, pickle, base64, httpx
+from streamlit_extras.floating_button import floating_button
+from streamlit_extras.grid import grid
 from streamlit_js_eval import streamlit_js_eval
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -38,6 +40,7 @@ with open("explanations_output.pickle", "rb") as file:
 
 st.set_page_config(layout = "wide")
 st.markdown('''<style>.block-container {padding-top: 0rem}</style>''', unsafe_allow_html = True)
+st.markdown('''<style>.block-container {padding-bottom: 1rem}</style>''', unsafe_allow_html = True)
 screen_height = streamlit_js_eval(js_expressions = "screen.height")
 
 st.sidebar.markdown('''<center><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
@@ -72,13 +75,16 @@ user_skillset = {
 # This needs to also be updated in the model when it's updated in the interface
 system_message = system_message(user_skillset)
 
+# with st.popover(":sparkles: Ask AI", use_container_width = True):
+# @st.dialog("Chat Support", width="large")
+# def chat_dialog():
 _, token_col, select_llm_col = st.columns([0.5, 0.3, 0.2], vertical_alignment = "center")
 
 with select_llm_col:
     model_selection = st.selectbox(label = "Select the LLM you want to use:",
-                                   options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
-                                   index = 0,
-                                   format_func = lambda x: {"google": "Gemini", 
+                                options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
+                                index = 2,
+                                format_func = lambda x: {"google": "Gemini", 
                                                             "chatgpt": "ChatGPT", 
                                                             "mistral": "Mistral-Small",
                                                             "mistral-large": "Mistral-Large", 
@@ -117,16 +123,18 @@ def stream_output(stream):
     for chunk, _ in stream:
         yield chunk.content
 
-
 chatbox_buffer = 0.5
 viz_col, chatbox_col = st.columns([chatbox_buffer, 1 - chatbox_buffer])
 
 with viz_col:
-    # with st.container(height = 750):
+
     st.plotly_chart(explanations_output["roc_auc"])
+    st.plotly_chart(explanations_output["confusion_matrix"])
+    st.plotly_chart(explanations_output["feature_importance"])
+
 
 with chatbox_col:
-    chat_container = st.container(height = 600, border = True)
+    chat_container = st.container(height = 600, border = True) # screen_height
     with chat_container:
         for message in st.session_state.messages:
             with st.chat_message(name = message["name"], avatar =  message["avatar"]):
@@ -139,11 +147,11 @@ with chatbox_col:
             user_avatar = ":material/cognition:"; ai_avatar = f"Images/{model_selection}.png"
 
             with st.chat_message(name = "user", avatar = user_avatar):
-                st.write(query["text"])
+                st.write(query["text"], use_container_width = True)
                 if query["files"] != []:
                     st.image(query["files"], width = 100) 
                 st.session_state.messages.append({"name": "user", "avatar": user_avatar, 
-                                                  "content": query["text"] + f" [{query['files'][0].name}]" if query["files"] != [] else query["text"]})
+                                                "content": query["text"] + f" [{query['files'][0].name}]" if query["files"] != [] else query["text"]})
 
         stream = True
         with chat_container:
@@ -188,3 +196,6 @@ with chatbox_col:
 # with token_col:
 #     text = " | ".join([f"{x}: {y:,}" for x, y in st.session_state.usage_metadata.items()])
 #     st.markdown(f'''<center><font size="2">{text}</font></center>''', unsafe_allow_html = True)
+
+# if floating_button(":sparkles: Ask AI"):
+#         chat_dialog()
