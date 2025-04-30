@@ -1,5 +1,5 @@
 # DS Toolkit
-import pandas as pd, numpy as np, streamlit as st, pickle
+import pandas as pd, numpy as np, streamlit as st, pickle, base64, httpx
 
 # Modelling
 from sklearn.model_selection import train_test_split
@@ -116,7 +116,16 @@ def select_model(model_name: str):
             model = "mistral-small-latest",
             temperature = 0,
             max_retries = 2)
-        
+    
+    elif model_name == "mistral-large":
+        # https://python.langchain.com/docs/integrations/chat/mistralai/
+        return ChatMistralAI(
+            model = params[model_name]["model"],
+            base_url = "https://models.inference.ai.azure.com", # replace with OS.GETENV[YADDA YADDA]
+            mistral_api_key = api_keys["github"],
+            temperature = 0,
+            max_retries = 2)
+    
     else:
         # https://python.langchain.com/docs/integrations/chat/azure_ai/
         return AzureAIChatCompletionsModel(
@@ -125,7 +134,7 @@ def select_model(model_name: str):
             max_tokens  = params[model_name]["max_tokens"],
             max_retries = 2)
 
-
+Mistral(api_key=api_keys["github"],server_url="https://models.inference.ai.azure.com")
 # System message
 def system_message(user: dict):
     return f'''
@@ -145,8 +154,8 @@ def system_message(user: dict):
     Always recommend follow-up, clarifying questions the user could ask to help aid their understanding. 
     '''
 
-# When explaining a plot, you should aim to give insights. Do not describe.
 
+# When explaining a plot, you should aim to give insights. Do not describe.
 def prettyDescribe(data):
     return (data
             .describe()
