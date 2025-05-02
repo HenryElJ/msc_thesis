@@ -21,7 +21,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "model_selection" not in st.session_state:
-    st.session_state.model_selection = None
+    st.session_state.model_selection = []
 
 if "responses" not in st.session_state:
     st.session_state.responses = []
@@ -39,14 +39,58 @@ with open("explanations_output.pickle", "rb") as file:
     explanations_output = pickle.load(file)
 
 st.set_page_config(layout = "wide")
-st.markdown('''<style>.block-container {padding-top: 0rem}</style>''', unsafe_allow_html = True)
-st.markdown('''<style>.block-container {padding-bottom: 1rem}</style>''', unsafe_allow_html = True)
-screen_height = streamlit_js_eval(js_expressions = "screen.height")
+st.markdown('''<style>
+            .block-container {padding-top: 0.15rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}
+            .st-emotion-cache-kgpedg {padding-top: 0.15; padding-bottom: 0}
+            .stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {height: 300px; overflow: auto}
+            </style>''', unsafe_allow_html = True)
 
-st.sidebar.markdown('''<center><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-                    <span class="material-symbols-rounded" style="font-size: 48px; color: #e3e3e3;">cognition</span></center>''', 
-                    unsafe_allow_html = True)
-st.sidebar.markdown("<center><h1>Conversational Explanations</h1></center>", unsafe_allow_html = True)
+# Custom CSS for a transparent scrollbar
+transparent_scrollbar_style = """
+<style>
+/* For WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 10px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Transparent track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3); /* Semi-transparent thumb */
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5); /* Slightly darker transparent thumb on hover */
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Transparent track with semi-transparent thumb */
+}
+</style>
+"""
+
+st.markdown(transparent_scrollbar_style, unsafe_allow_html=True)
+
+
+# https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
+# https://github.com/Socvest/streamlit-browser-engine # https://discuss.streamlit.io/t/get-browser-stats-like-user-agent-broswer-name-chrome-firefox-ie-etc-whether-app-is-running-on-mobile-or-desktop-and-more/66735
+from st_screen_stats import ScreenData
+screen_height = ScreenData().st_screen_data(key="screen_stats_")["innerHeight"]
+
+# from browser_detection import browser_detection_engine
+# browser_info = browser_detection_engine()
+
+st.sidebar.markdown('''
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+                    <span class="material-symbols-rounded" style="font-size: 48px; color: #e3e3e3;">cognition</span>
+                    <h1 style="font-size: 1.5em; margin: 0;">Conversational Explanations</h1>
+                    </div>''', unsafe_allow_html=True)
 
 st.sidebar.divider()
 domain = st.sidebar.selectbox("What is your area of expertise/domain?", ["Data Science", "Healthcare", "Other"])
@@ -78,20 +122,23 @@ system_message = system_message(user_skillset)
 # with st.popover(":sparkles: Ask AI", use_container_width = True):
 # @st.dialog("Chat Support", width="large")
 # def chat_dialog():
-_, token_col, select_llm_col = st.columns([0.5, 0.3, 0.2], vertical_alignment = "center")
 
-with select_llm_col:
-    model_selection = st.selectbox(label = "Select the LLM you want to use:",
-                                options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
-                                index = 2,
-                                format_func = lambda x: {"google": "Gemini", 
-                                                            "chatgpt": "ChatGPT", 
-                                                            "mistral": "Mistral-Small",
-                                                            "mistral-large": "Mistral-Large", 
-                                                            "deepseek": "DeepSeek", 
-                                                            "llama": "Llama", 
-                                                            "microsoft": "Microsoft (DeepSeek)"}[x])    
+# _, token_col, select_llm_col = st.columns([0.5, 0.3, 0.2], vertical_alignment = "center")
 
+# with select_llm_col:
+#     model_selection = st.selectbox(
+#         label = "Select the LLM you want to use:",
+#         options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
+#         index = 2,
+#         format_func = lambda x: {"google": "Gemini", 
+#                                     "chatgpt": "ChatGPT", 
+#                                     "mistral": "Mistral-Small",
+#                                     "mistral-large": "Mistral-Large", 
+#                                     "deepseek": "DeepSeek", 
+#                                     "llama": "Llama", 
+#                                     "microsoft": "Microsoft (DeepSeek)"}[x])    
+
+model_selection = "mistral"
 model = select_model(model_selection)
 
 config = {"configurable": {"thread_id": "conversational_explainer"}}
@@ -123,22 +170,24 @@ def stream_output(stream):
     for chunk, _ in stream:
         yield chunk.content
 
-chatbox_buffer = 0.5
-viz_col, chatbox_col = st.columns([chatbox_buffer, 1 - chatbox_buffer])
 
+viz_col, chatbox_col = st.columns([0.4, 0.6])
+
+viz_padding = 70; chat_padding = 220
 with viz_col:
-
-    st.plotly_chart(explanations_output["roc_auc"])
-    st.plotly_chart(explanations_output["confusion_matrix"])
-    st.plotly_chart(explanations_output["feature_importance"])
+    viz_container = st.container(height = screen_height - viz_padding, border = False)
+    with viz_container:
+        st.plotly_chart(explanations_output["roc_auc"])
+        st.plotly_chart(explanations_output["confusion_matrix"])
+        st.plotly_chart(explanations_output["feature_importance"])
 
 
 with chatbox_col:
-    chat_container = st.container(height = 600, border = True) # screen_height
+    chat_container = st.container(height = screen_height - chat_padding)
     with chat_container:
         for message in st.session_state.messages:
             with st.chat_message(name = message["name"], avatar =  message["avatar"]):
-                st.write(message["content"])
+                st.markdown(message["content"])
 
     accepted_file_types = ["jpg", "jpeg", "png"] # ["txt", "csv", "xlsx", "pdf"]
     if query := st.chat_input("Ask me a question!", accept_file = True, file_type = accepted_file_types):
@@ -165,33 +214,34 @@ with chatbox_col:
 
                 if stream:
                     responses = st.session_state.app.stream({"messages": [HumanMessage(message_input)]}, config, stream_mode = "messages") 
-                    st.write_stream(stream_output(responses))
+                    st.write(stream_output(responses))
 
                     st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
                     st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
                     # st.session_state.usage_metadata = st.session_state.app.get_state(config)[3]["writes"]["model"]["usage_metadata"]
 
                 else:
-                    responses = st.session_state.app.invoke({"messages": [HumanMessage(message_input)]}, config,)["messages"]
-                    with chat_container:            
-                        st.write(responses[-1].content)
+                    responses = st.session_state.app.invoke({"messages": [HumanMessage(message_input)]}, config,)["messages"]     
+                    st.write(responses[-1].content)
+                    # st.markdown(f'''<div style="height: 300px; overflow: auto;">{responses[-1].content}</div>''', unsafe_allow_html = True)
 
                     st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
                     st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
                     # st.session_state.usage_metadata = st.session_state.app.get_state(config)[3]["writes"]["model"]["usage_metadata"]
 
-    warning_col, download_col = st.columns([0.8, 0.2])
-    warning_col.info("Large language models can make mistakes. Please verify information before you make decisions.", icon = ":material/info:")
-    with download_col:
-
+    
+    if st.session_state.messages == []:
+        st.info("Large language models can make mistakes. Please verify information before decisions.", icon = ":material/info:")
+    else:
+        warning_col, download_col = st.columns([0.8, 0.2], vertical_alignment = "center")
+        warning_col.info("Large language models can make mistakes. Please verify information before decisions.", icon = ":material/info:")
+        
         export_data = "\n\n".join([x["name"] + ": " + (x["content"] + f"\n\n{'=' * 100}" if x["name"] != "user" else x["content"]) for x in st.session_state.messages])
-
-        st.download_button(
-            label = "Export",
+        download_col.download_button(
+            label = "Export chat",
             data = export_data,
             file_name = "chat.txt",
-            icon = ":material/download:"
-        )
+            icon = ":material/download:")
 
 # with token_col:
 #     text = " | ".join([f"{x}: {y:,}" for x, y in st.session_state.usage_metadata.items()])
