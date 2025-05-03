@@ -4,6 +4,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
 import streamlit.components.v1 as components
+from lorem_text import lorem
 
 # st.set_page_config(layout = "wide")
 # https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
@@ -97,7 +98,9 @@ import streamlit.components.v1 as components
 
 
 #  ====
+st.set_page_config(layout = "wide")
 st.title("Echo Bot")
+st.sidebar.title("Testing")
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -109,21 +112,21 @@ with chat_container:
 # Display chat messages from history on app rerun
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+            st.write(message["content"])
 
 # React to user input
 if prompt := st.chat_input("What is up?"):
     with chat_container:
         # Display user message in chat message container
         with st.chat_message("user"):
-            st.markdown(f'''{prompt}''', unsafe_allow_html = True)
+            st.write(prompt)
             # Add user message to chat history
             st.session_state.messages.append({"role": "user", "content": prompt})
     
 # Display assistant response in chat message container
     with chat_container:
         with st.chat_message("assistant"):
-            response = f"Echo: {(prompt + ' ') * 500}"
-            st.markdown(f'''<div style="height: 180px; overflow: auto;">{response}</div>''', unsafe_allow_html = True)
+            response = lorem.paragraphs(3)
+            st.write(response)
             # Add assistant response to chat history
             st.session_state.messages.append({"role": "assistant", "content": response})

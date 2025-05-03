@@ -17,6 +17,11 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from initialise import select_model, system_message, params, api_keys
 
+from lorem_text import lorem
+from st_screen_stats import ScreenData
+from streamlit_dimensions import st_dimensions
+from browser_detection import browser_detection_engine
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -39,58 +44,28 @@ with open("explanations_output.pickle", "rb") as file:
     explanations_output = pickle.load(file)
 
 st.set_page_config(layout = "wide")
-st.markdown('''<style>
-            .block-container {padding-top: 0.15rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}
-            .st-emotion-cache-kgpedg {padding-top: 0.15; padding-bottom: 0}
-            .stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {height: 300px; overflow: auto}
-            </style>''', unsafe_allow_html = True)
-
-# Custom CSS for a transparent scrollbar
-transparent_scrollbar_style = """
-<style>
-/* For WebKit browsers (Chrome, Safari) */
-::-webkit-scrollbar {
-    width: 10px; /* Width of the scrollbar */
-}
-
-::-webkit-scrollbar-track {
-    background: transparent; /* Transparent track */
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.3); /* Semi-transparent thumb */
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.5); /* Slightly darker transparent thumb on hover */
-}
-
-/* For Firefox */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Transparent track with semi-transparent thumb */
-}
-</style>
-"""
-
-st.markdown(transparent_scrollbar_style, unsafe_allow_html=True)
-
-
-# https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
-# https://github.com/Socvest/streamlit-browser-engine # https://discuss.streamlit.io/t/get-browser-stats-like-user-agent-broswer-name-chrome-firefox-ie-etc-whether-app-is-running-on-mobile-or-desktop-and-more/66735
-from st_screen_stats import ScreenData
-screen_height = ScreenData().st_screen_data(key="screen_stats_")["innerHeight"]
-
-# from browser_detection import browser_detection_engine
-# browser_info = browser_detection_engine()
-
 st.sidebar.markdown('''
                     <div style="display: flex; align-items: center; gap: 10px;">
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
                     <span class="material-symbols-rounded" style="font-size: 48px; color: #e3e3e3;">cognition</span>
                     <h1 style="font-size: 1.5em; margin: 0;">Conversational Explanations</h1>
-                    </div>''', unsafe_allow_html=True)
+                    </div>''', unsafe_allow_html = True)
+st.markdown('''<style>
+            .block-container {padding-top: 0.11rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}
+            .st-emotion-cache-1xgtwnd {padding-top: 0.15; padding-bottom: 0}
+            .stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {height: 350px; overflow: scroll !important}
+            </style>''', unsafe_allow_html = True)
+
+# https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
+# https://github.com/Socvest/streamlit-browser-engine # https://discuss.streamlit.io/t/get-browser-stats-like-user-agent-broswer-name-chrome-firefox-ie-etc-whether-app-is-running-on-mobile-or-desktop-and-more/66735
+
+screen_height = ScreenData().st_screen_data(key="screen_stats_")["innerHeight"]
+
+# browser_info = browser_detection_engine()
+
+# .stChatMessageContent.st-emotion-cache-1ir3vnm ea2tk8x1:last-child {vertical-align: top !important; width: auto}
+
+# https://pypi.org/project/streamlit-dimensions/
 
 st.sidebar.divider()
 domain = st.sidebar.selectbox("What is your area of expertise/domain?", ["Data Science", "Healthcare", "Other"])
@@ -99,25 +74,26 @@ if domain == "Other":
 
 st.sidebar.divider()
 st.sidebar.write(f"Please rate your skillset level:")
-slider_options = ["None", "Limited", "Moderate", "Good", "Excellent"]
-analysis_rating = st.sidebar.select_slider(label = "Data Analysis", options = slider_options, value = "Moderate")
-ml_rating = st.sidebar.select_slider(label = "Machine Learning", options = slider_options, value = "Moderate")
-stats_rating = st.sidebar.select_slider(label = "Statistics", options = slider_options, value = "Moderate")
-healthcare_rating = st.sidebar.select_slider(label = "Healthcare", options = slider_options, value = "Moderate")
+slider_options      = ["None", "Limited", "Moderate", "Good", "Excellent"]
+analysis_rating     = st.sidebar.select_slider(label = "Data Analysis",     options = slider_options, value = "Moderate")
+ml_rating           = st.sidebar.select_slider(label = "Machine Learning",  options = slider_options, value = "Moderate")
+stats_rating        = st.sidebar.select_slider(label = "Statistics",        options = slider_options, value = "Moderate")
+healthcare_rating   = st.sidebar.select_slider(label = "Healthcare",        options = slider_options, value = "Moderate")
 
 st.sidebar.divider()
 st.sidebar.markdown("<center><h5>Henry El-Jawhari, 2025</h5></center>", unsafe_allow_html = True)
 
 user_skillset = {
-    "domain": domain,
-    "data_analysis": analysis_rating,
+    "domain":           domain,
+    "data_analysis":    analysis_rating,
     "machine_learning": ml_rating,
-    "statistics": stats_rating,
-    "healthcare": healthcare_rating
+    "statistics":       stats_rating,
+    "healthcare":       healthcare_rating
     }
 
 # This needs to also be updated in the model when it's updated in the interface
 system_message = system_message(user_skillset)
+system_message = "answer shortly"
 
 # with st.popover(":sparkles: Ask AI", use_container_width = True):
 # @st.dialog("Chat Support", width="large")
@@ -170,7 +146,6 @@ def stream_output(stream):
     for chunk, _ in stream:
         yield chunk.content
 
-
 viz_col, chatbox_col = st.columns([0.4, 0.6])
 
 viz_padding = 70; chat_padding = 220
@@ -181,13 +156,12 @@ with viz_col:
         st.plotly_chart(explanations_output["confusion_matrix"])
         st.plotly_chart(explanations_output["feature_importance"])
 
-
 with chatbox_col:
     chat_container = st.container(height = screen_height - chat_padding)
     with chat_container:
         for message in st.session_state.messages:
             with st.chat_message(name = message["name"], avatar =  message["avatar"]):
-                st.markdown(message["content"])
+                st.write(message["content"])
 
     accepted_file_types = ["jpg", "jpeg", "png"] # ["txt", "csv", "xlsx", "pdf"]
     if query := st.chat_input("Ask me a question!", accept_file = True, file_type = accepted_file_types):
@@ -196,7 +170,7 @@ with chatbox_col:
             user_avatar = ":material/cognition:"; ai_avatar = f"Images/{model_selection}.png"
 
             with st.chat_message(name = "user", avatar = user_avatar):
-                st.write(query["text"], use_container_width = True)
+                st.write(query["text"])
                 if query["files"] != []:
                     st.image(query["files"], width = 100) 
                 st.session_state.messages.append({"name": "user", "avatar": user_avatar, 
@@ -220,15 +194,21 @@ with chatbox_col:
                     st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
                     # st.session_state.usage_metadata = st.session_state.app.get_state(config)[3]["writes"]["model"]["usage_metadata"]
 
+                    # Lorem ipsum test
+                    # responses = lorem.paragraphs(n_para)
+                    # st.write(responses)
+                    # st.session_state.responses = responses
+                    # st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses})
+
                 else:
                     responses = st.session_state.app.invoke({"messages": [HumanMessage(message_input)]}, config,)["messages"]     
                     st.write(responses[-1].content)
-                    # st.markdown(f'''<div style="height: 300px; overflow: auto;">{responses[-1].content}</div>''', unsafe_allow_html = True)
 
                     st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
                     st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
                     # st.session_state.usage_metadata = st.session_state.app.get_state(config)[3]["writes"]["model"]["usage_metadata"]
-
+                
+                # st.markdown('''<style>.stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {overflow: visible !important}</style>''', unsafe_allow_html = True)
     
     if st.session_state.messages == []:
         st.info("Large language models can make mistakes. Please verify information before decisions.", icon = ":material/info:")
@@ -249,3 +229,32 @@ with chatbox_col:
 
 # if floating_button(":sparkles: Ask AI"):
 #         chat_dialog()
+
+# Custom CSS code to make scrollbar transparent
+transparent_scrollbar_style = """
+<style>
+/* For WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 10px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Transparent track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3); /* Semi-transparent thumb */
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5); /* Slightly darker transparent thumb on hover */
+}
+
+/* For Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Transparent track with semi-transparent thumb */
+}
+"""
+st.markdown(transparent_scrollbar_style, unsafe_allow_html = True)
