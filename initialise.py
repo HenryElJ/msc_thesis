@@ -99,8 +99,6 @@ params = {
         }
     }
 
-
-
 # Custom functions
 def select_model(model_name: str):
     if model_name == "google":

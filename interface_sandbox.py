@@ -1,6 +1,6 @@
 # conda activate thesis_3.11 && cd github/msc_thesis && streamlit run interface_sandbox.py
 
-import streamlit as st, pickle, base64, httpx
+import streamlit as st, pickle, base64, os, re
 from streamlit_extras.floating_button import floating_button
 from streamlit_extras.grid import grid
 from streamlit_js_eval import streamlit_js_eval
@@ -25,11 +25,19 @@ from browser_detection import browser_detection_engine
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-if "model_selection" not in st.session_state:
-    st.session_state.model_selection = []
-
 if "responses" not in st.session_state:
     st.session_state.responses = []
+
+global model_selection
+if "model_selection" not in st.session_state:
+    st.session_state.model_selection = "mistral"
+    model_selection = "mistral"
+
+# https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
+# https://github.com/Socvest/streamlit-browser-engine # https://discuss.streamlit.io/t/get-browser-stats-like-user-agent-broswer-name-chrome-firefox-ie-etc-whether-app-is-running-on-mobile-or-desktop-and-more/66735
+# browser_info = browser_detection_engine()
+
+# https://pypi.org/project/streamlit-dimensions/
 
 # Token usage not tracked in streaming for `AzureAIChatCompletionsModel(...)`
 # if ("usage_metadata" not in st.session_state):
@@ -44,30 +52,66 @@ with open("explanations_output.pickle", "rb") as file:
     explanations_output = pickle.load(file)
 
 st.set_page_config(layout = "wide")
+
+screen_height = ScreenData().st_screen_data(key="screen_stats_")["innerHeight"]
+viz_padding = 70; chat_padding = 220; response_height = screen_height - chat_padding - 105
+
+st.markdown(f'''<style>
+            .block-container {{padding-top: 0.2rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}}
+            .st-emotion-cache-1xgtwnd {{padding-top: 0.15; padding-bottom: 0}}
+            .stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {{height: {response_height}px; overflow: auto !important}}
+            </style>''', unsafe_allow_html = True)
+
 st.sidebar.markdown('''
                     <div style="display: flex; align-items: center; gap: 10px;">
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
                     <span class="material-symbols-rounded" style="font-size: 48px; color: #e3e3e3;">cognition</span>
-                    <h1 style="font-size: 1.5em; margin: 0;">Conversational Explanations</h1>
+                    <h1 style="font-size: 1.5em; margin: 0; width: fit-content;">Conversational Explanations</h1>
                     </div>''', unsafe_allow_html = True)
-st.markdown('''<style>
-            .block-container {padding-top: 0.11rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}
-            .st-emotion-cache-1xgtwnd {padding-top: 0.15; padding-bottom: 0}
-            .stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {height: 350px; overflow: scroll !important}
-            </style>''', unsafe_allow_html = True)
-
-# https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
-# https://github.com/Socvest/streamlit-browser-engine # https://discuss.streamlit.io/t/get-browser-stats-like-user-agent-broswer-name-chrome-firefox-ie-etc-whether-app-is-running-on-mobile-or-desktop-and-more/66735
-
-screen_height = ScreenData().st_screen_data(key="screen_stats_")["innerHeight"]
-
-# browser_info = browser_detection_engine()
-
-# .stChatMessageContent.st-emotion-cache-1ir3vnm ea2tk8x1:last-child {vertical-align: top !important; width: auto}
-
-# https://pypi.org/project/streamlit-dimensions/
 
 st.sidebar.divider()
+
+llm_name_mapping = {"google"          : "Gemini (Google)", 
+                    "chatgpt"         : "ChatGPT (OpenAI)", 
+                    "mistral"         : "Mistral - Small",
+                    "mistral-large"   : "Mistral - Large", 
+                    "deepseek"        : "DeepSeek", 
+                    "llama"           : "Llama (Meta)", 
+                    "microsoft"       : "Microsoft (DeepSeek)"}
+
+llm_images = []
+for filepath in [x for x in os.listdir("Images") if re.search(".png", x) is not None]:
+    with open(f"Images/{filepath}", "rb") as file:
+        llm_name = filepath.replace(".png", "")
+        llm_images += [[llm_name, base64.b64encode(file.read()).decode()]]
+
+
+# def model_selection_func(name):
+#     global model_selection
+#     model_selection = name
+#     return model_selection
+
+# with st.sidebar.expander("Select the LLM to use:"):
+#     llm_1, llm_2, llm_3, _ = st.columns(4)
+#     llm_4, llm_5, llm_6, llm_7 = st.columns(4)
+#     llm_1.button(f"![](data:image/png;base64,{llm_images[0][1]})", on_click = select_model, help = llm_name_mapping[llm_images[0][0]], args = [llm_images[0][0]])
+#     llm_2.button(f"![](data:image/png;base64,{llm_images[1][1]})", on_click = select_model, help = llm_name_mapping[llm_images[1][0]], args = [llm_images[1][0]])
+#     llm_3.button(f"![](data:image/png;base64,{llm_images[2][1]})", on_click = select_model, help = llm_name_mapping[llm_images[2][0]], args = [llm_images[2][0]])
+#     llm_4.button(f"![](data:image/png;base64,{llm_images[3][1]})", on_click = select_model, help = llm_name_mapping[llm_images[3][0]], args = [llm_images[3][0]])
+#     llm_5.button(f"![](data:image/png;base64,{llm_images[4][1]})", on_click = select_model, help = llm_name_mapping[llm_images[4][0]], args = [llm_images[4][0]])
+#     llm_6.button(f"![](data:image/png;base64,{llm_images[5][1]})", on_click = select_model, help = llm_name_mapping[llm_images[5][0]], args = [llm_images[5][0]])
+#     llm_7.button(f"![](data:image/png;base64,{llm_images[6][1]})", on_click = select_model, help = llm_name_mapping[llm_images[6][0]], args = [llm_images[6][0]])
+#     st.markdown("<h5>You can change this model anytime.</h5>", unsafe_allow_html = True)
+
+model_selection = st.sidebar.selectbox(
+    label = "Select the LLM you want to use:",
+    options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
+    index = 2,
+    format_func = lambda x: llm_name_mapping[x])
+
+
+st.sidebar.divider()
+
 domain = st.sidebar.selectbox("What is your area of expertise/domain?", ["Data Science", "Healthcare", "Other"])
 if domain == "Other":
     domain = st.sidebar.text_input("Please enter your domain:")
@@ -84,37 +128,16 @@ st.sidebar.divider()
 st.sidebar.markdown("<center><h5>Henry El-Jawhari, 2025</h5></center>", unsafe_allow_html = True)
 
 user_skillset = {
-    "domain":           domain,
-    "data_analysis":    analysis_rating,
-    "machine_learning": ml_rating,
-    "statistics":       stats_rating,
-    "healthcare":       healthcare_rating
+    "domain"            : domain,
+    "data_analysis"     : analysis_rating,
+    "machine_learning"  : ml_rating,
+    "statistics"        : stats_rating,
+    "healthcare"        : healthcare_rating
     }
 
 # This needs to also be updated in the model when it's updated in the interface
-system_message = system_message(user_skillset)
-system_message = "answer shortly"
+system_message = system_message(user_skillset); system_message = "answer shortly"
 
-# with st.popover(":sparkles: Ask AI", use_container_width = True):
-# @st.dialog("Chat Support", width="large")
-# def chat_dialog():
-
-# _, token_col, select_llm_col = st.columns([0.5, 0.3, 0.2], vertical_alignment = "center")
-
-# with select_llm_col:
-#     model_selection = st.selectbox(
-#         label = "Select the LLM you want to use:",
-#         options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
-#         index = 2,
-#         format_func = lambda x: {"google": "Gemini", 
-#                                     "chatgpt": "ChatGPT", 
-#                                     "mistral": "Mistral-Small",
-#                                     "mistral-large": "Mistral-Large", 
-#                                     "deepseek": "DeepSeek", 
-#                                     "llama": "Llama", 
-#                                     "microsoft": "Microsoft (DeepSeek)"}[x])    
-
-model_selection = "mistral"
 model = select_model(model_selection)
 
 config = {"configurable": {"thread_id": "conversational_explainer"}}
@@ -148,7 +171,6 @@ def stream_output(stream):
 
 viz_col, chatbox_col = st.columns([0.4, 0.6])
 
-viz_padding = 70; chat_padding = 220
 with viz_col:
     viz_container = st.container(height = screen_height - viz_padding, border = False)
     with viz_container:
@@ -195,7 +217,7 @@ with chatbox_col:
                     # st.session_state.usage_metadata = st.session_state.app.get_state(config)[3]["writes"]["model"]["usage_metadata"]
 
                     # Lorem ipsum test
-                    # responses = lorem.paragraphs(n_para)
+                    # responses = lorem.paragraphs(10)
                     # st.write(responses)
                     # st.session_state.responses = responses
                     # st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses})
