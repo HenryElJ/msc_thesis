@@ -1,5 +1,10 @@
 # conda activate thesis_3.11 && cd github/msc_thesis && streamlit run interface_sandbox.py
 
+# https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
+# https://github.com/Socvest/streamlit-browser-engine # https://discuss.streamlit.io/t/get-browser-stats-like-user-agent-broswer-name-chrome-firefox-ie-etc-whether-app-is-running-on-mobile-or-desktop-and-more/66735
+# browser_info = browser_detection_engine()
+# https://pypi.org/project/streamlit-dimensions/
+
 import streamlit as st, pickle, base64, os, re
 from streamlit_extras.floating_button import floating_button
 from streamlit_extras.grid import grid
@@ -22,22 +27,19 @@ from st_screen_stats import ScreenData
 from streamlit_dimensions import st_dimensions
 from browser_detection import browser_detection_engine
 
+global model_selection
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "responses" not in st.session_state:
     st.session_state.responses = []
 
-global model_selection
 if "model_selection" not in st.session_state:
     st.session_state.model_selection = "mistral"
-    model_selection = "mistral"
 
-# https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
-# https://github.com/Socvest/streamlit-browser-engine # https://discuss.streamlit.io/t/get-browser-stats-like-user-agent-broswer-name-chrome-firefox-ie-etc-whether-app-is-running-on-mobile-or-desktop-and-more/66735
-# browser_info = browser_detection_engine()
-
-# https://pypi.org/project/streamlit-dimensions/
+if "button_selection" not in st.session_state:
+    st.session_state.button_selection = "mistral"
 
 # Token usage not tracked in streaming for `AzureAIChatCompletionsModel(...)`
 # if ("usage_metadata" not in st.session_state):
@@ -56,10 +58,20 @@ st.set_page_config(layout = "wide")
 screen_height = ScreenData().st_screen_data(key="screen_stats_")["innerHeight"]
 viz_padding = 70; chat_padding = 220; response_height = screen_height - chat_padding - 105
 
+llm_images = []
+filepaths = [x for x in os.listdir("Images") if re.search(".png", x) is not None]; filepaths.sort()
+for filepath in filepaths:
+    with open(f"Images/{filepath}", "rb") as file:
+        llm_name = filepath.replace(".png", "")
+        llm_images += [[llm_name, base64.b64encode(file.read()).decode()]]
+
+st.logo(f"Images/{st.session_state.button_selection}.png", size = "small")
+
 st.markdown(f'''<style>
             .block-container {{padding-top: 0.2rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}}
             .st-emotion-cache-1xgtwnd {{padding-top: 0.15; padding-bottom: 0}}
-            .stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {{height: {response_height}px; overflow: auto !important}}
+            .stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {{height: {response_height}px; overflow: scroll !important; flex-direction: column}}
+            .st-emotion-cache-1ir3vnm.ea2tk8x1:last-child {{margin: 0px}}
             </style>''', unsafe_allow_html = True)
 
 st.sidebar.markdown('''
@@ -79,36 +91,35 @@ llm_name_mapping = {"google"          : "Gemini (Google)",
                     "llama"           : "Llama (Meta)", 
                     "microsoft"       : "Microsoft (DeepSeek)"}
 
-llm_images = []
-for filepath in [x for x in os.listdir("Images") if re.search(".png", x) is not None]:
-    with open(f"Images/{filepath}", "rb") as file:
-        llm_name = filepath.replace(".png", "")
-        llm_images += [[llm_name, base64.b64encode(file.read()).decode()]]
+button = True
+if button:
+    def button_selection(name):
+        st.session_state.button_selection = name
 
+    with st.sidebar.expander("Select the LLM to use:"):
+        llm_1, llm_2, llm_3, _ = st.columns(4)
+        llm_4, llm_5, llm_6, llm_7 = st.columns(4)
+        st.markdown("""<style> .st-emotion-cache-c1nttv.eacrzsi2:focus {background-color: #000000; border-color: #FF4B4B} </style>""", unsafe_allow_html = True)
+        llm_1.button(f"![](data:image/png;base64,{llm_images[0][1]})", on_click = button_selection, help = llm_name_mapping[llm_images[0][0]], args = [llm_images[0][0]])
+        llm_2.button(f"![](data:image/png;base64,{llm_images[1][1]})", on_click = button_selection, help = llm_name_mapping[llm_images[1][0]], args = [llm_images[1][0]])
+        llm_3.button(f"![](data:image/png;base64,{llm_images[2][1]})", on_click = button_selection, help = llm_name_mapping[llm_images[2][0]], args = [llm_images[2][0]])
+        llm_4.button(f"![](data:image/png;base64,{llm_images[3][1]})", on_click = button_selection, help = llm_name_mapping[llm_images[3][0]], args = [llm_images[3][0]])
+        llm_5.button(f"![](data:image/png;base64,{llm_images[4][1]})", on_click = button_selection, help = llm_name_mapping[llm_images[4][0]], args = [llm_images[4][0]])
+        llm_6.button(f"![](data:image/png;base64,{llm_images[5][1]})", on_click = button_selection, help = llm_name_mapping[llm_images[5][0]], args = [llm_images[5][0]])
+        llm_7.button(f"![](data:image/png;base64,{llm_images[6][1]})", on_click = button_selection, help = llm_name_mapping[llm_images[6][0]], args = [llm_images[6][0]])
 
-# def model_selection_func(name):
-#     global model_selection
-#     model_selection = name
-#     return model_selection
+        st.markdown("<h5>You can change this model anytime.</h5>", unsafe_allow_html = True)
 
-# with st.sidebar.expander("Select the LLM to use:"):
-#     llm_1, llm_2, llm_3, _ = st.columns(4)
-#     llm_4, llm_5, llm_6, llm_7 = st.columns(4)
-#     llm_1.button(f"![](data:image/png;base64,{llm_images[0][1]})", on_click = select_model, help = llm_name_mapping[llm_images[0][0]], args = [llm_images[0][0]])
-#     llm_2.button(f"![](data:image/png;base64,{llm_images[1][1]})", on_click = select_model, help = llm_name_mapping[llm_images[1][0]], args = [llm_images[1][0]])
-#     llm_3.button(f"![](data:image/png;base64,{llm_images[2][1]})", on_click = select_model, help = llm_name_mapping[llm_images[2][0]], args = [llm_images[2][0]])
-#     llm_4.button(f"![](data:image/png;base64,{llm_images[3][1]})", on_click = select_model, help = llm_name_mapping[llm_images[3][0]], args = [llm_images[3][0]])
-#     llm_5.button(f"![](data:image/png;base64,{llm_images[4][1]})", on_click = select_model, help = llm_name_mapping[llm_images[4][0]], args = [llm_images[4][0]])
-#     llm_6.button(f"![](data:image/png;base64,{llm_images[5][1]})", on_click = select_model, help = llm_name_mapping[llm_images[5][0]], args = [llm_images[5][0]])
-#     llm_7.button(f"![](data:image/png;base64,{llm_images[6][1]})", on_click = select_model, help = llm_name_mapping[llm_images[6][0]], args = [llm_images[6][0]])
-#     st.markdown("<h5>You can change this model anytime.</h5>", unsafe_allow_html = True)
+        # with stylable_container("green", css_styles = """button {background-color: #00FF00; color: black; }""",):    
+        #     test_button = st.button("Test", type = "primary")
 
-model_selection = st.sidebar.selectbox(
-    label = "Select the LLM you want to use:",
-    options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
-    index = 2,
-    format_func = lambda x: llm_name_mapping[x])
-
+        model_selection = st.session_state.button_selection
+else:
+    model_selection = st.sidebar.selectbox(
+        label = "Select the LLM you want to use:",
+        options = ("google", "chatgpt", "mistral", "mistral-large", "deepseek", "llama", "microsoft"),
+        index = 2,
+        format_func = lambda x: llm_name_mapping[x])
 
 st.sidebar.divider()
 
@@ -142,8 +153,9 @@ model = select_model(model_selection)
 
 config = {"configurable": {"thread_id": "conversational_explainer"}}
 
+# On initial start-up, model or user skillset changes
 if ("app" not in st.session_state) | (st.session_state.model_selection != model_selection) | (st.session_state.user_skillset != user_skillset):
-
+    
     st.session_state.model_selection = model_selection
 
     prompt_template = ChatPromptTemplate(
