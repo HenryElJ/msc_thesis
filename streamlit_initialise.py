@@ -28,17 +28,17 @@ from lorem_text import lorem
 
 load_dotenv()
 
-api_keys = {
-    "github": os.getenv('GITHUB_API_KEY'),
-    "google": os.getenv('GOOGLE_API_KEY'),
-    "mistral": os.getenv('MISTRAL_API_KEY')
-    }
+# api_keys = {
+#     "github": os.getenv('GITHUB_API_KEY'),
+#     "google": os.getenv('GOOGLE_API_KEY'),
+#     "mistral": os.getenv('MISTRAL_API_KEY')
+#     }
 
-clients = {
-    "github": ChatCompletionsClient(endpoint = "https://models.github.ai/inference", credential = AzureKeyCredential(api_keys["github"])),
-    "google": genai.Client(api_key = api_keys["google"]),
-    "mistral": Mistral(api_key = api_keys["mistral"])
-}
+# clients = {
+#     "github": ChatCompletionsClient(endpoint = "https://models.github.ai/inference", credential = AzureKeyCredential(api_keys["github"])),
+#     "google": genai.Client(api_key = api_keys["google"]),
+#     "mistral": Mistral(api_key = api_keys["mistral"])
+# }
 
 params = {
         "chatgpt": {
