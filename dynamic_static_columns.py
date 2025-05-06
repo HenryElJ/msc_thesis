@@ -1,12 +1,6 @@
 # conda activate thesis_3.11 && cd github/msc_thesis && streamlit run dynamic_static_columns.py
 
-import streamlit as st
-import plotly.graph_objects as go
-import numpy as np
-import streamlit.components.v1 as components
-# from lorem_text import lorem
-
-from custom_streamlit_imports import params
+from streamlit_initialise import *
 
 # st.set_page_config(layout = "wide")
 # https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625

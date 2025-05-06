@@ -1,31 +1,7 @@
 # conda activate thesis_3.11 && cd github/msc_thesis && streamlit run interface_sandbox.py
 
-# https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
-# https://github.com/Socvest/streamlit-browser-engine # https://discuss.streamlit.io/t/get-browser-stats-like-user-agent-broswer-name-chrome-firefox-ie-etc-whether-app-is-running-on-mobile-or-desktop-and-more/66735
-# browser_info = browser_detection_engine()
-# https://pypi.org/project/streamlit-dimensions/
-
-import streamlit as st, pickle, base64, os, re
-from streamlit_extras.floating_button import floating_button
-from streamlit_extras.grid import grid
-from streamlit_js_eval import streamlit_js_eval
-from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_mistralai import ChatMistralAI
-from langchain_azure_ai.chat_models import AzureAIChatCompletionsModel
-
-# Conversational Chatbot
-from langchain_core.messages import HumanMessage
-from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import START, MessagesState, StateGraph
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-
-from custom_streamlit_imports import *
-
-from lorem_text import lorem
-from st_screen_stats import ScreenData
-from streamlit_dimensions import st_dimensions
-from browser_detection import browser_detection_engine
+# Custom imports
+from streamlit_initialise import *
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -45,8 +21,6 @@ if "button_selection" not in st.session_state:
 
 if "user_skillset" not in st.session_state:
     st.session_state.user_skillset = {}
-
-load_dotenv()
 
 with open("explanations_output.pickle", "rb") as file:
     explanations_output = pickle.load(file)
