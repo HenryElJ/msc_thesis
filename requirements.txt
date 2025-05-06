@@ -5,7 +5,7 @@ langchain_mistralai==0.2.10
 langgraph==0.4.1
 lorem_text==2.1
 mistralai==1.7.0
-protobuf==6.30.2
+protobuf==5.27.3
 python-dotenv==1.1.0
 streamlit==1.45.0
 streamlit_extras==0.7.0
