@@ -20,14 +20,12 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
-from initialise import select_model, system_message, params, api_keys
+from custom_streamlit_imports import *
 
 from lorem_text import lorem
 from st_screen_stats import ScreenData
 from streamlit_dimensions import st_dimensions
 from browser_detection import browser_detection_engine
-
-global model_selection
 
 if "messages" not in st.session_state:
     st.session_state.messages = []

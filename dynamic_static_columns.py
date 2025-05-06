@@ -6,7 +6,7 @@ import numpy as np
 import streamlit.components.v1 as components
 # from lorem_text import lorem
 
-from initialise import params
+from custom_streamlit_imports import params
 
 # st.set_page_config(layout = "wide")
 # https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
