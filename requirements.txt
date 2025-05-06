@@ -11,3 +11,4 @@ streamlit==1.45.0
 streamlit_screen_stats==0.0.82
 plotly==5.24.1
 plotly-express==0.4.1
+streamlit-local-storage==0.0.25
