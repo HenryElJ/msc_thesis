@@ -4,7 +4,9 @@ import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
 import streamlit.components.v1 as components
-from lorem_text import lorem
+# from lorem_text import lorem
+
+from initialise import params
 
 # st.set_page_config(layout = "wide")
 # https://github.com/Socvest/st-screen-stats # https://discuss.streamlit.io/t/build-responsive-apps-based-on-different-screen-features/51625
@@ -126,7 +128,8 @@ if prompt := st.chat_input("What is up?"):
 # Display assistant response in chat message container
     with chat_container:
         with st.chat_message("assistant"):
-            response = lorem.paragraphs(3)
+            # response = lorem.paragraphs(3)
+            response = "Hi " * 300
             st.write(response)
             # Add assistant response to chat history
             st.session_state.messages.append({"role": "assistant", "content": response})
