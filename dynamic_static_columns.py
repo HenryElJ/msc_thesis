@@ -1,4 +1,4 @@
-# conda activate thesis_3.11 && cd github/msc_thesis && streamlit run dynamic_static_columns.py
+# cd github/msc_thesis && conda activate thesis_3.11 && streamlit run dynamic_static_columns.py
 
 from streamlit_initialise import *
 
@@ -94,36 +94,51 @@ from streamlit_initialise import *
 
 
 #  ====
+import streamlit as st
 st.set_page_config(layout = "wide")
-st.title("Echo Bot")
-st.sidebar.title("Testing")
+st.sidebar.title("Example")
+st.sidebar.write(f"Please rate your skillset level:")
+slider_options      = ["None", "Limited", "Moderate", "Good", "Excellent"]
+analysis_rating     = st.sidebar.select_slider(label = "Data Analysis",     options = slider_options, value = "Moderate")
+ml_rating           = st.sidebar.select_slider(label = "Machine Learning",  options = slider_options, value = "Moderate")
+coding_rating       = st.sidebar.select_slider(label = "Coding",            options = slider_options, value = "Moderate")
 
-# Initialize chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+tab1, tab2 = st.tabs(["\u2001" * 8 + x for x in ["Example Tab 1", "Example Tab 2"]])
 
-chat_container = st.container(height = 300)
+st.markdown(f'''
+            <style>
+            .block-container {{padding-top: 3rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}}
+            </style>''', unsafe_allow_html = True)
 
-with chat_container:
-# Display chat messages from history on app rerun
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+# st.title("Echo Bot")
+# st.sidebar.title("Testing")
 
-# React to user input
-if prompt := st.chat_input("What is up?"):
-    with chat_container:
-        # Display user message in chat message container
-        with st.chat_message("user"):
-            st.write(prompt)
-            # Add user message to chat history
-            st.session_state.messages.append({"role": "user", "content": prompt})
+# # Initialize chat history
+# if "messages" not in st.session_state:
+#     st.session_state.messages = []
+
+# chat_container = st.container(height = 300)
+
+# with chat_container:
+# # Display chat messages from history on app rerun
+#     for message in st.session_state.messages:
+#         with st.chat_message(message["role"]):
+#             st.write(message["content"])
+
+# # React to user input
+# if prompt := st.chat_input("What is up?"):
+#     with chat_container:
+#         # Display user message in chat message container
+#         with st.chat_message("user"):
+#             st.write(prompt)
+#             # Add user message to chat history
+#             st.session_state.messages.append({"role": "user", "content": prompt})
     
-# Display assistant response in chat message container
-    with chat_container:
-        with st.chat_message("assistant"):
-            # response = lorem.paragraphs(3)
-            response = "Hi " * 300
-            st.write(response)
-            # Add assistant response to chat history
-            st.session_state.messages.append({"role": "assistant", "content": response})
+# # Display assistant response in chat message container
+#     with chat_container:
+#         with st.chat_message("assistant"):
+#             # response = lorem.paragraphs(3)
+#             response = "Hi " * 300
+#             st.write(response)
+#             # Add assistant response to chat history
+#             st.session_state.messages.append({"role": "assistant", "content": response})

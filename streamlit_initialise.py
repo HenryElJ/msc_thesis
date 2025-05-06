@@ -109,6 +109,11 @@ def select_model(model_name: str):
             max_retries = 2)
 
 
+def stream_output(stream):
+    for chunk, _ in stream:
+        yield chunk.content
+
+
 # System message
 def system_message(user: dict):
     return f'''
