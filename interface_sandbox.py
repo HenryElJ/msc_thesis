@@ -61,6 +61,8 @@ st.markdown(f'''<style>
             .st-emotion-cache-1ir3vnm.ea2tk8x1:last-child {{margin: 0px}}
             /* Tab height */
             .st-al.st-as.st-bh.st-bd.st-fh.st-fi.st-fj.st-fk.st-fl.st-fm.st-fn.st-fo.st-fp {{height: 2rem}}
+            /* Tab body padding */
+            .st-bd.st-c0.st-dv.st-c8.st-c6.st-c7 {{padding-top: 0rem}}
             /* Floating button */
             .st-emotion-cache-i2li6s.eacrzsi1 {{background-image: linear-gradient(to bottom right, red, yellow); border-color: gold}} /*blue, purple*/
             .st-emotion-cache-i2li6s.eacrzsi1:hover {{background-image: linear-gradient(to bottom right, yellow, red); border-color: gold}}
@@ -183,8 +185,7 @@ with introduction_tab:
        st.session_state.ask_ai[0] = not st.session_state.ask_ai[0]
 
     if st.session_state.ask_ai[0]:
-        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
-             {generate_tab(introduction_config)}''')
+        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:\n\t{generate_tab(introduction_config)}''')
         exec(add_chatbox_col(st.session_state.tab))
     else:
         exec(generate_tab(introduction_config))
@@ -197,9 +198,8 @@ with data_tab:
         st.session_state.ask_ai[1] = not st.session_state.ask_ai[1]
     
     if st.session_state.ask_ai[1]:
-        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
-             {generate_tab(data_config)}''')
-        exec(add_chatbox_col("data"))
+        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:\n\t{generate_tab(data_config)}''')
+        exec(add_chatbox_col(st.session_state.tab))
     else:
         exec(generate_tab(data_config))
 
@@ -211,8 +211,7 @@ with model_tab:
         st.session_state.ask_ai[2] = not st.session_state.ask_ai[2]
 
     if st.session_state.ask_ai[2]:
-        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
-             {generate_tab(model_config)}''')
+        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:\n\t{generate_tab(model_config)}''')
         exec(add_chatbox_col(st.session_state.tab))
     else:
         exec(generate_tab(model_config))
