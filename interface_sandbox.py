@@ -25,7 +25,11 @@ if "user_skillset" not in st.session_state:
     st.session_state.user_skillset = {}
 
 if "tab" not in st.session_state:
-    st.session_state.tab = []
+    st.session_state.tab = None
+
+if "ask_ai" not in st.session_state:
+    # [introduction, data, model]
+    st.session_state.ask_ai = [False, False, False]
 
 # Icons of LLMs
 llm_images = []
@@ -36,6 +40,8 @@ for filepath in filepaths:
         llm_images += [[llm_name, base64.b64encode(file.read()).decode()]]
 
 st.logo(f"llm_icons/{st.session_state.button_selection}.png", size = "small")
+
+user_avatar = ":material/cognition:"; ai_avatar = f"llm_icons/{st.session_state.model_selection}.png"
 
 # Page configurations
 st.set_page_config(layout = "wide")
@@ -56,8 +62,8 @@ st.markdown(f'''<style>
             /* Tab height */
             .st-al.st-as.st-bh.st-bd.st-fh.st-fi.st-fj.st-fk.st-fl.st-fm.st-fn.st-fo.st-fp {{height: 2rem}}
             /* Floating button */
-            .st-emotion-cache-i2li6s.eacrzsi1 {{background-image: linear-gradient(to bottom right, red, yellow)}}
-            .st-emotion-cache-i2li6s.eacrzsi1:hover {{background-image: linear-gradient(to bottom right, yellow, red)}}
+            .st-emotion-cache-i2li6s.eacrzsi1 {{background-image: linear-gradient(to bottom right, red, yellow); border-color: gold}} /*blue, purple*/
+            .st-emotion-cache-i2li6s.eacrzsi1:hover {{background-image: linear-gradient(to bottom right, yellow, red); border-color: gold}}
             </style>''', unsafe_allow_html = True)
 
 # .st-emotion-cache-8atqhb.e1mlolmg0 {{height: 0}}
@@ -171,18 +177,48 @@ introduction, data, model, explanations = st.tabs(["\u2001" * 8 + x for x in [":
 
 # INTRODUCTION
 with introduction:
-    exec(generate_tab(introduction_tab))
+
+    st.session_state.tab = "introduction"
+    if floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab + "_tab"):
+       st.session_state.ask_ai[0] = not st.session_state.ask_ai[0]
+
+    if st.session_state.ask_ai[0]:
+        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
+             {generate_tab(introduction_tab)}''')
+        exec(add_chatbox_col(st.session_state.tab))
+    else:
+        exec(generate_tab(introduction_tab))
+
 
 # DATA
 with data:
-    exec(generate_tab(data_tab))
+
+    st.session_state.tab = "data"
+    if floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab + "_tab"):
+        st.session_state.ask_ai[1] = not st.session_state.ask_ai[1]
+    
+    if st.session_state.ask_ai[1]:
+        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
+             {generate_tab(data_tab)}''')
+        exec(add_chatbox_col("data"))
+    else:
+        exec(generate_tab(data_tab))
 
 # MODEL
 with model:
-    exec(generate_tab(model_tab))
+
+    st.session_state.tab = "model"
+    if floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab + "_tab"):
+        st.session_state.ask_ai[2] = not st.session_state.ask_ai[2]
+
+    if st.session_state.ask_ai[2]:
+        exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
+             {generate_tab(model_tab)}''')
+        exec(add_chatbox_col(st.session_state.tab))
+    else:
+        exec(generate_tab(model_tab))
 
 # EXPLANATIONS
-
 with explanations:
     
     st.session_state.tab = "explanations"
@@ -291,3 +327,9 @@ with explanations:
     }
     """
     st.markdown(transparent_scrollbar_style, unsafe_allow_html = True)
+
+
+# with test_tab:
+    # st.session_state.tab + _ai
+    # exec(generate_tab() + add_chatbox_col)
+    # exec(generate_tab(test_text))

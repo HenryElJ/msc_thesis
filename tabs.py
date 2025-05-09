@@ -2,9 +2,28 @@ def generate_tab(tab):
     return tab.replace(";\n", ";")
 
 
-introduction_tab = '''st.session_state.tab = "introduction";
-floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab);
-intro1, intro2 = introduction.columns([0.25, 0.75], vertical_alignment = "center");
+def add_chatbox_col(tab):
+    return f'''with {tab}_ai:
+        \tchat_container = st.container(height = screen_height - chat_padding, key = "{tab}_container");
+    
+        \twith chat_container:
+            \t\tfor message in st.session_state.messages:
+                \t\t\twith st.chat_message(name = message["name"], avatar =  message["avatar"]): 
+                    \t\t\t\tst.write(message["content"]);
+    
+        \tif query := st.chat_input("Ask me a question!", accept_file = True, key = "{tab}_chat_input"):
+            \t\tif query["text"] is None:
+                \t\t\tpass
+            \t\telse:
+                \t\t\twith chat_container:
+                    \t\t\t\twith st.chat_message(name = "user", avatar = user_avatar):
+                        \t\t\t\t\tst.write(query["text"]); st.session_state.messages.append({{"name": "user", "avatar": user_avatar, "content": query["text"]}})
+                    \t\t\t\twith st.chat_message(name = "assistant", avatar = ai_avatar):
+                        \t\t\t\t\t\tmessage_input = [{{"type": "text", "text": query["text"]}}]; responses = lorem.paragraphs(10); st.write(responses); st.session_state.responses = responses; st.session_state.messages.append({{"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses}});
+        
+        \tst.info("Large language models can make mistakes. Please verify information before decisions.", icon = ":material/info:")'''
+
+introduction_tab = '''intro1, intro2 = st.columns([0.25, 0.75], vertical_alignment = "center");
 intro1.image("images/vaccine.jpeg");
 intro2.markdown(
     """
@@ -25,8 +44,8 @@ intro2.markdown(
 
     Vaccine hesitancy is characterised by the World Health Organisation as one of the [top-10 global health threats](https://www.who.int/news-room/spotlight/ten-threats-to-global-health-in-2019) :link:.
     """);
-introduction.markdown("""---""");
-virus1, virus2 = introduction.columns([0.75, 0.25], vertical_alignment = "top");
+st.markdown("""---""");
+virus1, virus2 = st.columns([0.75, 0.25], vertical_alignment = "top");
 virus1.markdown(
     f"""
     ### **Task Outline**
@@ -64,9 +83,7 @@ virus1.markdown(
     """, unsafe_allow_html = True);
 virus2.image("images/h1n1.jpeg")'''
 
-data_tab = '''st.session_state.tab = "data";
-floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab);
-data_dict, _ = st.columns(2);
+data_tab = '''data_dict, _ = st.columns(2);
 data_dict.expander(":books: Data Dictionary").container(height = screen_height - dict_padding, border = False).markdown("""
 ##### **Data Labels**
 
@@ -202,9 +219,7 @@ Therefore, users will:
 <br>
 """, unsafe_allow_html = True)'''
 
-model_tab = '''st.session_state.tab = "model";
-floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab);
-st.markdown("""
+model_tab = '''st.markdown("""
 The model used for classifying between "Vaccinated" and "Not vaccinated" is a multi-layer Perceptron classifier which optinises the log-loss function using LBFGS or stochastic gradient descent.
 From [scikit-learn: 1.17.1. Multi-layer Perceptron](https://scikit-learn.org/stable/modules/neural_networks_supervised.html) :link:
 
