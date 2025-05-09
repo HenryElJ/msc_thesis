@@ -110,6 +110,14 @@ st.markdown(f'''
             .block-container {{padding-top: 3rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}}
             </style>''', unsafe_allow_html = True)
 
+
+test = '''
+sub1, sub2 = tab1.tabs(["SubTab1", "SubTab2"])
+sub1.write("hello")
+'''
+
+exec(test)
+
 # st.title("Echo Bot")
 # st.sidebar.title("Testing")
 

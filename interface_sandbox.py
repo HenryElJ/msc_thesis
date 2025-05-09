@@ -2,6 +2,7 @@
 
 # Custom imports
 from streamlit_initialise import *
+from tabs import *
 
 # Import all files
 with open("explanations_output.pickle", "rb") as file:
@@ -23,28 +24,40 @@ if "button_selection" not in st.session_state:
 if "user_skillset" not in st.session_state:
     st.session_state.user_skillset = {}
 
+if "tab" not in st.session_state:
+    st.session_state.tab = []
+
 # Icons of LLMs
 llm_images = []
-filepaths = [x for x in os.listdir("Images") if re.search(".png", x) is not None]; filepaths.sort()
+filepaths = [x for x in os.listdir("llm_icons") if re.search(".png", x) is not None]; filepaths.sort()
 for filepath in filepaths:
-    with open(f"Images/{filepath}", "rb") as file:
+    with open(f"llm_icons/{filepath}", "rb") as file:
         llm_name = filepath.replace(".png", "")
         llm_images += [[llm_name, base64.b64encode(file.read()).decode()]]
 
-st.logo(f"Images/{st.session_state.button_selection}.png", size = "small")
+st.logo(f"llm_icons/{st.session_state.button_selection}.png", size = "small")
 
 # Page configurations
 st.set_page_config(layout = "wide")
 
 screen_height = ScreenData().st_screen_data(key="screen_stats_")["innerHeight"]
-viz_padding = 115; chat_padding = 265; response_height = screen_height - chat_padding - 105
+dict_padding = 220; viz_padding = 130; chat_padding = 270; response_height = screen_height - chat_padding - 105
 
+# .block-container{{overflow: hidden}}
 st.markdown(f'''<style>
-            .block-container {{padding-top: 0rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem; overflow: hidden}}
+            /* Overall screen padding */
+            .block-container {{padding-top: 0rem; padding-bottom: 0rem; padding-left: 1rem; padding-right: 1rem}}
+            /* Sidebar padding*/
             .st-emotion-cache-1xgtwnd {{padding-top: 1rem; padding-bottom: 0rem}}
+            /* Last message of chatbox */
             .stChatMessage.st-emotion-cache-4oy321.ea2tk8x0:last-child {{height: {response_height}px; overflow: scroll !important; flex-direction: column}}
+            /**/
             .st-emotion-cache-1ir3vnm.ea2tk8x1:last-child {{margin: 0px}}
+            /* Tab height */
             .st-al.st-as.st-bh.st-bd.st-fh.st-fi.st-fj.st-fk.st-fl.st-fm.st-fn.st-fo.st-fp {{height: 2rem}}
+            /* Floating button */
+            .st-emotion-cache-i2li6s.eacrzsi1 {{background-image: linear-gradient(to bottom right, red, yellow)}}
+            .st-emotion-cache-i2li6s.eacrzsi1:hover {{background-image: linear-gradient(to bottom right, yellow, red)}}
             </style>''', unsafe_allow_html = True)
 
 # .st-emotion-cache-8atqhb.e1mlolmg0 {{height: 0}}
@@ -156,8 +169,24 @@ if ("app" not in st.session_state) | (st.session_state.model_selection != model_
 # Tab configuration
 introduction, data, model, explanations = st.tabs(["\u2001" * 8 + x for x in [":microbe: Introduction", ":bar_chart: Data", ":robot_face: Model", ":sparkles: Explanations"]])
 
+# INTRODUCTION
+with introduction:
+    exec(generate_tab(introduction_tab))
+
+# DATA
+with data:
+    exec(generate_tab(data_tab))
+
+# MODEL
+with model:
+    exec(generate_tab(model_tab))
+
+# EXPLANATIONS
 
 with explanations:
+    
+    st.session_state.tab = "explanations"
+
     viz_col, chatbox_col = st.columns([0.5, 0.5])
 
     with viz_col:
@@ -178,7 +207,7 @@ with explanations:
         if query := st.chat_input("Ask me a question!", accept_file = True, file_type = accepted_file_types):
             with chat_container:
 
-                user_avatar = ":material/cognition:"; ai_avatar = f"Images/{model_selection}.png"
+                user_avatar = ":material/cognition:"; ai_avatar = f"llm_icons/{model_selection}.png"
 
                 with st.chat_message(name = "user", avatar = user_avatar):
                     st.write(query["text"])
