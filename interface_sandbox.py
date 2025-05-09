@@ -173,10 +173,10 @@ if ("app" not in st.session_state) | (st.session_state.model_selection != model_
     _ = st.session_state.app.update_state(config, {"messages": st.session_state.responses})
 
 # Tab configuration
-introduction, data, model, explanations = st.tabs(["\u2001" * 8 + x for x in [":microbe: Introduction", ":bar_chart: Data", ":robot_face: Model", ":sparkles: Explanations"]])
+introduction_tab, data_tab, model_tab, explanations_tab = st.tabs(["\u2001" * 8 + x for x in [":microbe: Introduction", ":bar_chart: Data", ":robot_face: Model", ":sparkles: Explanations"]])
 
 # INTRODUCTION
-with introduction:
+with introduction_tab:
 
     st.session_state.tab = "introduction"
     if floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab + "_tab"):
@@ -184,14 +184,13 @@ with introduction:
 
     if st.session_state.ask_ai[0]:
         exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
-             {generate_tab(introduction_tab)}''')
+             {generate_tab(introduction_config)}''')
         exec(add_chatbox_col(st.session_state.tab))
     else:
-        exec(generate_tab(introduction_tab))
-
+        exec(generate_tab(introduction_config))
 
 # DATA
-with data:
+with data_tab:
 
     st.session_state.tab = "data"
     if floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab + "_tab"):
@@ -199,13 +198,13 @@ with data:
     
     if st.session_state.ask_ai[1]:
         exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
-             {generate_tab(data_tab)}''')
+             {generate_tab(data_config)}''')
         exec(add_chatbox_col("data"))
     else:
-        exec(generate_tab(data_tab))
+        exec(generate_tab(data_config))
 
 # MODEL
-with model:
+with model_tab:
 
     st.session_state.tab = "model"
     if floating_button(":sparkles: Ask AI", type = "primary", key = st.session_state.tab + "_tab"):
@@ -213,14 +212,14 @@ with model:
 
     if st.session_state.ask_ai[2]:
         exec(f'''{st.session_state.tab}_col, {st.session_state.tab}_ai = st.columns([0.5, 0.5]);\nwith {st.session_state.tab}_col:
-             {generate_tab(model_tab)}''')
+             {generate_tab(model_config)}''')
         exec(add_chatbox_col(st.session_state.tab))
     else:
-        exec(generate_tab(model_tab))
+        exec(generate_tab(model_config))
 
 # EXPLANATIONS
-with explanations:
-    
+with explanations_tab:
+        
     st.session_state.tab = "explanations"
 
     viz_col, chatbox_col = st.columns([0.5, 0.5])
@@ -263,18 +262,17 @@ with explanations:
                         message_input += [{"type": "image", "source_type": "base64", "mime_type": "image/jpg", "data": image_data}]
 
                     if stream:
-                        # responses = st.session_state.app.stream({"messages": [HumanMessage(message_input)]}, config, stream_mode = "messages") 
-                        # st.write(stream_output(responses))
+                        responses = st.session_state.app.stream({"messages": [HumanMessage(message_input)]}, config, stream_mode = "messages")
+                        st.write(stream_output(responses))
 
-                        # st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
-                        # st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
-                        # # st.session_state.usage_metadata = st.session_state.app.get_state(config)[3]["writes"]["model"]["usage_metadata"]
+                        st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]
+                        st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content})
 
                         # Lorem ipsum test
-                        responses = lorem.paragraphs(10)
-                        st.write(responses)
-                        st.session_state.responses = responses
-                        st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses})
+                        # responses = lorem.paragraphs(10)
+                        # st.write(responses)
+                        # st.session_state.responses = responses
+                        # st.session_state.messages.append({"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses})
 
                     else:
                         responses = st.session_state.app.invoke({"messages": [HumanMessage(message_input)]}, config,)["messages"]     
@@ -327,9 +325,3 @@ with explanations:
     }
     """
     st.markdown(transparent_scrollbar_style, unsafe_allow_html = True)
-
-
-# with test_tab:
-    # st.session_state.tab + _ai
-    # exec(generate_tab() + add_chatbox_col)
-    # exec(generate_tab(test_text))

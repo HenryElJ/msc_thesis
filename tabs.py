@@ -19,11 +19,13 @@ def add_chatbox_col(tab):
                     \t\t\t\twith st.chat_message(name = "user", avatar = user_avatar):
                         \t\t\t\t\tst.write(query["text"]); st.session_state.messages.append({{"name": "user", "avatar": user_avatar, "content": query["text"]}})
                     \t\t\t\twith st.chat_message(name = "assistant", avatar = ai_avatar):
-                        \t\t\t\t\t\tmessage_input = [{{"type": "text", "text": query["text"]}}]; responses = lorem.paragraphs(10); st.write(responses); st.session_state.responses = responses; st.session_state.messages.append({{"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses}});
+                        # \t\t\t\t\t\tmessage_input = [{{"type": "text", "text": query["text"]}}]; responses = lorem.paragraphs(10); st.write(responses); st.session_state.responses = responses; st.session_state.messages.append({{"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses}});
+                        \t\t\t\t\t\tmessage_input = [{{"type": "text", "text": query["text"]}}]; responses = st.session_state.app.stream({{"messages": [HumanMessage(message_input)]}}, config, stream_mode = "messages"); st.write(stream_output(responses)); st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]; st.session_state.messages.append({{"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content}})
         
         \tst.info("Large language models can make mistakes. Please verify information before decisions.", icon = ":material/info:")'''
 
-introduction_tab = '''intro1, intro2 = st.columns([0.25, 0.75], vertical_alignment = "center");
+
+introduction_config = '''intro1, intro2 = st.columns([0.25, 0.75], vertical_alignment = "center");
 intro1.image("images/vaccine.jpeg");
 intro2.markdown(
     """
@@ -83,7 +85,7 @@ virus1.markdown(
     """, unsafe_allow_html = True);
 virus2.image("images/h1n1.jpeg")'''
 
-data_tab = '''data_dict, _ = st.columns(2);
+data_config = '''data_dict, _ = st.columns([0.999 if st.session_state.ask_ai[1] else 0.5, 0.001 if st.session_state.ask_ai[1] else 0.5]);
 data_dict.expander(":books: Data Dictionary").container(height = screen_height - dict_padding, border = False).markdown("""
 ##### **Data Labels**
 
@@ -219,11 +221,11 @@ Therefore, users will:
 <br>
 """, unsafe_allow_html = True)'''
 
-model_tab = '''st.markdown("""
+model_config = '''st.write("""
 The model used for classifying between "Vaccinated" and "Not vaccinated" is a multi-layer Perceptron classifier which optinises the log-loss function using LBFGS or stochastic gradient descent.
 From [scikit-learn: 1.17.1. Multi-layer Perceptron](https://scikit-learn.org/stable/modules/neural_networks_supervised.html) :link:
 
-\"Multi-layer Perceptron (MLP) is a supervised learning algorithm that learns a function $f: \mathrm R^m \\to \mathrm R^o$ by training on a dataset, 
+"Multi-layer Perceptron (MLP) is a supervised learning algorithm that learns a function $f: \mathrm R^m \\to \mathrm R^o$ by training on a dataset, 
 where $m$ is the number of dimensions for input and $o$ is the number of dimensions for output. Given a set of features $X = x_1, x_2, \ldots, x_m$ and a target $y$, 
 it can learn a non-linear function approximator for either classification or regression. It is different from logistic regression, 
 in that between the input and the output layer, there can be one or more non-linear layers, called hidden layers. 
@@ -232,5 +234,5 @@ The leftmost layer, known as the input layer, consists of a set of neurons $\{x_
 representing the input features. Each neuron in the hidden layer transforms the values from the previous layer with a weighted linear summation
 $w_1 x_1 + w_2 x_2 + \ldots + w_m x_m $, 
 followed by a non-linear activation function $g(\cdot): \mathrm R \\to \mathrm R$ - like the hyperbolic tan function. 
-The output layer receives the values from the last hidden layer and transforms them into output values.\"
+The output layer receives the values from the last hidden layer and transforms them into output values.
 """)'''
