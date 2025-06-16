@@ -8,6 +8,9 @@ import streamlit as st, pickle, base64, os, re
 # Streamlit hacks
 from streamlit_extras.floating_button import floating_button
 from st_screen_stats import ScreenData
+import streamlit.components.v1 as components
+# from st_pages import get_pages, get_script_run_ctx 
+from streamlit_javascript import st_javascript
 # For local running
 from dotenv import load_dotenv
 # Connect to LLMs
@@ -132,3 +135,55 @@ def system_message(user: dict):
 
     Always recommend follow-up, clarifying questions the user could ask to help aid their understanding. 
     '''
+
+
+def read_img(file):
+    return base64.b64encode(file.read()).decode()
+
+
+def generate_tab(tab):
+    return tab.replace(";\n", ";")
+
+
+def add_chatbox_col(tab):
+    return f'''with {tab}_ai:
+        \tchat_container = st.container(height = screen_height - chat_padding, key = "{tab}_container");
+    
+        \twith chat_container:
+            \t\tfor message in st.session_state.messages:
+                \t\t\twith st.chat_message(name = message["name"], avatar =  message["avatar"]): 
+                    \t\t\t\tst.write(message["content"]);
+    
+        \tif query := st.chat_input("Ask me a question!", accept_file = True, key = "{tab}_chat_input"):
+            \t\tif query["text"] is None:
+                \t\t\tpass
+            \t\telse:
+                \t\t\twith chat_container:
+                    \t\t\t\twith st.chat_message(name = "user", avatar = user_avatar):
+                        \t\t\t\t\tst.write(query["text"]); st.session_state.messages.append({{"name": "user", "avatar": user_avatar, "content": query["text"]}})
+                    \t\t\t\twith st.chat_message(name = "assistant", avatar = ai_avatar):
+                        # \t\t\t\t\t\tmessage_input = [{{"type": "text", "text": query["text"]}}]; responses = lorem.paragraphs(10); st.write(responses); st.session_state.responses = responses; st.session_state.messages.append({{"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses}});
+                        \t\t\t\t\t\tmessage_input = [{{"type": "text", "text": query["text"]}}]; responses = st.session_state.app.stream({{"messages": [HumanMessage(message_input)]}}, config, stream_mode = "messages"); st.write(stream_output(responses)); st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]; st.session_state.messages.append({{"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content}})
+        
+        \tst.info("Large language models can make mistakes. Please verify information before decisions.", icon = ":material/info:")'''
+
+
+# Icons of LLMs
+llm_name_mapping = {"google"          : "Gemini (Google)", 
+                    "chatgpt"         : "ChatGPT (OpenAI)", 
+                    "mistral"         : "Mistral - Small",
+                    "mistral-large"   : "Mistral - Large", 
+                    "deepseek"        : "DeepSeek", 
+                    "llama"           : "Llama (Meta)", 
+                    "microsoft"       : "Microsoft (DeepSeek)"}
+
+llm_images = []
+filepaths = [x for x in os.listdir("images/llm_icons") if re.search(".png", x) is not None]; filepaths.sort()
+for filepath in filepaths:
+    with open(f"images/llm_icons/{filepath}", "rb") as file:
+        llm_name = filepath.replace(".png", "")
+        llm_images += [[llm_name, read_img(file)]]
+
+sidebar_setup = '''
+
+'''

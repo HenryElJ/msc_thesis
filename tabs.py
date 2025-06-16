@@ -1,31 +1,5 @@
-def generate_tab(tab):
-    return tab.replace(";\n", ";")
-
-
-def add_chatbox_col(tab):
-    return f'''with {tab}_ai:
-        \tchat_container = st.container(height = screen_height - chat_padding, key = "{tab}_container");
-    
-        \twith chat_container:
-            \t\tfor message in st.session_state.messages:
-                \t\t\twith st.chat_message(name = message["name"], avatar =  message["avatar"]): 
-                    \t\t\t\tst.write(message["content"]);
-    
-        \tif query := st.chat_input("Ask me a question!", accept_file = True, key = "{tab}_chat_input"):
-            \t\tif query["text"] is None:
-                \t\t\tpass
-            \t\telse:
-                \t\t\twith chat_container:
-                    \t\t\t\twith st.chat_message(name = "user", avatar = user_avatar):
-                        \t\t\t\t\tst.write(query["text"]); st.session_state.messages.append({{"name": "user", "avatar": user_avatar, "content": query["text"]}})
-                    \t\t\t\twith st.chat_message(name = "assistant", avatar = ai_avatar):
-                        # \t\t\t\t\t\tmessage_input = [{{"type": "text", "text": query["text"]}}]; responses = lorem.paragraphs(10); st.write(responses); st.session_state.responses = responses; st.session_state.messages.append({{"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses}});
-                        \t\t\t\t\t\tmessage_input = [{{"type": "text", "text": query["text"]}}]; responses = st.session_state.app.stream({{"messages": [HumanMessage(message_input)]}}, config, stream_mode = "messages"); st.write(stream_output(responses)); st.session_state.responses = st.session_state.app.get_state(config)[0]["messages"]; st.session_state.messages.append({{"name": model_selection, "avatar": ai_avatar, "content": st.session_state.responses[-1].content}})
-        
-        \tst.info("Large language models can make mistakes. Please verify information before decisions.", icon = ":material/info:")'''
-
-
-introduction_config = '''intro1, intro2 = st.columns([0.25, 0.75], vertical_alignment = "center");
+# H1N1 --------------------------------------------------> 
+h1n1_introduction = '''intro1, intro2 = st.columns([0.25, 0.75], vertical_alignment = "center");
 intro1.image("images/vaccine.jpeg");
 intro2.markdown(
     """
@@ -34,7 +8,7 @@ intro2.markdown(
     [Immunisation](https://www.who.int/health-topics/vaccines-and-immunization#tab=tab_1) :link: is a fundamental aspect of primary health care and an indisputable human right. 
     Vaccines are critical to the prevention and control of infectious disease outbreaks, and underpin global health security.
 
-    Vaccines work by training your immune system to create antibodies and assist your body’s natural defences to help build protection.
+    Vaccines work by training your immune system to create antibodies and assist your body's natural defences to help build protection.
     Because vaccines contain only killed or weakened forms of germs like viruses or bacteria, they do not cause the disease or put you at risk of its complications.
 
     There are vaccines for more than [20 life-threatening diseases](https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases) :link: including: cholera, typhoid, influenza, rabies, measles, mumps and rubella (MMR). 
@@ -85,8 +59,8 @@ virus1.markdown(
     """, unsafe_allow_html = True);
 virus2.image("images/h1n1.jpeg")'''
 
-data_config = '''data_dict, _ = st.columns([0.999 if st.session_state.ask_ai[1] else 0.5, 0.001 if st.session_state.ask_ai[1] else 0.5]);
-data_dict.expander(":books: Data Dictionary").container(height = screen_height - dict_padding, border = False).markdown("""
+h1n1_data = '''documentation, exploration = st.tabs(["\u2001" * 5 + x for x in [":page_facing_up: Documentation", ":mag: Exploration"]]);
+documentation.expander(":books: Data Dictionary").container(height = screen_height - dict_padding, border = False).markdown("""
 ##### **Data Labels**
 
 Each row in the dataset represents one person who responded to the National 2009 H1N1 Flu Survey.
@@ -111,7 +85,7 @@ For all binary variables: 0 = No; 1 = Yes, 999 = Missing.
 * **:red-background[h1n1_knowledge]** - Level of knowledge about H1N1 flu.
 0 = No knowledge; 1 = A little knowledge; 2 = A lot of knowledge.
 
-* behavioral_antiviral_meds]** - Has taken antiviral medications. (binary)
+* **:red-background[behavioral_antiviral_meds]** - Has taken antiviral medications. (binary)
 
 * **:red-background[behavioral_avoidance]** - Has avoided close contact with others with flu-like symptoms. (binary)
 
@@ -183,7 +157,8 @@ For all binary variables: 0 = No; 1 = Yes, 999 = Missing.
 
 * **:red-background[employment_occupation]** - Type of occupation of respondent. Values are represented as short random character strings.
 """);
-st.markdown("""
+
+documentation.markdown("""
 ##### **Data Source**
             
 The data comes from the National 2009 H1N1 Flu Survey (NHFS) and is provided courtesy of the United States [National Center for Health Statistics](https://www.cdc.gov/nchs/index.htm) :link:.
@@ -219,9 +194,29 @@ Therefore, users will:
 * By using this data, you signify your agreement to comply with the above requirements.
 
 <br>
-""", unsafe_allow_html = True)'''
+""", unsafe_allow_html = True);
+exploration_column, _ = exploration.columns([screen_width - eda_padding, eda_padding])
+ex_col1_1, ex_col1_2 = exploration_column.columns([3/4, 1/4], gap = "large")
+ex_col1_1.write("Preview of Data")
+ex_col1_1.dataframe(eda_output["data_preview"].head(20), hide_index = True)
+ex_col1_2.plotly_chart(eda_output["h1n1_vaccine"])
 
-model_config = '''st.write("""
+describe_select = exploration_column.radio("Describe Features", ["numeric", "category"], format_func = lambda x: x.title(), horizontal = True)
+exploration_column.dataframe(eda_output[f"describe_{describe_select}"], width = 800)
+
+features = [x for x in eda_output["data_preview"].columns if x not in ["h1n1_vaccine", "respondent_id"]] # exploration_tabs = exploration.tabs(features)
+feature_select = exploration_column.selectbox("Feature Analysis", features, format_func = lambda x: x.replace("_", " ").title())
+exploration_column.plotly_chart(eda_output[f"{feature_select}_distribution"])
+exploration_column.write("")
+exploration_column.plotly_chart(eda_output[f"{feature_select}_missing"])
+exploration_column.write("")
+try:
+\texploration_column.plotly_chart(eda_output[f"{feature_select}_corr"])
+except:
+\tpass
+'''
+
+h1n1_model = '''st.write("""
 The model used for classifying between "Vaccinated" and "Not vaccinated" is a multi-layer Perceptron classifier which optinises the log-loss function using LBFGS or stochastic gradient descent.
 From [scikit-learn: 1.17.1. Multi-layer Perceptron](https://scikit-learn.org/stable/modules/neural_networks_supervised.html) :link:
 
@@ -236,3 +231,135 @@ $w_1 x_1 + w_2 x_2 + \ldots + w_m x_m $,
 followed by a non-linear activation function $g(\cdot): \mathrm R \\to \mathrm R$ - like the hyperbolic tan function. 
 The output layer receives the values from the last hidden layer and transforms them into output values.
 """)'''
+
+# Dengue -------------------------------------------------->
+
+dengue_introduction = '''
+intro1, intro2 = st.columns([1/3, 2/3]);
+intro1.image("images/mosquito.jpeg")
+intro2.markdown("""
+https://www.drivendata.org/competitions/44/dengai-predicting-disease-spread/
+
+https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue
+
+https://en.wikipedia.org/wiki/Dengue_fever
+
+https://www.cdc.gov/dengue/index.html
+
+Dengue fever is a mosquito-borne disease that occurs in tropical and sub-tropical parts of the world. 
+In mild cases, symptoms are similar to the flu: fever, rash, and muscle and joint pain. 
+In severe cases, dengue fever can cause severe bleeding, low blood pressure, and even death.
+
+Because it is carried by mosquitoes, the transmission dynamics of dengue are related to climate variables such as temperature and precipitation. 
+Although the relationship to climate is complex, a growing number of scientists argue that climate change is likely to produce distributional shifts that will have significant public health implications worldwide.
+
+In recent years dengue fever has been spreading. Historically, the disease has been most prevalent in Southeast Asia and the Pacific islands. 
+These days many of the nearly half billion cases per year are occurring in Latin America.
+
+Using environmental data collected by various U.S. Federal Government agencies—from the Centers for Disease Control and Prevention to the National Oceanic and Atmospheric Administration in the U.S. Department of Commerce—can you predict the number of dengue fever cases reported each week in San Juan, Puerto Rico and Iquitos, Peru?
+
+Your task is to predict the number of dengue cases each week (in each location) based on environmental variables describing changes in temperature, precipitation, vegetation, and more.
+
+An understanding of the relationship between climate and dengue dynamics can improve research initiatives and resource allocation to help fight life-threatening pandemics.""")'''
+
+dengue_data = '''documentation, exploration = st.tabs(["\u2001" * 5 + x for x in [":page_facing_up: Documentation", ":mag: Exploration"]]);
+data_dict, _ = st.columns([0.999 if st.session_state.ask_ai[1] else 0.5, 0.001 if st.session_state.ask_ai[1] else 0.5]);
+data_dict.expander(":books: Data Dictionary").container(height = screen_height - dict_padding, border = False).markdown("""
+##### **Data Labels**
+
+You are provided the following set of information on a (year, week-of-year) timescale:
+
+Where appropriate, units are provided as a _unit suffix on the feature name.
+
+##### **Features**
+
+**:red-background[city]** - City abbreviations: sj for San Juan and iq for Iquitos
+
+**:red-background[week_start_date]** - Date given in yyyy-mm-dd format
+
+**:red-background[station_max_temp_c]** - Maximum temperature
+
+**:red-background[station_min_temp_c]** - Minimum temperature
+
+**:red-background[station_avg_temp_c]** - Average temperature
+
+**:red-background[station_precip_mm]** - Total precipitation
+
+**:red-background[station_diur_temp_rng_c]** - Diurnal temperature range
+
+**:red-background[precipitation_amt_mm]** - Total precipitation
+
+**:red-background[reanalysis_sat_precip_amt_mm]** - Total precipitation
+
+**:red-background[reanalysis_dew_point_temp_k]** - Mean dew point temperature
+
+**:red-background[reanalysis_air_temp_k]** - Mean air temperature
+
+**:red-background[reanalysis_relative_humidity_percent]** - Mean relative humidity
+
+**:red-background[reanalysis_specific_humidity_g_per_kg]** - Mean specific humidity
+
+**:red-background[reanalysis_precip_amt_kg_per_m2]** - Total precipitation
+
+**:red-background[reanalysis_max_air_temp_k]** - Maximum air temperature
+
+**:red-background[reanalysis_min_air_temp_k]** - Minimum air temperature
+
+**:red-background[reanalysis_avg_temp_k]** - Average air temperature
+
+**:red-background[reanalysis_tdtr_k]** - Diurnal temperature range
+
+**:red-background[ndvi_se]** - Pixel southeast of city centroid
+
+**:red-background[ndvi_sw]** - Pixel southwest of city centroid
+
+**:red-background[ndvi_ne]** - Pixel northeast of city centroid
+
+**:red-background[ndvi_nw]** - Pixel northwest of city centroid
+""");
+
+st.divider();
+
+st.markdown("""
+#### Data Source
+
+The data for this competition comes from multiple sources aimed at supporting the Predict the Next Pandemic Initiative. Dengue surveillance data is provided by the U.S. Centers for Disease Control and prevention, as well as the Department of Defense's Naval Medical Research Unit 6 and the Armed Forces Health Surveillance Center, in collaboration with the Peruvian government and U.S. universities. Environmental and climate data is provided by the National Oceanic and Atmospheric Administration (NOAA), an agency of the U.S. Department of Commerce.
+
+In their own words:
+
+"Accurate dengue predictions would help public health workers ... and people around the world take steps to reduce the impact of these epidemics. But predicting dengue is a hefty task that calls for the consolidation of different data sets on disease incidence, weather, and the environment.
+
+This is a complicated and messy problem, to be sure. But real data is often complicated and messy. Study up using the resources below—your insights could save lives!"
+
+You can learn more here:
+
+[Dengue Forecasting Homepage](http://dengueforecasting.noaa.gov/) :link:
+
+[CDC Dengue Overview](http://www.cdc.gov/Dengue/) :link:
+
+[NOAA Wiki](https://en.wikipedia.org/wiki/National_Oceanic_and_Atmospheric_Administration) :link:
+""")
+'''
+
+dengue_model = '''st.write("""
+Modelling is performed using a RandomForestRegressor.
+""")'''
+
+# Obesity -------------------------------------------------->
+
+obesity_introduction = '''st.write("""
+Placeholder text
+""")'''
+
+obesity_data = '''st.write("""
+Placeholder text
+""")'''
+
+obesity_model = '''st.write("""
+Placeholder text
+""")'''
+
+tabs = {"h1n1": {}, "dengue": {}, "obesity": {}}
+tabs["h1n1"].update({"introduction": h1n1_introduction, "data": h1n1_data, "model": h1n1_model})
+tabs["dengue"].update({"introduction": dengue_introduction, "data": dengue_data, "model": dengue_model})
+tabs["obesity"].update({"introduction": obesity_introduction, "data": obesity_data, "model": obesity_model})
