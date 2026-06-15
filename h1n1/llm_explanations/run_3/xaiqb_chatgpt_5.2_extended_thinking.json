@@ -1,0 +1,160 @@
+{
+"questions": {
+"Data": {
+"What kind of data was the system trained on?": {
+"question_interpretation": "This asks what type of information the AI learned from (for example, clinical records versus survey responses), which matters for judging whether its predictions are relevant to your patients and setting.",
+"answer": "The system was trained on structured, tabular survey data collected during the 2009-10 influenza season in the United States. Each record represents a survey respondent and includes coded responses about H1N1-related concerns and knowledge, protective behaviours, clinician recommendation, health factors, and demographic and household characteristics. The original dataset also contains seasonal influenza variables, but the deployed model was built to focus on H1N1 vaccine uptake."
+},
+"What is the source of the training data?": {
+"question_interpretation": "This asks where the training data came from and how it was collected, because collection methods and population coverage affect bias and generalisability.",
+"answer": "The training data comes from the National 2009 H1N1 Flu Survey (NHFS), distributed via a public machine-learning competition dataset. NHFS was sponsored by the National Center for Immunization and Respiratory Diseases and conducted jointly with the National Center for Health Statistics at the U.S. Centers for Disease Control and Prevention. It was a list-assisted random-digit-dial telephone survey designed to estimate influenza immunisation coverage in the 2009-10 season among people aged 6 months and older living in the United States."
+},
+"How were the labels/ground-truth produced?": {
+"question_interpretation": "This asks what the 'correct answer' was for training (the outcome the model tries to predict), and whether it reflects real-world outcomes or proxy measures.",
+"answer": "The ground-truth labels are binary indicators of vaccination status as recorded in the survey label file (for example, whether the respondent received the H1N1 vaccine). These labels are linked to the respondent's feature record using a respondent identifier and then used as the outcome for supervised learning. The modelling work selected the H1N1 vaccination label as the target for deployment."
+},
+"What is the sample size of the training data?": {
+"question_interpretation": "This asks how many individuals were available for training and testing, because sample size influences how stable and trustworthy performance estimates are.",
+"answer": "The combined training dataset contains 26,707 respondents. For the H1N1 uptake model, 31 predictor variables were used (after excluding seasonal-flu-related fields and the respondent identifier), with H1N1 vaccination as the target. The data were split into 80% training (21,365 records) and 20% testing (5,342 records)."
+},
+"What dataset(s) is the system NOT using?": {
+"question_interpretation": "This asks what information is deliberately excluded, which helps you understand what the model cannot 'see' and what it cannot reasonably predict.",
+"answer": "The deployed model does not use the respondent identifier, and it excludes seasonal-influenza-related fields (variables containing 'seas', including the seasonal vaccination label and seasonal opinion measures). It is trained only on the NHFS-derived tabular survey dataset and no additional external datasets are described. In the interactive what-if interface, several anonymised categorical fields are also not surfaced for user adjustment to preserve interpretability."
+},
+"What are the potential limitations/biases of the data?": {
+"question_interpretation": "This asks what data issues could lead to unsafe or unfair outputs, such as missing values, population mismatch, or historical/setting-specific effects.",
+"answer": "The data reflect a specific place and time (U.S. population during the 2009-10 season), so transportability to other countries, later seasons, or different healthcare systems is uncertain. Several variables have substantial missingness (for example, health insurance and clinician recommendation fields have markedly fewer non-null entries than the full cohort), which necessitates imputation and may weaken reliability for individuals with incomplete data. The outcome is imbalanced (in the test set, 1,130 vaccinated versus 4,212 not vaccinated), which can bias the model towards predicting non-uptake and increases the risk of missed true uptake. The feature set includes protected or socially patterned characteristics (such as age group, sex, race, income/poverty), so outputs can reflect underlying structural differences rather than purely individual choice."
+}
+},
+"Output": {
+"What kind of output does the system give?": {
+"question_interpretation": "This asks what the AI produces in practice (a score, category, or explanation) so you can plan how it might be used safely.",
+"answer": "For each individual record, the system outputs a predicted probability of H1N1 vaccine uptake and a corresponding binary classification (will/will not get the vaccine) based on a chosen threshold. Alongside the prediction, the system can provide explanation outputs, including global feature importance summaries and case-level explanation plots (breakdown and Shapley-value style attributions) as well as what-if profiles."
+},
+"What does the system output mean?": {
+"question_interpretation": "This asks how to interpret the numbers or labels the model returns, which is essential to avoid overconfidence or misuse.",
+"answer": "The predicted probability represents the model's estimate (from 0 to 1) that a person with the given characteristics would receive the H1N1 vaccine, based on patterns learned from the survey cohort. The binary output simply applies a threshold to that probability (default 0.50 in the modelling workflow, adjustable in the dashboard) to label the case as 'predicted uptake' or 'predicted non-uptake'. It is not a statement of clinical eligibility or a guarantee of real-world behaviour."
+},
+"What is the scope of the system's capability? Can it do...?": {
+"question_interpretation": "This asks what the system is designed to do, and—just as importantly—what it is not designed or validated to do.",
+"answer": "The system is designed to estimate the likelihood of H1N1 vaccine uptake using survey-style variables about attitudes, behaviours, health factors, and demographics. It is not designed to predict seasonal influenza vaccination in the deployed configuration, nor to provide medical advice, diagnose disease, assess contraindications, or determine who should be vaccinated. Performance outside the historical NHFS survey context is not established here."
+},
+"How is the output used for other system component(s)?": {
+"question_interpretation": "This asks how the prediction feeds into the wider system (for example, dashboards or explanation modules), which matters for auditability and user trust.",
+"answer": "Predicted probabilities are used to create binary predictions at a set threshold and to compute evaluation summaries such as confusion matrices and classification reports. The same model outputs feed the explanation components that calculate global variable importance and generate case-level explanations (breakdown and Shapley-type plots). In the what-if dashboard, user-selected feature values are passed into the model to generate a new predicted probability, then explanation plots and ceteris-paribus profiles are produced for that customised scenario."
+},
+"How should I best utilize the output of the system?": {
+"question_interpretation": "This asks how to use the output in a way that supports decisions without creating patient-safety risks or inappropriate automation.",
+"answer": "Use the probability as a behavioural risk indicator for likely vaccine uptake within the same kind of population the model was trained on, rather than as a deterministic decision. If using the binary label, choose the threshold deliberately: a lower threshold will flag more potential uptake (fewer missed uptake cases), while a higher threshold is more conservative and reduces false alarms. Given the model's moderate sensitivity for uptake, avoid using it as a gatekeeper for services; instead, treat it as one input that can guide communication, outreach, or further assessment."
+},
+"How should the output fit in my workflow?": {
+"question_interpretation": "This asks how the model should be positioned relative to clinical/public health judgement and existing processes.",
+"answer": "The output is best treated as decision support for understanding and anticipating H1N1 vaccination behaviour, rather than as an automated directive. In practice, it could be reviewed alongside clinical and contextual knowledge (including factors not captured in the survey variables) and used to inform discussions or population-level planning. Where possible, document the chosen threshold and the explanation outputs reviewed, so that downstream decisions remain transparent and auditable."
+},
+"What is the source of the information object(s)?": {
+"question_interpretation": "This asks where the input facts and explanation artefacts come from, because provenance affects trust and data governance.",
+"answer": "Input features are derived from NHFS survey responses (coded numeric and categorical fields describing attitudes, behaviours, health-related factors, and demographics). The prediction and explanation artefacts are generated by applying the trained XGBoost model (including its data-preparation steps) to those inputs and then computing explanation summaries (such as permutation importance and Shapley-style attributions) from the model's behaviour on the evaluation data or a user-specified scenario."
+},
+"What is the scope of the output data?": {
+"question_interpretation": "This asks what fields the system produces and what they represent, which is important for safe integration into records or reporting.",
+"answer": "At minimum, the system produces a probability of H1N1 vaccine uptake and a derived binary prediction for a given individual record. When explanations are enabled, it also produces ranked feature-importance outputs and visual summaries of which variables most influenced a specific prediction, plus what-if (ceteris-paribus) profiles showing how predictions would change if selected inputs changed. It does not output treatment recommendations, diagnoses, or clinical triage categories."
+},
+"What is the amount of the output data?": {
+"question_interpretation": "This asks how much information you receive per case, which affects usability, documentation burden, and oversight.",
+"answer": "Per individual case, there is one predicted probability and one binary label. If explanation components are used, additional outputs include a ranked list of feature importances (globally) and a small set of plots per case (breakdown, Shapley-style attribution, and ceteris-paribus curves for selected variables). The what-if interface focuses on a small number of high-impact fields rather than exposing all predictors at once."
+},
+"What logic is used for the initial output/recommendation?": {
+"question_interpretation": "This asks what decision logic converts inputs into an output, including any thresholds or rule-like steps that could affect safety.",
+"answer": "Before prediction, missing answers are filled in (numeric fields use the most common observed value; categorical fields use an explicit 'missing' category), and categorical responses are expanded into separate yes/no indicator fields. A gradient-boosted decision tree classifier (XGBoost) then produces a probability of H1N1 vaccine uptake. The system converts that probability into a binary prediction by comparing it to a threshold (0.50 in the modelling workflow; adjustable between 0.05 and 0.95 in the dashboard)."
+}
+},
+"Performance": {
+"How accurate/precise/reliable are the predictions?": {
+"question_interpretation": "This asks how well the system performs and how dependable it is, which is central for risk management before any operational use.",
+"answer": "On the held-out test set (5,342 respondents), overall accuracy was 0.84 and the area under the ROC curve was 0.838. For predicting H1N1 vaccine uptake (the positive class), precision was 0.68 and recall (sensitivity) was 0.46, meaning the model correctly identifies fewer than half of true uptake cases at the default threshold. It performs much better at identifying non-uptake (recall 0.94 for the negative class). Reliability outside this dataset and setting is not quantified here."
+},
+"How often does the system make mistakes?": {
+"question_interpretation": "This asks about the frequency of wrong predictions in concrete terms, because different error rates have different clinical and public health consequences.",
+"answer": "In the test set, the confusion matrix shows 856 errors out of 5,342 cases (about 16% misclassified) at the default 0.50 threshold. This comprised 250 false positives (predicted uptake when uptake did not occur) and 606 false negatives (predicted non-uptake when uptake did occur). In practical terms, missed uptake predictions are the more common error mode."
+},
+"In what situations is the system likely to be correct/incorrect?": {
+"question_interpretation": "This asks when you can trust the output more or less, which helps you decide when extra scrutiny or a different workflow is needed.",
+"answer": "At the default threshold, the system is more reliable when predicting non-uptake than uptake, reflecting both the measured class-specific performance and the underlying class imbalance. The model's behaviour is most influenced by clinician recommendation for the H1N1 vaccine and H1N1-related opinion variables, so predictions may be particularly sensitive to how these fields are recorded (including missingness or ambiguous responses). Where key fields are missing and must be imputed, or where the patient population differs substantially from the 2009-10 U.S. survey cohort, outputs should be treated as less trustworthy."
+},
+"What are the limitations of the system?": {
+"question_interpretation": "This asks for the main constraints that could prevent safe use, including data, model design, and evidence gaps.",
+"answer": "The system is trained on historical U.S. telephone survey data from the 2009-10 season, and no external validation, prospective evaluation, or site-specific recalibration is described. It focuses on predicting H1N1 vaccine uptake and explicitly excludes seasonal influenza variables in the deployed model. Sensitivity for identifying uptake is moderate (recall 0.46 at a 0.50 threshold), so the system can miss many true uptake cases. Some predictors are anonymised categories, limiting interpretability and potentially hindering fair, transparent communication."
+},
+"What kind of mistakes is the system likely to make?": {
+"question_interpretation": "This asks about the typical error pattern (for example, missed cases versus false alarms), because these lead to different downstream harms.",
+"answer": "The system is more likely to produce false negatives for uptake than false positives at the default threshold: in the test set there were 606 false negatives versus 250 false positives. In a public health setting, this means it may underestimate uptake for some individuals who would in fact accept vaccination. Because the binary label depends on the chosen threshold, changing the threshold will shift this balance and should be aligned to the operational risk you are trying to minimise."
+}
+},
+"How (global model-wide explanation)": {
+"How does the system make predictions?": {
+"question_interpretation": "This asks for a high-level, model-wide description of how inputs are turned into predictions, to support transparency and governance.",
+"answer": "The system first tidies the input survey variables by filling in missing answers and converting categorical responses into separate indicator fields. It then applies a gradient-boosted decision tree classifier (XGBoost) that combines many small decision rules to estimate the probability of H1N1 vaccine uptake. Explanations are generated by measuring which variables most affect predictions overall (global importance) and by attributing a specific prediction to feature contributions for an individual case (breakdown/Shapley-style outputs)."
+},
+"What features does the system consider?": {
+"question_interpretation": "This asks which patient or respondent characteristics the model uses, which is crucial for assessing relevance, missing-data risks, and fairness.",
+"answer": "The deployed model uses 31 predictors after excluding seasonal-influenza-related fields. These include H1N1 concern and knowledge; protective behaviours (antiviral medicines, avoidance, face mask use, hand washing, avoiding large gatherings, limiting outside-home contact, touching face); clinician recommendation for H1N1 vaccination; health and household factors (chronic medical condition, child under 6 months in household, health worker status, health insurance, household adults/children); and demographic/socioeconomic and geographic characteristics (age group, education, race, sex, income/poverty, marital status, rent/own, employment status, HHS geo region, census metropolitan status, employment industry and occupation)."
+},
+"What is the system's overall logic?": {
+"question_interpretation": "This asks what sort of reasoning the model approximates—i.e., what it is 'looking for'—so clinicians can judge plausibility and risks.",
+"answer": "Overall, the model learns associations between reported attitudes, clinician recommendation, behaviours, and demographic context and whether a respondent ultimately received the H1N1 vaccine. It does not apply clinical guideline logic; instead, it identifies patterns in the training cohort that tend to co-occur with uptake or non-uptake. The most influential drivers, based on model-agnostic importance, relate to clinician recommendation and perceived vaccine effectiveness and risk."
+},
+"How does it weigh different features?": {
+"question_interpretation": "This asks which variables matter most to the model and how strongly, because dominant features can drive unexpected or biased outputs.",
+"answer": "Feature weighting is implicit in the many decision rules learned by the boosted trees rather than a single set of coefficients. Permutation-based importance shows that 'doctor recommends H1N1 vaccine' is the most influential feature, followed by opinions about H1N1 vaccine effectiveness and H1N1 risk; other comparatively influential inputs include health worker status and age group. Case-level explanations (breakdown/Shapley-style) can be used to see which features pushed an individual prediction towards higher or lower predicted uptake."
+},
+"What kind of rules does it follow?": {
+"question_interpretation": "This asks whether the model uses human-readable rules and what form those rules take, which affects interpretability and audit.",
+"answer": "The model follows decision-tree-style 'if/then' split rules internally, but there are many such rules across an ensemble of boosted trees. Each tree contributes a small adjustment, and the final probability is the combined effect of all trees. As a result, there is no single simple rule that deterministically explains every prediction; explanations summarise the most influential contributions."
+},
+"What are the top rules/features that determine its predictions?": {
+"question_interpretation": "This asks for the strongest determinants of model output so clinicians can sanity-check whether the model is focusing on clinically and ethically acceptable factors.",
+"answer": "Across the model, the top determinants are clinician recommendation for H1N1 vaccination, perceived H1N1 vaccine effectiveness, and perceived H1N1 risk. Next most influential features include health worker status and age group, with additional contributions from H1N1 concern, geographic region, perceived sickness from vaccination, and demographic/socioeconomic variables such as race, sex, and income/poverty. These rankings come from permutation-based importance on the evaluation data."
+},
+"What kind of algorithm is used?": {
+"question_interpretation": "This asks what modelling approach underpins the system, which helps interpret strengths, failure modes, and the right type of explanations.",
+"answer": "The deployed predictor is an XGBoost classifier (a gradient-boosted decision tree model) combined with a standardised data-preparation step that handles missing answers and categorical responses. Alternative baseline models (logistic regression, random forest, and a multilayer perceptron) were benchmarked during development."
+},
+"How were the parameters set?": {
+"question_interpretation": "This asks how the model was tuned and selected, because the tuning method affects overfitting risk and reproducibility.",
+"answer": "Model hyperparameters were selected using randomised search with 5-fold cross-validation, optimising ROC AUC. The chosen XGBoost configuration used 200 estimators with maximum tree depth 5 and learning rate 0.1, with subsampling 0.8 and full column sampling (colsample_bytree 1.0), plus regularisation settings reg_lambda 100 and reg_alpha 0.1 and min_child_weight 3 (gamma 0; scale_pos_weight 1). A fixed random seed (42) was used for reproducibility."
+}
+},
+"Others": {
+"How have updates affected the system?": {
+"question_interpretation": "This asks whether the system changes over time and whether those changes might affect safety, performance, or clinical meaning.",
+"answer": "No update or retraining lifecycle is described beyond training the model on the NHFS-derived dataset and saving the resulting trained model for reuse. Because an explicit change-management process is not provided, the impact of future updates (for example, retraining on new data or changing thresholds/features) cannot be assessed from the available information. If updates are planned, you would need comparative performance and bias assessments before and after each change."
+},
+"Does the system learn specifically from my interaction?": {
+"question_interpretation": "This asks whether your use of the system changes its behaviour (for example, online learning), which matters for governance and reproducibility.",
+"answer": "No. The system uses a fixed, pre-trained model; user interactions in the what-if dashboard change only the input scenario and the threshold for classification, not the underlying model parameters. There is no mechanism described for updating the model based on individual user feedback or local outcomes."
+},
+"Why is the system using or not using a given algorithm/feature/rule/dataset?": {
+"question_interpretation": "This asks for the rationale behind design choices, which supports accountability and helps users judge appropriateness.",
+"answer": "Several candidate algorithms (logistic regression, random forest, XGBoost, and a multilayer perceptron) were compared, and XGBoost was selected because it achieved the best mean accuracy after hyperparameter tuning (0.840 on the test split). Seasonal-influenza-related variables were excluded because the modelling focus was narrowed to predicting H1N1 vaccine uptake. For the interactive dashboard, only a small set of the most influential and interpretable variables are exposed for adjustment, while anonymised categorical fields are not prioritised for user interaction."
+},
+"What are the results of other people using the system?": {
+"question_interpretation": "This asks whether there is real-world evidence from deployments or external users, which is important for clinical confidence.",
+"answer": "No results from real-world deployment, clinical pilots, or external user studies are reported here. The evidence provided is limited to development-time evaluation on a held-out test split from the same dataset. Any claims about operational impact or user outcomes would require separate prospective evaluation."
+},
+"Who is responsible for this system? Who are the authors?": {
+"question_interpretation": "This asks who built and maintains the system, which is essential for accountability, escalation, and governance.",
+"answer": "The system was developed by Henry El-Jawhari in collaboration with the Freie Universität Berlin and the Robert Koch Institute (RKI)."
+}
+},
+"UI": {
+"What are the affordances of the system?": {
+"question_interpretation": "This asks what the interface allows you to do (inputs, controls, and outputs), which affects usability and the risk of misuse.",
+"answer": "The system includes an interactive 'What-If?' dashboard that lets a user set key categorical features via toggle buttons (clinician recommendation, H1N1 vaccine effectiveness opinion, H1N1 risk opinion, age group, race, and sex) and adjust the probability threshold via a slider. When run, it displays the predicted probability of H1N1 vaccine uptake and states whether the case is classified as uptake or non-uptake under the chosen threshold. It also generates explanation visuals for the scenario, including breakdown, Shapley-style attribution, and ceteris-paribus plots showing how predictions change when selected variables vary."
+},
+"What does this UI element do?": {
+"question_interpretation": "This asks what a specific on-screen control or output means, so users can operate the tool correctly and understand the consequences of changes.",
+"answer": "The toggle buttons change the selected value for a feature in the simulated case (for example, whether a doctor recommends vaccination or the respondent's stated risk perception), and the system then recomputes the predicted probability for that scenario. The 'Prediction Threshold' slider changes the cut-off used to convert the probability into a yes/no classification, allowing you to make the decision rule more or less conservative. The 'Run What-If? Dashboard' button refreshes the prediction and regenerates the accompanying explanation plots for the chosen settings."
+}
+}
+}
+}

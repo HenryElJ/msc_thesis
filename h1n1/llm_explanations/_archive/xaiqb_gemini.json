@@ -1,0 +1,63 @@
+{
+    "Global": {
+      "Data": {
+        "question_answer": {
+          "What kind of data was the system trained on?": "The system was trained on survey data from the National 2009 H1N1 Flu Survey (NHFS). This data includes respondent demographics, opinions about H1N1 and seasonal flu, and health behaviors.【2-0】",
+          "What is the source of the training data?": "The data comes from the 'Flu Shot Learning: Predict H1N1 and Seasonal Flu Vaccines' competition on DrivenData, which is based on the National 2009 H1N1 Flu Survey (NHFS).【2-0】",
+          "How were the labels/ground-truth produced?": "The labels, indicating whether a respondent received the H1N1 vaccine, were self-reported by the survey respondents. A value of 1 indicates they received the vaccine, and 0 indicates they did not.【2-1】",
+          "What is the sample size of the training data?": "The full dataset contains 26,707 survey responses. For training the model, this data was split into a training set of 21,365 records and a testing set of 5,342 records.【2-11】",
+          "What dataset(s) is the system NOT using?": "The model is trained specifically on H1N1-related features and excludes features related to the seasonal flu vaccine to focus the prediction.【2-66】",
+          "What are the potential limitations/biases of the data?": "The dataset has a significant number of missing values in key fields like health insurance, employment industry, and occupation, which could introduce bias. For example, nearly 46% of respondents have missing health insurance information.【2-20】"
+        }
+      },
+      "Output": {
+        "question_answer": {
+          "What kind of output does the system give?": "The system outputs a probability score (from 0 to 1) indicating the likelihood that an individual will receive the H1N1 vaccine. This is then converted to a binary prediction: 1 (will get vaccine) or 0 (will not get vaccine).【2-72】",
+          "What does the system output mean?": "The output represents the model's prediction of a person's H1N1 vaccination status. A higher probability score suggests a greater likelihood of vaccination.",
+          "What is the scope of the system's capability? Can it do...?": "The system is designed only to predict H1N1 vaccine uptake based on the provided features. It cannot predict seasonal flu vaccine uptake or provide medical advice.",
+          "How is the output used for other system component(s)?": "The output probabilities are used to generate a final binary classification and to evaluate the model's performance using metrics like accuracy and AUC.",
+          "How should I best utilize the output of the system?": "The output can be used to identify populations or individuals who are less likely to get vaccinated, allowing for targeted public health interventions and educational campaigns.",
+          "How should the output fit in my workflow?": "This tool can supplement clinical decision-making by providing an evidence-based prediction of vaccine behavior. It can help clinicians identify at-risk patients and initiate conversations about vaccination.",
+          "What is the source of the information object(s)?": "The information objects are the features collected in the National 2009 H1N1 Flu Survey.【2-0】",
+          "What is the scope of the output data?": "The output is a single probability score per individual, ranging from 0.0 to 1.0.",
+          "What is the amount of the output data?": "The system generates one prediction for each individual input record.",
+          "What logic is used for the initial output/recommendation?": "The prediction is based on a Random Forest model, which uses an ensemble of decision trees to determine the final output.【2-26】"
+        }
+      },
+      "Performance": {
+        "question_answer": {
+          "How accurate/precise/reliable are the predictions?": "The model has an overall accuracy of 83.2% and an AUC score of 0.831. For predicting who will get the vaccine (the positive class), the precision is 0.621 and recall is 0.535.【2-29】",
+          "How often does the system make mistakes?": "The model incorrectly predicts that a person will get the vaccine about 377 times for every 4212 people who don't (False Positive). It incorrectly predicts a person will not get the vaccine about 523 times for every 1130 people who do (False Negative).【2-28】",
+          "In what situations is the system likely to be correct/incorrect?": "The model is more likely to be correct when predicting that someone will *not* get the vaccine (higher precision for the negative class). It is less reliable at correctly identifying those who *will* get the vaccine.",
+          "What are the limitations of the system?": "The primary limitation is the lower performance in correctly identifying individuals who will get vaccinated (recall of 0.535). This means it misses a significant portion of the vaccinated population.【2-29】",
+          "What kind of mistakes is the system likely to make?": "The system is more prone to False Negatives, meaning it is more likely to predict that someone will not get the vaccine when they actually will.【2-28】"
+        }
+      },
+      "How (global model-wide explanation)": {
+        "question_answer": {
+          "How does the system make predictions?": "The system uses a Random Forest Classifier, which is an ensemble learning method. It builds multiple decision trees during training and outputs the class that is the mode of the classes of the individual trees.【2-26】",
+          "What features does the system consider?": "The model considers 31 features, including opinions on vaccine effectiveness and risk, doctor recommendations, health behaviors, and demographic information.【2-26】",
+          "What is the system's overall logic?": "The model's logic is based on the collective decision of many individual decision trees. Each tree votes on the prediction, and the final prediction is the one that receives the most votes.",
+          "How does it weigh different features?": "The model weighs features based on how much they reduce impurity (e.g., Gini impurity or entropy) in the decision trees. The most important features are those that lead to the largest improvements in predictive accuracy.【2-38】",
+          "What kind of rules does it follow?": "A Random Forest model does not create a single set of human-readable rules but rather a large number of rules within its many decision trees. The 'Variable Importance' plot shows which features have the most influence on the outcomes.【2-38】",
+          "What are the top rules/features that determine its predictions?": "The top three most influential features are whether a doctor recommended the H1N1 vaccine, the respondent's perceived risk of getting sick from H1N1, and their opinion on the vaccine's effectiveness.【2-34】",
+          "What kind of algorithm is used?": "The system uses a Random Forest Classifier algorithm.【2-26】",
+          "How were the parameters set?": "The model's hyperparameters were tuned using a Randomized Search Cross-Validation approach to find the combination that yielded the best ROC AUC score. The best parameters included 500 estimators, a 'balanced' class weight, and the 'entropy' criterion.【2-68】"
+        }
+      },
+      "Others": {
+        "question_answer": {
+          "How have updates aﬀected the system?": "This is a static model trained on a 2009 dataset. It has not been updated with new data.",
+          "Does the system learn specifically from my interaction?": "No, the system does not learn or adapt based on individual user interactions. It is a pre-trained model.",
+          "Why is the system using or not using a given algorithm/feature/rule/dataset?": "The Random Forest algorithm was chosen after comparing its performance against other models like Logistic Regression and XGBoost. Features related to seasonal flu were excluded to create a specialized model for H1N1 prediction.【2-66】",
+          "What are the results of other people using the system?": "This is a demonstration model based on a public dataset and has not been used in a live clinical environment with other users."
+        }
+      },
+      "UI": {
+        "question_answer": {
+          "What are the aﬀordances of the system?": "The system allows a user to input patient or population data and receive a prediction on H1N1 vaccine uptake.",
+          "What does this UI element do?": "The UI is designed to allow for data input and to display the resulting prediction and explanations of that prediction."
+        }
+      }
+    }
+}

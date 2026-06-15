@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "template_name": "Healthcare XAI Question Bank Instructional Template",
+    "version": "1.0",
+    "last_updated": "2025-01-25",
+    "authors": "Henry El-Jawhari, Robert Koch Institute (RKI), Freie Universisät Berlin",
+    "description": "An instructional JSON template for a Large Language Model to generate structured, explanations about an AI system, based on the eXplainable AI (XAI) Question Bank.",
+    "output_format": "JSON object representing filled question-answer pairs."
+  },
+  "instructions": {
+    "guidelines": [
+        "Use plain English to explain in a simple and comprehensible way. Do not use overly technical jargon.",
+        "Do not include code, citations, or mathematical derivations unless explicitly relevant to the explanation."
+    ],
+    "output": 
+    [
+        "Fill in the empty string placeholders with the specific details of the AI system.",
+        "The section 'question_interpretation' should explaining the meaning and intention of the question.",
+        "The section 'answer' shoud provide the explanation.",
+        "Output should be only a single JSON file containing only the 'questions' portion of this instruction template.",
+        "The answers should be written in British English."
+    ]
+  },
+  "questions":
+  {
+    "Data": {
+            "What kind of data was the system trained on?": {"question_interpretation": ""},
+            "What is the source of the training data?": {"question_interpretation": ""},
+            "How were the labels/ground-truth produced?": {"question_interpretation": ""},
+            "What is the sample size of the training data?": {"question_interpretation": ""},
+            "What dataset(s) is the system NOT using?": {"question_interpretation": ""},
+            "What are the potential limitations/biases of the data?": {"question_interpretation": ""}
+    }
+  }
+}

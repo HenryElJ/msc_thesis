@@ -1,0 +1,208 @@
+{
+  "questions": {
+    "Data": {
+      "question_answer": {
+        "What kind of data was the system trained on?": {
+          "question_interpretation": "What types of patient or population information were used to develop the AI system?",
+          "answer": "The system was trained on data from the National 2009 H1N1 Flu Survey (NHFS), which includes demographic, behavioural, and clinical information about individuals' vaccination status, health behaviours, and opinions regarding flu and vaccination.",
+          "domain_relevance": "Understanding the data source ensures clinicians know the population the system is relevant for, supporting safe and appropriate use in patient care and public health planning."
+        },
+        "What is the source of the training data?": {
+          "question_interpretation": "Where did the data used to train the system come from?",
+          "answer": "The training data comes from the NHFS, a survey conducted by the US CDC and the National Center for Health Statistics, designed to monitor influenza immunisation coverage during the 2009-2010 season.",
+          "domain_relevance": "Knowing the data source helps healthcare professionals assess the credibility and applicability of the system to their patient population."
+        },
+        "How were the labels/ground-truth produced?": {
+          "question_interpretation": "How was the correct answer or outcome determined in the training data?",
+          "answer": "Labels were based on self-reported responses to whether individuals received the H1N1 or seasonal flu vaccine.",
+          "domain_relevance": "Understanding how ground truth was established informs clinicians about the reliability of the system’s predictions and any potential for reporting bias."
+        },
+        "What is the sample size of the training data?": {
+          "question_interpretation": "How many individuals' data were used to train the system?",
+          "answer": "The training set includes over 5,000 respondents, each with 31 features.",
+          "domain_relevance": "Sample size affects the robustness and generalisability of the system’s predictions to real-world clinical populations."
+        },
+        "What dataset(s) is the system NOT using?": {
+          "question_interpretation": "Are there any important data sources that were not included in training?",
+          "answer": "The system does not use ongoing CDC annual flu surveillance data or electronic health record data from clinical settings.",
+          "domain_relevance": "Awareness of excluded datasets helps clinicians identify gaps in the system’s knowledge and potential limitations in specific clinical contexts."
+        },
+        "What are the potential limitations/biases of the data?": {
+          "question_interpretation": "What weaknesses or biases might exist in the data used to train the system?",
+          "answer": "Potential limitations include self-reporting bias, underrepresentation of certain demographic groups, and the fact that the data reflects the US population during a specific pandemic period.",
+          "domain_relevance": "Recognising data limitations is crucial for clinicians to interpret predictions cautiously and avoid over-reliance in populations that differ from the training data."
+        }
+      }
+    },
+    "Output": {
+      "question_answer": {
+        "What kind of output does the system give?": {
+          "question_interpretation": "What does the AI system produce as a result?",
+          "answer": "The system outputs a probability score indicating the likelihood that an individual will receive the H1N1 or seasonal flu vaccine.",
+          "domain_relevance": "Clinicians can use this output to identify patients at higher or lower risk of vaccine uptake, supporting targeted interventions."
+        },
+        "What does the system output mean?": {
+          "question_interpretation": "How should I interpret the numbers or results the system provides?",
+          "answer": "A higher probability score means the individual is more likely to get vaccinated, while a lower score suggests a lower likelihood.",
+          "domain_relevance": "Correct interpretation of output ensures appropriate use in clinical decision-making, such as patient counselling or public health outreach."
+        },
+        "What is the scope of the system's capability? Can it do...?": {
+          "question_interpretation": "What can and can’t the system do?",
+          "answer": "The system predicts vaccine uptake likelihood based on survey features; it does not diagnose flu, predict vaccine effectiveness, or provide individualised medical advice.",
+          "domain_relevance": "Understanding the system’s limits prevents misuse and ensures it is applied only to appropriate clinical or public health questions."
+        },
+        "How is the output used for other system component(s)?": {
+          "question_interpretation": "Does the output feed into other tools or workflows?",
+          "answer": "The output can be integrated into dashboards or decision support tools to inform vaccination campaigns or patient outreach strategies.",
+          "domain_relevance": "Integration with existing workflows can enhance efficiency and support evidence-based public health interventions."
+        },
+        "How should I best utilize the output of the system?": {
+          "question_interpretation": "What is the recommended way to use the system’s results?",
+          "answer": "Use the output to identify individuals or groups less likely to be vaccinated and prioritise them for targeted education or outreach.",
+          "domain_relevance": "Effective use of the output can improve vaccination rates and reduce the risk of influenza outbreaks in vulnerable populations."
+        },
+        "How should the output fit in my workflow?": {
+          "question_interpretation": "How can I incorporate the system’s results into my daily work?",
+          "answer": "Incorporate the system’s predictions into patient records or public health dashboards to inform clinical or community-level interventions.",
+          "domain_relevance": "Seamless workflow integration supports timely and proactive patient care."
+        },
+        "What is the source of the information object(s)?": {
+          "question_interpretation": "Where does the output information come from?",
+          "answer": "The output is generated from the AI model trained on NHFS survey data.",
+          "domain_relevance": "Knowing the source supports transparency and trust in the system’s recommendations."
+        },
+        "What is the scope of the output data?": {
+          "question_interpretation": "What range or types of predictions does the system provide?",
+          "answer": "The system provides probability scores for vaccine uptake for individuals aged 6 months and older, based on survey features.",
+          "domain_relevance": "Scope awareness ensures clinicians apply the system only to relevant patient groups."
+        },
+        "What is the amount of the output data?": {
+          "question_interpretation": "How much data does the system produce per use?",
+          "answer": "For each individual assessed, the system produces a single probability score per vaccine type.",
+          "domain_relevance": "Understanding output volume aids in planning for integration with electronic health records or public health databases."
+        },
+        "What logic is used for the initial output/recommendation?": {
+          "question_interpretation": "How does the system decide on its predictions?",
+          "answer": "The system uses a machine learning model (XGBoost) that weighs multiple features such as age, race, sex, health behaviours, and opinions to estimate vaccination likelihood.",
+          "domain_relevance": "Understanding the logic helps clinicians trust and interpret the system’s recommendations in context."
+        }
+      }
+    },
+    "Performance": {
+      "question_answer": {
+        "How accurate/precise/reliable are the predictions?": {
+          "question_interpretation": "How often does the system make correct predictions?",
+          "answer": "The system achieves a mean accuracy of approximately 84% and an area under the ROC curve (AUC) of 0.84, indicating good discrimination between those likely and unlikely to be vaccinated.",
+          "domain_relevance": "Performance metrics help clinicians judge whether the system is reliable enough to inform patient care or public health decisions."
+        },
+        "How often does the system make mistakes?": {
+          "question_interpretation": "How frequently does the system get it wrong?",
+          "answer": "With an accuracy of 84%, the system is incorrect in about 16% of cases, which may be higher in populations different from the training data.",
+          "domain_relevance": "Awareness of error rates is crucial for safe clinical use and for setting realistic expectations with patients and colleagues."
+        },
+        "In what situations is the system likely to be correct/incorrect?": {
+          "question_interpretation": "When can I trust the system’s predictions, and when should I be cautious?",
+          "answer": "The system is most reliable for individuals similar to those in the NHFS dataset. Predictions may be less accurate for groups underrepresented in the survey or in settings with different vaccination behaviours.",
+          "domain_relevance": "Recognising these situations helps clinicians apply the system judiciously and avoid over-reliance in inappropriate contexts."
+        },
+        "What are the limitations of the system?": {
+          "question_interpretation": "What can’t the system do well?",
+          "answer": "Limitations include reliance on self-reported data, potential bias from survey design, and lack of real-time clinical data.",
+          "domain_relevance": "Understanding limitations prevents misuse and supports ethical, patient-centred care."
+        },
+        "What kind of mistakes is the system likely to make?": {
+          "question_interpretation": "What types of errors should I watch out for?",
+          "answer": "The system may misclassify individuals whose behaviours or beliefs differ from those captured in the training survey, or those from underrepresented groups.",
+          "domain_relevance": "Awareness of likely errors helps clinicians interpret results with appropriate caution."
+        }
+      }
+    },
+    "How (global model-wide explanation)": {
+      "question_answer": {
+        "How does the system make predictions?": {
+          "question_interpretation": "What is the general process the system uses to arrive at its results?",
+          "answer": "The system uses a machine learning algorithm (XGBoost) to analyse multiple features from the survey and estimate the probability of vaccine uptake.",
+          "domain_relevance": "Understanding the prediction process supports transparency and trust in the system’s outputs."
+        },
+        "What features does the system consider?": {
+          "question_interpretation": "Which patient or population characteristics are used in the prediction?",
+          "answer": "Key features include age group, race, sex, health behaviours (such as hand washing and mask use), opinions about vaccine effectiveness, and whether a doctor recommended vaccination.",
+          "domain_relevance": "Knowing which features are used helps clinicians understand what factors drive the system’s recommendations and whether they are clinically relevant."
+        },
+        "What is the system's overall logic?": {
+          "question_interpretation": "How does the system combine different pieces of information?",
+          "answer": "The system assigns different weights to each feature based on their importance in predicting vaccine uptake, combining them to produce a final probability score.",
+          "domain_relevance": "Understanding the logic helps clinicians interpret results and identify when additional clinical judgement is needed."
+        },
+        "How does it weigh different features?": {
+          "question_interpretation": "Which factors are most influential in the system’s predictions?",
+          "answer": "Features such as age group, race, sex, chronic medical conditions, and doctor recommendation have the greatest influence on predictions.",
+          "domain_relevance": "Awareness of feature importance helps clinicians assess whether the system’s reasoning aligns with clinical experience."
+        },
+        "What kind of rules does it follow?": {
+          "question_interpretation": "Does the system use any specific rules or thresholds?",
+          "answer": "The system uses statistical relationships learned from the data rather than fixed clinical rules; it identifies patterns that best separate those who do and do not receive vaccines.",
+          "domain_relevance": "Understanding the absence of explicit rules highlights the need for clinical oversight when using the system."
+        },
+        "What are the top rules/features that determine its predictions?": {
+          "question_interpretation": "Which factors most strongly affect the system’s output?",
+          "answer": "Doctor recommendation, age group, and opinions about vaccine effectiveness are among the most important determinants.",
+          "domain_relevance": "Knowing the top features helps clinicians focus on modifiable factors when discussing vaccination with patients."
+        },
+        "What kind of algorithm is used?": {
+          "question_interpretation": "What type of AI or statistical method underpins the system?",
+          "answer": "The system uses XGBoost, a decision-tree-based machine learning algorithm known for its accuracy and interpretability.",
+          "domain_relevance": "Algorithm transparency supports informed consent and ethical use in healthcare."
+        },
+        "How were the parameters set?": {
+          "question_interpretation": "How were the settings for the algorithm chosen?",
+          "answer": "Parameters were optimised using cross-validation to maximise predictive accuracy on the training data.",
+          "domain_relevance": "Parameter optimisation ensures the system performs as well as possible on the available data, supporting reliable clinical use."
+        }
+      }
+    },
+    "Others": {
+      "question_answer": {
+        "How have updates affected the system?": {
+          "question_interpretation": "Has the system changed over time, and if so, how?",
+          "answer": "The system is based on a static dataset from 2009-2010 and does not update automatically with new data.",
+          "domain_relevance": "Lack of updates means clinicians should be cautious when applying the system to current populations, as patterns of vaccine uptake may have changed."
+        },
+        "Does the system learn specifically from my interaction?": {
+          "question_interpretation": "Does the system adapt or change based on my use?",
+          "answer": "No, the system does not learn from individual user interactions; it provides consistent predictions based on the original training data.",
+          "domain_relevance": "This ensures reproducibility but limits adaptability to new patterns or local contexts."
+        },
+        "Why is the system using or not using a given algorithm/feature/rule/dataset?": {
+          "question_interpretation": "Why were certain methods or data sources chosen or excluded?",
+          "answer": "XGBoost was chosen for its strong performance and interpretability. Only features available in the NHFS dataset were used, and no external clinical data was included.",
+          "domain_relevance": "Understanding these choices helps clinicians judge the system’s strengths and limitations in their own context."
+        },
+        "What are the results of other people using the system?": {
+          "question_interpretation": "How has the system performed in practice?",
+          "answer": "The system has been used in research settings to identify factors influencing vaccine uptake, but there are no published results from clinical implementation.",
+          "domain_relevance": "Real-world evidence is important for clinicians to assess the system’s practical value and safety."
+        },
+        "Who is responsible for this system? Who are the authors?": {
+          "question_interpretation": "Who developed and maintains the system?",
+          "answer": "The system was developed by Henry El-Jawhari at the Freie Universität Berlin and the Robert Koch Institute.",
+          "domain_relevance": "Knowing the responsible parties supports accountability and enables users to seek support or clarification as needed."
+        }
+      }
+    },
+    "UI": {
+      "question_answer": {
+        "What are the affordances of the system?": {
+          "question_interpretation": "What can I do with the system’s interface?",
+          "answer": "The system provides a dashboard where users can input patient or population characteristics and receive predicted vaccination probabilities.",
+          "domain_relevance": "User-friendly interfaces support adoption and effective use in busy clinical environments."
+        },
+        "What does this UI element do?": {
+          "question_interpretation": "What is the function of a specific part of the interface?",
+          "answer": "Each input field allows you to specify a patient or population characteristic, such as age or health behaviour, which the system uses to generate its prediction.",
+          "domain_relevance": "Understanding UI elements ensures clinicians can use the system efficiently and accurately."
+        }
+      }
+    }
+  }
+}

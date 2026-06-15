@@ -1,0 +1,160 @@
+{
+  "questions": {
+    "Data": {
+      "What kind of data was the system trained on?": {
+        "question_interpretation": "This asks what type of patient information the system uses to learn patterns about vaccine uptake.",
+        "answer": "The system was trained on telephone survey data from the 2009 H1N1 pandemic, capturing patient demographics (age, sex, race), behavioural factors (handwashing, mask use, avoidance behaviours), healthcare access (insurance status, whether the patient is a healthcare worker), medical history (chronic conditions, children under 6 months), and crucially, opinions about H1N1 risk and vaccine effectiveness along with doctor recommendations."
+      },
+      "What is the source of the training data?": {
+        "question_interpretation": "This asks where the data came from and who collected it, which affects how much we can trust it.",
+        "answer": "The data originates from the National 2009 H1N1 Flu Survey (NHFS), conducted jointly by the National Center for Immunization and Respiratory Diseases (NCIRD) and the National Center for Health Statistics (NCHS) at the Centers for Disease Control and Prevention (CDC). The survey was conducted between October 2009 and June 2010 using list-assisted random-digit-dialling of households across the United States."
+      },
+      "How were the labels/ground-truth produced?": {
+        "question_interpretation": "This asks how we know whether someone actually received the H1N1 vaccine—the 'correct answer' the system learns from.",
+        "answer": "The vaccination status (whether patients received the H1N1 vaccine) was self-reported by survey respondents during telephone interviews. These responses formed the ground truth labels that the system uses to learn which patient characteristics are associated with vaccine uptake."
+      },
+      "What is the sample size of the training data?": {
+        "question_interpretation": "This asks how many patient cases the system learned from, which affects how reliable its predictions might be.",
+        "answer": "The system was trained on approximately 26,578 survey responses from individuals aged 6 months or older living in the United States during the 2009-2010 flu season. The dataset was split into training and test sets to evaluate model performance."
+      },
+      "What dataset(s) is the system NOT using?": {
+        "question_interpretation": "This asks what patient information or data sources are deliberately excluded, which helps understand the system's limitations.",
+        "answer": "The system deliberately excludes seasonal flu vaccination data to prevent feature leakage, despite significant overlap between H1N1 and seasonal flu vaccine recipients. It also does not incorporate clinical outcomes data (such as whether vaccinated patients contracted H1N1), real-world vaccine effectiveness data, or any patient data collected after June 2010."
+      },
+      "What are the potential limitations/biases of the data?": {
+        "question_interpretation": "This asks what systemic problems might exist in the data that could lead to unreliable predictions for certain patient groups.",
+        "answer": "The data is based on self-reported telephone survey responses, which may suffer from recall bias and social desirability bias. The survey excluded individuals without landline telephones in 2009-2010, potentially underrepresenting lower-income populations. As a pandemic-era dataset from 2009-2010, the public health context, vaccine hesitancy patterns, and healthcare access may differ substantially from current populations, potentially limiting the system's applicability to contemporary vaccine decision-making."
+      }
+    },
+    "Output": {
+      "What kind of output does the system give?": {
+        "question_interpretation": "This asks what information the system actually provides when you use it.",
+        "answer": "The system outputs a predicted probability (between 0 and 1) representing the likelihood that a patient with specific characteristics would accept the H1N1 vaccine. This probability can be converted to a binary prediction (will vaccinate/will not vaccinate) using an adjustable threshold, with 0.5 as the default cut-off."
+      },
+      "What does the system output mean?": {
+        "question_interpretation": "This asks how to interpret the numbers the system provides in a clinical context.",
+        "answer": "A predicted probability of 0.75, for example, indicates that patients with similar characteristics had a 75% rate of vaccine acceptance in the historical survey data. This represents the system's confidence that a patient will accept vaccination based on their demographic and attitudinal profile, not a measure of vaccine efficacy or medical need."
+      },
+      "What is the scope of the system's capability? Can it do...?": {
+        "question_interpretation": "This asks what clinical questions the system can and cannot answer.",
+        "answer": "The system can predict the likelihood of H1N1 vaccine acceptance based on patient characteristics, opinions, and doctor recommendations. However, it cannot determine medical necessity, predict vaccine side effects, assess immune response, recommend whether a patient should be vaccinated, or account for vaccine supply constraints. It is a decision-support tool for understanding patient vaccine acceptance patterns, not a clinical decision-making tool."
+      },
+      "How is the output used for other system component(s)?": {
+        "question_interpretation": "This asks whether the system's predictions feed into other tools or workflows.",
+        "answer": "The system includes an interactive 'What-If' dashboard that uses the predictions to generate detailed explanations. When the system produces a probability, the dashboard can display breakdown plots, Shapley values, and ceteris paribus profiles that show which patient characteristics most strongly influenced that particular prediction, helping clinicians understand the reasoning behind each estimate."
+      },
+      "How should I best utilize the output of the system?": {
+        "question_interpretation": "This asks how healthcare professionals should use the predictions in practice.",
+        "answer": "Use the predicted probabilities to identify patients who may be hesitant about H1N1 vaccination and prioritise targeted counselling. Patients with low predicted probabilities may benefit from additional discussion about vaccine safety and effectiveness. The system is best used to inform patient communication strategies rather than to make vaccination decisions, which should always involve clinical judgement and shared decision-making."
+      },
+      "How should the output fit in my workflow?": {
+        "question_interpretation": "This asks where in the clinical process this tool belongs.",
+        "answer": "The system is most appropriately used during pre-consultation planning or population health outreach to identify patients requiring enhanced vaccine counselling. It should not replace clinical assessment or patient-centred discussion about vaccination. Consider it as a screening tool to flag patients who may need additional time and tailored messaging during vaccination consultations."
+      },
+      "What is the source of the information object(s)?": {
+        "question_interpretation": "This asks where the specific patient data used for predictions comes from.",
+        "answer": "Patient information for predictions would come from clinical records, intake questionnaires, or direct patient interviews capturing demographics, opinions about H1N1 risk and vaccine effectiveness, behavioural patterns, and whether a doctor has recommended vaccination. The system requires the same types of information that were collected in the original CDC survey."
+      },
+      "What is the scope of the output data?": {
+        "question_interpretation": "This asks what types of predictions the system can make and what it covers.",
+        "answer": "The system provides predictions specifically for H1N1 vaccine acceptance. It does not predict acceptance of other vaccines, actual vaccination completion, immune response, or clinical outcomes. The predictions are bounded between 0 and 1 (representing 0% to 100% probability) and can be generated for individual patients or patient cohorts."
+      },
+      "What is the amount of the output data?": {
+        "question_interpretation": "This asks how much information the system provides per patient or per use.",
+        "answer": "For each patient, the system outputs a single probability value. When using the What-If dashboard, additional outputs include variable importance rankings showing which factors most influenced the prediction, breakdown plots showing the contribution of each patient characteristic, and profile plots demonstrating how changes in patient characteristics would affect the predicted probability."
+      },
+      "What logic is used for the initial output/recommendation?": {
+        "question_interpretation": "This asks how the system decides what probability to assign to each patient.",
+        "answer": "The system uses an XGBoost gradient boosting algorithm that learned patterns from 26,578 survey responses. It identifies combinations of patient characteristics (particularly doctor recommendations and patient opinions about H1N1 risk and vaccine effectiveness) that were historically associated with vaccine acceptance, then applies these learned patterns to new patient profiles to generate probability estimates."
+      }
+    },
+    "Performance": {
+      "How accurate/precise/reliable are the predictions?": {
+        "question_interpretation": "This asks how often the system's predictions match what actually happens with patients.",
+        "answer": "The system achieves 84% accuracy on held-out test data, meaning it correctly predicts vaccine acceptance or refusal in approximately 84 out of 100 cases. However, this performance was measured on historical data from 2009-2010; real-world performance with contemporary patients may differ due to changes in public health attitudes, vaccine hesitancy patterns, and healthcare access since the H1N1 pandemic."
+      },
+      "How often does the system make mistakes?": {
+        "question_interpretation": "This asks about the error rate and what types of mistakes occur.",
+        "answer": "The system makes incorrect predictions approximately 16% of the time. The specific breakdown between false positives (predicting vaccination when patients refuse) and false negatives (predicting refusal when patients accept) is not detailed in the available documentation. These errors likely occur when patients' individual decision-making diverges from the typical patterns seen in the training population."
+      },
+      "In what situations is the system likely to be correct/incorrect?": {
+        "question_interpretation": "This asks when to trust the predictions more or less.",
+        "answer": "The system is most reliable for patients whose profiles closely match the 2009-2010 survey population and who have clear opinions about H1N1 risk and vaccine effectiveness. It is likely less accurate for patients with unique circumstances not well-represented in the training data, those with ambivalent or changing opinions, contemporary populations with different vaccine attitudes than the pandemic era, or patients whose decisions are driven by factors not captured in the model (such as recent personal experiences with influenza)."
+      },
+      "What are the limitations of the system?": {
+        "question_interpretation": "This asks what the system fundamentally cannot do or where it shouldn't be relied upon.",
+        "answer": "The system is limited by its reliance on 2009-2010 pandemic-era data, which may not reflect current vaccine hesitancy patterns. It cannot account for evolving public health circumstances, changes in vaccine formulations, supply constraints, or individual factors beyond the survey variables. Critically, it predicts vaccine acceptance behaviour, not medical appropriateness or clinical outcomes. The system should not be used to decide who should be vaccinated, only to identify who may need additional counselling."
+      },
+      "What kind of mistakes is the system likely to make?": {
+        "question_interpretation": "This asks what patterns of errors to watch for in clinical use.",
+        "answer": "The system may incorrectly predict that patients will accept vaccination when they express positive opinions but have practical barriers (access, cost, time constraints) not captured in the model. Conversely, it may miss patients who initially express hesitancy but are persuaded through effective clinical counselling. It may also fail to account for social influence, recent news events, or peer experiences that substantially shift individual decision-making beyond historical survey patterns."
+      }
+    },
+    "How (global model-wide explanation)": {
+      "How does the system make predictions?": {
+        "question_interpretation": "This asks what process the system follows to generate predictions.",
+        "answer": "The system uses gradient boosting to combine multiple decision trees that each examine different patient characteristics. It processes patient information through preprocessing steps (handling missing data and converting categories to numbers), then passes this through the trained XGBoost model, which weighs various patient attributes to produce a probability estimate. The model has learned which combinations of characteristics were historically associated with vaccine acceptance."
+      },
+      "What features does the system consider?": {
+        "question_interpretation": "This asks which patient characteristics the system examines when making predictions.",
+        "answer": "The system considers 31 patient characteristics including doctor recommendations for H1N1 vaccine, patient opinions about H1N1 risk and vaccine effectiveness, demographic factors (age, sex, race, education, income), behavioural patterns (handwashing, mask use, avoidance of gatherings), medical history (chronic conditions, presence of children under 6 months), healthcare access (insurance, healthcare worker status), employment details, and geographic location."
+      },
+      "What is the system's overall logic?": {
+        "question_interpretation": "This asks what general principle or strategy the system uses to make predictions.",
+        "answer": "The system's logic follows a pattern-matching approach: it identifies which combinations of patient characteristics were historically associated with vaccine acceptance and applies these learned patterns to new patients. The fundamental logic is that patients who trust vaccines, perceive H1N1 as risky, receive doctor recommendations, and share demographic characteristics with past vaccine acceptors are more likely to be vaccinated."
+      },
+      "How does it weigh different features?": {
+        "question_interpretation": "This asks which patient characteristics matter most in the predictions.",
+        "answer": "The system weighs doctor recommendation for H1N1 vaccine, patient opinion about H1N1 vaccine effectiveness, and patient opinion about H1N1 risk as the three most important factors. Demographic characteristics (age group, race, sex) have secondary importance. Behavioural and geographic factors have lesser influence. This weighting reflects the historical data pattern that medical advice and personal beliefs about disease risk were stronger predictors of vaccination than demographics alone."
+      },
+      "What kind of rules does it follow?": {
+        "question_interpretation": "This asks what decision-making patterns or if-then relationships the system has learned.",
+        "answer": "Rather than explicit if-then rules, the XGBoost model follows implicit patterns learned from data, such as: patients with doctor recommendations and high perceived vaccine effectiveness have elevated acceptance probability; older age groups show higher baseline acceptance; patients who view H1N1 as high risk but lack doctor recommendations show intermediate probabilities. These patterns are encoded across multiple decision trees that collectively determine the final prediction."
+      },
+      "What are the top rules/features that determine its predictions?": {
+        "question_interpretation": "This asks which factors have the most influence on the system's predictions.",
+        "answer": "The top three determinants are: (1) whether a doctor recommended the H1N1 vaccine, (2) the patient's opinion about whether the H1N1 vaccine is effective, and (3) the patient's opinion about whether H1N1 poses a health risk. These three factors substantially outweigh demographic and behavioural characteristics in determining the predicted probability of vaccination."
+      },
+      "What kind of algorithm is used?": {
+        "question_interpretation": "This asks what machine learning approach powers the system.",
+        "answer": "The system uses XGBoost (Extreme Gradient Boosting), a gradient boosting algorithm that builds an ensemble of decision trees sequentially. Each tree attempts to correct the errors of previous trees, resulting in a powerful predictive model. XGBoost is widely used in healthcare prediction tasks due to its ability to handle complex non-linear relationships and mixed data types whilst maintaining interpretability."
+      },
+      "How were the parameters set?": {
+        "question_interpretation": "This asks how the system's internal settings were chosen to optimise performance.",
+        "answer": "The system's parameters were optimised through RandomizedSearchCV, a technique that systematically tests different parameter combinations to find the configuration that maximises accuracy on validation data. This hyperparameter tuning process searched through various settings for tree depth, learning rate, and regularisation strength to identify the optimal configuration that achieved 84% accuracy whilst avoiding overfitting to the training data."
+      }
+    },
+    "Others": {
+      "How have updates affected the system?": {
+        "question_interpretation": "This asks whether the system has been modified since creation and how those changes impacted performance.",
+        "answer": "The available documentation does not indicate any updates to the system after initial development. The system was trained once on the 2009-2010 NHFS data and has not been retrained with more recent vaccination data or updated to reflect contemporary vaccine hesitancy patterns. This means the system's predictions are based on pandemic-era attitudes and behaviours that may not reflect current patient populations."
+      },
+      "Does the system learn specifically from my interaction?": {
+        "question_interpretation": "This asks whether the system adapts based on feedback from individual patients or clinicians using it.",
+        "answer": "No. The system is a static model that does not learn from individual interactions or update based on local patient outcomes. Each prediction is based solely on the patterns learned during initial training on the 2009-2010 survey data. Your use of the system, whether predictions prove accurate or inaccurate, does not influence future predictions."
+      },
+      "Why is the system using or not using a given algorithm/feature/rule/dataset?": {
+        "question_interpretation": "This asks about the rationale behind key design decisions in the system.",
+        "answer": "XGBoost was selected because it demonstrated the highest accuracy (84%) compared to alternative algorithms including logistic regression, random forests, and neural networks when tested on the same data. Seasonal flu vaccination data was deliberately excluded despite being available to prevent feature leakage, as including it would create artificially inflated performance. The NHFS dataset was used because it provides comprehensive data on vaccine decision-making during an actual pandemic with a novel vaccine."
+      },
+      "What are the results of other people using the system?": {
+        "question_interpretation": "This asks whether there is evidence from real-world clinical deployment and outcomes.",
+        "answer": "There is no documentation of real-world clinical deployment or user feedback from this system. The performance metrics (84% accuracy) are based solely on retrospective evaluation using held-out portions of the 2009-2010 survey data. Without evidence from actual clinical use, the practical utility, user acceptance, and real-world performance with contemporary patients remain unvalidated."
+      },
+      "Who is responsible for this system? Who are the authors?": {
+        "question_interpretation": "This asks who developed the system and who should be contacted with questions or concerns.",
+        "answer": "The system was developed by Henry El-Jawhari at the Freie Universität Berlin and Robert Koch Institute (RKI). The underlying data comes from the Centers for Disease Control and Prevention's National 2009 H1N1 Flu Survey. Questions about the system's development, validation, or appropriate clinical use should be directed to the development team at these institutions."
+      }
+    },
+    "UI": {
+      "What are the affordances of the system?": {
+        "question_interpretation": "This asks what actions users can take and what interactive features are available.",
+        "answer": "The system provides a What-If dashboard where clinicians can adjust six patient characteristics (doctor recommendation, opinions about vaccine effectiveness and H1N1 risk, age group, race, and sex) to see how changes affect predicted vaccination probability. Users can modify the prediction threshold to make the system more or less conservative and can generate visual explanations including breakdown plots, Shapley values, and ceteris paribus profiles that show how individual patient characteristics influence predictions."
+      },
+      "What does this UI element do?": {
+        "question_interpretation": "This asks about the function of specific interactive components in the dashboard.",
+        "answer": "The dashboard includes dropdown selectors for categorical variables (age, race, sex) and sliders for opinion-based variables (risk perception, vaccine effectiveness beliefs) that allow users to define patient profiles. The prediction threshold slider adjusts the cut-off for classifying patients as likely to accept or refuse vaccination. The 'Run What-If' button generates predictions and explanation plots for the specified patient profile, displaying how each characteristic contributes to the final probability estimate."
+      }
+    }
+  }
+}

@@ -1,0 +1,156 @@
+{
+    "questions": {
+        "Data": {
+            "What kind of data was the system trained on?": {
+                "answer": "The system was trained on survey response data capturing individual-level information about H1N1 flu vaccine uptake. The dataset includes 31 features spanning behavioural factors (e.g. hand washing, face mask use, avoiding large gatherings), health-related factors (e.g. chronic medical conditions, healthcare worker status, health insurance coverage), opinion-based factors (e.g. perceived vaccine effectiveness, perceived risk of H1N1 illness), and demographic characteristics (e.g. age group, education level, employment status, geographic region). All data represents self-reported responses from survey participants.",
+                "domain_relevance": "Understanding the data composition is essential for clinicians to recognise that predictions are based on patient-reported behaviours and attitudes rather than clinical measurements or laboratory results. This helps contextualise the system's outputs within public health outreach and patient counselling scenarios."
+            },
+            "What is the source of the training data?": {
+                "answer": "The training data originates from DrivenData's 'Flu Shot Learning: Predict H1N1 and Seasonal Flu Vaccines' competition. This dataset is derived from the National 2009 H1N1 Flu Survey (NHFS), a population-based telephone survey conducted to monitor vaccination coverage during the H1N1 pandemic response.",
+                "domain_relevance": "The data source being a nationally representative telephone survey provides confidence in population-level generalisability for public health applications. However, healthcare professionals should note that telephone survey methodology may underrepresent certain populations, such as those without landline access or with language barriers."
+            },
+            "How were the labels/ground-truth produced?": {
+                "answer": "The ground truth labels were produced through self-reported survey responses. Participants directly indicated whether they had received the H1N1 flu vaccine (coded as 0 for 'No' and 1 for 'Yes'). This binary outcome serves as the target variable for the prediction model.",
+                "domain_relevance": "Self-reported vaccination status may be subject to recall bias or social desirability effects. In clinical practice, this means the model learns patterns from perceived rather than verified vaccination records, which is important to consider when using predictions to guide patient conversations about vaccine hesitancy."
+            },
+            "What is the sample size of the training data?": {
+                "answer": "The total dataset contains approximately 26,707 survey respondents. The data was split using an 80:20 ratio, resulting in approximately 21,365 records for training and 5,342 records for testing and validation purposes.",
+                "domain_relevance": "This sample size is substantial for developing reliable predictive models in public health contexts. The large respondent pool helps ensure the model captures diverse population segments, though healthcare professionals should verify that specific patient subgroups of interest are adequately represented."
+            },
+            "What dataset(s) is the system NOT using?": {
+                "answer": "The system does not use clinical or electronic health record (EHR) data, laboratory test results, medical imaging, or verified vaccination registry information. It also excludes seasonal flu vaccine-related features, focusing exclusively on H1N1 vaccine uptake. Additionally, the system does not incorporate real-time data, social media sentiment, or external epidemiological indicators.",
+                "domain_relevance": "The absence of clinical data means the system cannot account for contraindications, prior adverse reactions, or medical history that might influence vaccination decisions. Healthcare professionals should supplement model predictions with clinical judgement and patient-specific medical information."
+            },
+            "What are the potential limitations/biases of the data?": {
+                "answer": "Key limitations include: (1) Self-report bias in both features and outcomes; (2) Telephone survey methodology may underrepresent populations without landline access; (3) Data reflects 2009 pandemic context, which may not fully generalise to current vaccination attitudes; (4) Missing data exists across multiple variables, particularly for employment industry and occupation; (5) Potential selection bias from survey non-response; (6) Protected characteristics (race, income, education) show varying representation that may affect predictions for minority groups.",
+                "domain_relevance": "These biases are particularly relevant for health equity considerations. Clinicians working with underserved populations should be aware that model performance may vary across demographic groups, and predictions should be interpreted cautiously when working with patients whose characteristics differ substantially from the training population."
+            }
+        },
+        "Output": {
+            "What kind of output does the system give?": {
+                "answer": "The system produces a probability score between 0 and 1, representing the likelihood that an individual will receive the H1N1 vaccine. This continuous probability can be converted to a binary prediction (vaccinated/not vaccinated) using a threshold, typically 0.5. The system also provides individual-level explanations showing which factors contributed most to each prediction.",
+                "domain_relevance": "Probability outputs allow healthcare professionals to prioritise outreach efforts, focusing resources on individuals with moderate probabilities who may be amenable to intervention, rather than those with very high or very low vaccination likelihood."
+            },
+            "What does the system output mean?": {
+                "answer": "A probability of 0.7, for example, indicates the model estimates a 70% chance that an individual with those characteristics would receive the H1N1 vaccine. Higher values suggest greater predicted likelihood of vaccination. The accompanying feature explanations show which specific factors (e.g. doctor recommendation, perceived vaccine effectiveness) are driving the prediction upward or downward.",
+                "domain_relevance": "Understanding probability interpretation helps clinicians communicate risk appropriately to patients and colleagues. A prediction is not a certainty—it represents a statistical estimate based on population patterns that may not apply to every individual."
+            },
+            "What is the scope of the system's capability? Can it do...?": {
+                "answer": "The system can: predict H1N1 vaccine uptake likelihood, identify key factors influencing individual predictions, and explore 'what-if' scenarios by modifying input features. The system cannot: predict seasonal flu vaccine uptake (excluded from this model), provide clinical recommendations, account for contraindications, or guarantee individual outcomes. It is designed for population-level insights and individual risk stratification, not clinical decision-making.",
+                "domain_relevance": "Clear scope boundaries help prevent misuse. The system supports public health planning and patient engagement strategies but should never replace clinical assessment of vaccine appropriateness for individual patients."
+            },
+            "How is the output used for other system component(s)?": {
+                "answer": "The probability outputs can feed into population stratification tools to segment individuals by vaccination likelihood. The feature importance outputs can inform targeted messaging strategies. What-if analysis components allow exploration of how changing specific factors (e.g. adding a doctor recommendation) might shift predicted probabilities.",
+                "domain_relevance": "Integration with public health campaign management systems enables data-driven resource allocation, helping direct limited outreach resources toward populations most likely to benefit from intervention."
+            },
+            "How should I best utilize the output of the system?": {
+                "answer": "Use the probability scores to prioritise patient outreach, focusing on individuals in the moderate probability range (0.3-0.7) who may be undecided. Review individual feature explanations to understand specific barriers or facilitators for each patient. Use what-if analysis to explore how interventions (e.g. physician recommendation) might influence outcomes. Always combine model insights with clinical knowledge and patient preferences.",
+                "domain_relevance": "This approach aligns with patient-centred care principles, using data to inform rather than dictate conversations. The system helps identify talking points but the healthcare professional remains essential for building trust and addressing individual concerns."
+            },
+            "How should the output fit in my workflow?": {
+                "answer": "The system is best positioned as a pre-consultation tool for population health management. Before patient encounters or outreach campaigns, review predicted probabilities to identify high-priority individuals. During patient interactions, use feature explanations to guide conversations about specific concerns (e.g. if vaccine safety concerns are flagged). Post-encounter, update records and monitor whether interventions align with model predictions.",
+                "domain_relevance": "Integrating predictive insights into existing workflows enhances efficiency without disrupting established care processes. The system augments clinical judgement rather than replacing it."
+            },
+            "What is the source of the information object(s)?": {
+                "answer": "All information objects derive from the National 2009 H1N1 Flu Survey data processed through a Random Forest classification model. Feature importance values come from permutation-based variable importance analysis. Individual explanations use SHAP-like breakdown methods implemented through the DALEX explainability framework.",
+                "domain_relevance": "Transparency about information sources builds trust. Healthcare professionals can be confident that outputs are derived from established survey methodology and validated machine learning techniques."
+            },
+            "What is the scope of the output data?": {
+                "answer": "Output data covers individual-level predictions for H1N1 vaccine uptake only. Geographic scope is limited to the United States population represented in the NHFS survey. Temporal scope reflects 2009 pandemic conditions. The model does not extrapolate to other vaccines, other countries, or substantially different epidemiological contexts.",
+                "domain_relevance": "Scope limitations are critical for appropriate application. Using this model for COVID-19 vaccine prediction, for instance, would require careful validation given different public attitudes and circumstances."
+            },
+            "What is the amount of the output data?": {
+                "answer": "For each individual, the system produces: one probability score, one binary prediction, and feature-level contribution scores for all 31 input variables. Batch processing can generate predictions for thousands of individuals simultaneously. Aggregate reports can summarise population-level patterns across demographic segments.",
+                "domain_relevance": "The granularity of output supports both individual patient counselling and population health management, allowing healthcare organisations to operate at multiple scales."
+            },
+            "What logic is used for the initial output/recommendation?": {
+                "answer": "The initial probability is computed by aggregating predictions from 500 decision trees in the Random Forest ensemble. Each tree votes based on learned patterns from training data, and the final probability represents the proportion of trees predicting vaccination. The model applies entropy-based splitting criteria with balanced class weights to handle the imbalanced outcome distribution.",
+                "domain_relevance": "Understanding the ensemble voting mechanism helps clinicians appreciate that predictions represent consensus across many decision pathways, providing robustness against individual quirks in the data."
+            }
+        },
+        "Performance": {
+            "How accurate/precise/reliable are the predictions?": {
+                "answer": "The hyperparameter-tuned Random Forest model achieves: 83.2% overall accuracy, 0.831 ROC-AUC score, 61.8% precision for predicting vaccination, and 53.5% recall for identifying vaccinated individuals. The F1-score for the positive class is 0.574. These metrics indicate good overall discrimination but moderate sensitivity for identifying individuals who will actually get vaccinated.",
+                "domain_relevance": "An AUC of 0.831 indicates the model correctly ranks a randomly chosen vaccinated individual higher than a non-vaccinated individual 83% of the time. This is clinically useful for prioritisation but not sufficient for definitive individual predictions."
+            },
+            "How often does the system make mistakes?": {
+                "answer": "Based on the confusion matrix from 5,342 test cases: the model correctly identified 3,835 non-vaccinated individuals and 607 vaccinated individuals. It incorrectly predicted 377 non-vaccinated individuals as vaccinated (false positives) and missed 523 vaccinated individuals, predicting them as non-vaccinated (false negatives). Overall error rate is approximately 16.8%.",
+                "domain_relevance": "The higher false negative rate (46.5% of vaccinated individuals missed) means the model is more likely to underestimate vaccination likelihood. For outreach purposes, this is relatively safe—resources may be directed toward some individuals who would have vaccinated anyway, but fewer truly hesitant individuals are overlooked."
+            },
+            "In what situations is the system likely to be correct/incorrect?": {
+                "answer": "The system performs best when: individuals have clear indicators (strong doctor recommendation, high perceived vaccine effectiveness, healthcare worker status). Performance is weaker for: individuals with mixed or neutral attitudes, those with missing data on key variables, and potentially for demographic groups underrepresented in training data. The model struggles most with the 'moveable middle'—individuals whose vaccination decision could go either way.",
+                "domain_relevance": "Ironically, the individuals where the model is least certain are often those most amenable to intervention. Healthcare professionals should view uncertain predictions as opportunities for meaningful engagement rather than limitations."
+            },
+            "What are the limitations of the system?": {
+                "answer": "Key limitations include: (1) Historical data from 2009 may not reflect current attitudes; (2) Self-reported data lacks clinical verification; (3) Cannot account for individual medical contraindications; (4) Lower recall means many potential vaccine recipients are missed; (5) Protected characteristics influence predictions, raising fairness concerns; (6) No real-time learning or adaptation to changing circumstances.",
+                "domain_relevance": "These limitations underscore that the system is a decision-support tool, not a decision-making tool. Clinical judgement, patient preferences, and current epidemiological context must always inform final actions."
+            },
+            "What kind of mistakes is the system likely to make?": {
+                "answer": "The most common error is false negatives—predicting someone will not get vaccinated when they actually do (523 cases in testing). This occurs because the model is calibrated toward the majority class (non-vaccinated). False positives are less common (377 cases) but mean some outreach resources may be directed toward individuals already inclined to vaccinate.",
+                "domain_relevance": "From a public health perspective, false negatives represent missed opportunities for reinforcement, while false positives represent inefficient but not harmful resource allocation. Neither error type poses direct patient safety risks."
+            }
+        },
+        "How (global model-wide explanation)": {
+            "How does the system make predictions?": {
+                "answer": "The system uses a Random Forest classifier—an ensemble of 500 decision trees that each learn different patterns from the training data. For a new individual, each tree traces a path through its learned decision rules and votes on the outcome. The final prediction is the proportion of trees voting for vaccination, interpreted as a probability.",
+                "domain_relevance": "The ensemble approach mirrors clinical reasoning where multiple factors are weighed together. Just as a clinician considers various patient characteristics holistically, the model integrates information across many decision pathways."
+            },
+            "What features does the system consider?": {
+                "answer": "The system considers 31 features across five categories: (1) Behavioural factors—antiviral medication use, avoidance behaviours, face mask use, hand hygiene, gathering avoidance; (2) Health factors—H1N1 concern and knowledge, doctor recommendations, chronic conditions, healthcare worker status, insurance; (3) Opinion factors—perceived vaccine effectiveness, perceived H1N1 risk, vaccine safety concerns; (4) Protected characteristics—age, education, race, sex, income, marital status; (5) Demographic factors—housing, employment, geographic region, household composition.",
+                "domain_relevance": "This comprehensive feature set captures the multifactorial nature of vaccination decisions, reflecting the Health Belief Model and other behavioural frameworks familiar to public health practitioners."
+            },
+            "What is the system's overall logic?": {
+                "answer": "The system learns that vaccination likelihood increases with: positive opinions about vaccine effectiveness, doctor recommendations, higher H1N1 concern, healthcare worker status, and health insurance coverage. Conversely, concerns about vaccine side effects and lower perceived risk decrease predicted vaccination probability. The model captures complex interactions—for example, doctor recommendation may have stronger effects for individuals with moderate baseline concern.",
+                "domain_relevance": "This logic aligns with established vaccine hesitancy research, validating that the model has learned clinically meaningful patterns rather than spurious correlations."
+            },
+            "How does it weigh different features?": {
+                "answer": "Variable importance analysis reveals that opinion-related factors (perceived vaccine effectiveness, perceived H1N1 risk) and doctor recommendations are the most influential predictors. Health-related factors form the second tier of importance. Behavioural factors and demographic characteristics contribute but with lower individual impact. Protected characteristics like race and geographic region show measurable but smaller effects.",
+                "domain_relevance": "The prominence of modifiable factors (opinions, doctor recommendations) over fixed characteristics (demographics) suggests that targeted interventions can meaningfully influence outcomes—an encouraging finding for public health practice."
+            },
+            "What kind of rules does it follow?": {
+                "answer": "The Random Forest does not follow explicit if-then rules but rather learns probabilistic patterns. However, interpretable approximations suggest rules like: 'If doctor recommended H1N1 vaccine AND perceived effectiveness is high, vaccination probability increases substantially' or 'If concerned about vaccine side effects AND low perceived H1N1 risk, vaccination probability decreases.'",
+                "domain_relevance": "These implicit rules can guide clinical conversations. For instance, addressing vaccine safety concerns may be particularly important for patients who also perceive low personal risk from H1N1."
+            },
+            "What are the top rules/features that determine its predictions?": {
+                "answer": "The top five most influential features are: (1) Opinion on H1N1 vaccine effectiveness; (2) Doctor recommendation for H1N1 vaccine; (3) Perceived risk of H1N1 illness without vaccination; (4) Concern about getting sick from the vaccine; (5) Level of concern about H1N1. Together, these opinion and recommendation factors dominate prediction outcomes.",
+                "domain_relevance": "These findings reinforce evidence-based vaccination promotion strategies: physician recommendations are powerful, and addressing both efficacy perceptions and safety concerns is essential for improving uptake."
+            },
+            "What kind of algorithm is used?": {
+                "answer": "The system employs a Random Forest Classifier from the scikit-learn library. Random Forest is an ensemble learning method that constructs multiple decision trees during training and outputs the mode (classification) or mean prediction (regression) of individual trees. This approach reduces overfitting and improves generalisation compared to single decision trees.",
+                "domain_relevance": "Random Forest is well-suited for healthcare applications because it handles mixed data types, manages missing values gracefully, and provides interpretable feature importance measures—all valuable for clinical decision support."
+            },
+            "How were the parameters set?": {
+                "answer": "Model parameters were optimised through randomised search cross-validation, testing 50 parameter combinations across 5 folds. The optimal configuration uses: 500 trees, entropy splitting criterion, balanced class weights, minimum 5 samples for splits, minimum 2 samples per leaf, square root of features considered at each split, and bootstrap sampling. This achieved a cross-validated ROC-AUC of 0.831.",
+                "domain_relevance": "Rigorous hyperparameter tuning with cross-validation helps ensure the model generalises well to new patients rather than memorising training data patterns. The balanced class weights specifically address the imbalanced outcome distribution common in vaccination studies."
+            }
+        },
+        "Others": {
+            "How have updates affected the system?": {
+                "answer": "The current system represents the initial deployment version based on 2009 NHFS data. No subsequent updates have been applied. Future updates would require retraining on more recent survey data to capture evolving public attitudes toward vaccination, particularly given significant shifts in vaccine discourse since the COVID-19 pandemic.",
+                "domain_relevance": "Healthcare professionals should be aware that model predictions reflect historical patterns. Regular revalidation against current patient populations is recommended before relying on predictions for contemporary public health campaigns."
+            },
+            "Does the system learn specifically from my interaction?": {
+                "answer": "No, the system does not learn from individual user interactions or patient encounters. The model is static—trained once on historical data and deployed without online learning capabilities. Predictions are based solely on input features provided, not on feedback about prediction accuracy or intervention outcomes.",
+                "domain_relevance": "This design ensures consistency and auditability but means the system cannot adapt to local population characteristics or emerging trends without formal retraining by the development team."
+            },
+            "Why is the system using or not using a given algorithm/feature/rule/dataset?": {
+                "answer": "Random Forest was selected for its balance of predictive performance, interpretability, and robustness to missing data. Seasonal flu vaccine features were excluded to focus specifically on H1N1 uptake prediction. The NHFS dataset was chosen for its national representativeness and comprehensive feature coverage. Alternative algorithms (Logistic Regression, XGBoost) were evaluated but showed similar or slightly lower performance.",
+                "domain_relevance": "Transparent algorithm selection rationale builds trust in the system. Healthcare professionals can be confident that design choices were made deliberately based on performance evidence rather than arbitrary preferences."
+            },
+            "What are the results of other people using the system?": {
+                "answer": "The system was developed and validated in a research context using the DrivenData competition framework. Comparable approaches on this dataset have achieved ROC-AUC scores ranging from 0.80 to 0.86, placing this implementation in the upper performance range. Real-world deployment results in clinical or public health settings are not yet available.",
+                "domain_relevance": "Benchmark comparisons provide context for expected performance. Healthcare organisations considering deployment should plan pilot evaluations to assess performance in their specific patient populations and operational contexts."
+            }
+        },
+        "UI": {
+            "What are the affordances of the system?": {
+                "answer": "The system provides: (1) Batch prediction capability for processing multiple individuals simultaneously; (2) Individual prediction with probability scores; (3) Feature importance visualisations showing global model behaviour; (4) Individual breakdown plots explaining specific predictions; (5) What-if analysis tools for exploring counterfactual scenarios; (6) Partial dependence and accumulated local effects plots for understanding feature relationships.",
+                "domain_relevance": "These affordances support multiple use cases—from population-level campaign planning to individual patient counselling preparation. Healthcare professionals can engage with the system at their preferred level of detail."
+            },
+            "What does this UI element do?": {
+                "answer": "Key interface elements include: Probability Score Display—shows the predicted likelihood of vaccination as a percentage; Feature Contribution Chart—bar chart showing which factors pushed the prediction up or down; What-If Sliders—allow modification of input values to see how predictions change; Variable Importance Plot—ranks features by their overall influence on model predictions; Partial Dependence Curves—show how predictions change across the range of each feature.",
+                "domain_relevance": "Understanding interface elements enables efficient system use. The what-if functionality is particularly valuable for preparing patient conversations, allowing clinicians to explore how addressing specific concerns might influence vaccination likelihood."
+            }
+        }
+    }
+}

@@ -1,0 +1,125 @@
+{
+    "Global": {
+        "Data": {
+            "Questions": [
+                "What kind of data was the system trained on?",
+                "What is the source of the training data?",
+                "How were the labels/ground-truth produced?",
+                "What is the sample size of the training data?",
+                "What dataset(s) is the system NOT using?",
+                "What are the potential limitations/biases of the data?"
+                ]
+        },
+        "Output": {
+            "Questions": [
+                "What kind of output does the system give?",
+                "What does the system output mean?",
+                "What is the scope of the system's capability? Can it do...?",
+                "How is the output used for other system component(s)?",
+                "How should I best utilize the output of the system?",
+                "How should the output fit in my workflow?",
+                "What is the source of the information object(s)?",
+                "What is the scope of the output data?",
+                "What is the amount of the output data?",
+                "What logic is used for the initial output/recommendation?"
+                ]
+        },
+        "Performance": {
+            "Questions": [
+                "How accurate/precise/reliable are the predictions?",
+                "How often does the system make mistakes?",
+                "In what situations is the system likely to be correct/incorrect?",
+                "What are the limitations of the system?",
+                "What kind of mistakes is the system likely to make?"
+                ]
+        },
+        "How (global model-wide explanation)": {
+            "Questions": [
+                "How does the system make predictions?",
+                "What features does the system consider?",
+                "What is the system's overall logic?",
+                "How does it weigh different features?",
+                "What kind of rules does it follow?",
+                "What are the top rules/features that determine its predictions?",
+                "What kind of algorithm is used?",
+                "How were the parameters set?"
+                ]
+        },
+        "Others": {
+            "Questions": [
+                "How have updates aﬀected the system?",
+                "Does the system learn specifically from my interaction?",
+                "Why is the system using or not using a given algorithm/feature/rule/dataset?",
+                "What are the results of other people using the system?"
+                ]
+        },
+        "UI": {
+            "Questions": [
+                "What are the aﬀordances of the system?",
+                "What does this UI element do?" 
+                ]
+        }
+    },
+    "Local": {
+        "Data": {
+            "Questions": [
+            "What is the size, proportion, or distribution of the training data with given feature(s)/feature-value(s)?"
+            ]
+        },
+        "Performance": {
+            "Questions": [
+            "Is the system's performance good enough for…?"
+            ]
+        },
+        "How (global model-wide explanation)": {
+            "Questions": [
+            "Is [feature X] used or not used for the predictions?",
+            "How does [feature X] impact its predictions?",
+            "How does [parameter X] aﬀect the system?"
+            ]
+        },
+        "Why": {
+            "Questions": [
+            "Why/how is this instance given this prediction?",
+            "What feature(s) of this instance determine the system's prediction of it?",
+            "Why are [instance A and B] given the same prediction?"
+            ]
+        },
+        "Why not": {
+            "Questions": [
+            "Why is this instance NOT predicted to be [a different outcome Q]?",
+            "Why is this instance predicted [P instead of a different outcome Q]?",
+            "Why are [instance A and B] given different predictions?"
+            ]
+        },
+        "How to be that (a different prediction)": {
+            "Questions": [
+            "How should this instance change to get a different prediction Q?",
+            "What is the minimum change required for this instance to get a different prediction Q?",
+            "How should a given feature change for this instance to get a different prediction Q?",
+            "What kind of instance is predicted of [a different outcome Q]?"
+            ]
+        },
+        "How to still be this (the current prediction)": {
+            "Questions": [
+            "What is the scope of change permitted for this instance to still get the same prediction?",
+            "What is the range of value permitted for a given feature for this prediction to stay the same?",
+            "What is the necessary feature(s)/feature-value(s) present or absent to guarantee this prediction?",
+            "What kind of instance gets the same prediction?"
+            ]
+        },
+        "What If": {
+            "Questions": [
+            "What would the system predict if this instance changes to…?",
+            "What would the system predict if a given feature changes to…?",
+            "What would the system predict for [a different instance]?",
+            "What would the system predict if the parameter changes from P to Q?"
+            ]
+        },
+        "Others": {
+            "Questions": [
+            "What does [a machine learning terminology] mean?"
+            ]
+        }
+    }
+}

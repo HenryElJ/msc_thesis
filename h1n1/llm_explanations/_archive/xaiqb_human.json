@@ -1,0 +1,201 @@
+{
+    "Data": {
+        "question_answer": {
+            "What kind of data was the system trained on?": 
+            {
+                "answer": "The data comes from two csv files. One file contains the features, the other file contains their labels.",
+                "domain_relevance": ""
+            },
+            "What is the source of the training data?": 
+            {
+                "answer": "Data comes from the National 2009 H1N1 Flu Survey (NHFS).",
+                "domain_relevance": ""
+            },
+            "How were the labels/ground-truth produced?": 
+            {
+                "answer": "Respondants were asked if they had recieved the H1N1 vaccination or not. This is a binary 0/1 feature indicating no/yes respectively.",
+                "domain_relevance": ""
+            },
+            "What is the sample size of the training data?": 
+            {
+                "answer": "There are 26,707 observations with 37 features.",
+                "domain_relevance": ""
+            },
+            "What dataset(s) is the system NOT using?": 
+            {
+                "answer": "Only the data provided by the two csv files are being used by the AI system.",
+                "domain_relevance": ""
+            },
+            "What are the potential limitations/biases of the data?": 
+            {
+                "answer": "The data has limited transferability, as all respondants were persons 6 months or older living in the United States at the time of the interview. The interviews were conducted over telephone, so this also limits the representation of the overall population.",
+                "domain_relevance": ""
+            }
+        }
+    },
+    "Output": {
+        "question_answer": {
+            "What kind of output does the system give?": 
+            {
+                "answer": "The output is an array of predicted probabilities. Additionally, tabular and graphical data are produced.",
+                "domain_relevance": ""
+            },
+            "What does the system output mean?": 
+            {
+                "answer": "The system output represents a predicted probability on the interval [0, 1]. This is a predicted probability that an obervation recieved the vaccination. Tabular and graphical data provide explanations about global and local model/AI system behaviour.",
+                "domain_relevance": ""
+            },
+            "What is the scope of the system's capability? Can it do...?": 
+            {
+                "answer": "The system can generate predicted probabilities for new observations, and provide detailed explanation metrics for global and local model behaviour.",
+                "domain_relevance": ""
+            },
+            "How is the output used for other system component(s)?": 
+            {
+                "answer": "The predictions and the actual labels for observations are used to compute a confusion matrix and evaluation metrics such as accuracy and AUC. The model objects and test data are used to generate explanation objects for global and local model/AI system behaviour.",
+                "domain_relevance": ""
+            },
+            "How should I best utilize the output of the system?": 
+            {
+                "answer": "AI-assisted decision to assess the likelihood a person gets the H1N1 vaccine, and how different features contribute to this decision which then create.",
+                "domain_relevance": ""
+            },
+            "How should the output fit in my workflow?": 
+            {
+                "answer": "Identify important features when evaluating what makes someone likely/unlikely to get vaccinated.",
+                "domain_relevance": ""
+            },
+            "What is the source of the information object(s)?": 
+            {
+                "answer": "Taken from a split of the overall data. Also allows for manual input of certain features to create new data points.",
+                "domain_relevance": ""
+            },
+            "What is the scope of the output data?": 
+            {
+                "answer": "The scope is related to all the features initially provided in the data.",
+                "domain_relevance": ""
+            },
+            "What is the amount of the output data?": 
+            {
+                "answer": "The output of the AI system is one row per obvervation.",
+                "domain_relevance": ""
+            },
+            "What logic is used for the initial output/recommendation?": 
+            {
+                "answer": "The logic used is the probability, which can be binarised into a 0/1 recommendation based on a desired threshold (i.e. > 0.5).",
+                "domain_relevance": ""
+            }
+        }
+    },
+    "Performance": {
+        "question_answer": {
+            "How accurate/precise/reliable are the predictions?": 
+            {
+                "answer": "Accuracy: 0.83. Sensitivity/Recall: 0.91. Specificity: 0.54. Precision: 0.88. Negative Predicted Value: 0.62. AUC: 0.83",
+                "domain_relevance": ""
+            },
+            "How often does the system make mistakes?": 
+            {
+                "answer": "With an accuracy of 0.83 (i.e. 83% of observations were correctly classified), the system makes mistakes 17% of the time.",
+                "domain_relevance": ""
+            },
+            "In what situations is the system likely to be correct/incorrect?": 
+            {
+                "answer": "With a sensitivity of 0.91 and a specificity of 0.54, the majority of obervations will be correctly identified. However due to the dataset being imbalanced towards the negative class (i.e. 0, no vaccine), the model overpredictes an observation will not get the vaccine.",
+                "domain_relevance": ""
+            },
+            "What are the limitations of the system?": 
+            {
+                "answer": "AI system is limited only to the training data provided. No feature selection or engineering has been performed.",
+                "domain_relevance": ""
+            },
+            "What kind of mistakes is the system likely to make?": 
+            {
+                "answer": "The system will incorrectly identify if a person gets the vaccine or not (i.e. False Positive or False Negative).",
+                "domain_relevance": ""
+            }
+        }
+    },
+    "How (global model-wide explanation)": {
+        "question_answer": {
+            "How does the system make predictions?": 
+            {
+                "answer": "A RandomForestClassifier() generates the predictions.",
+                "domain_relevance": ""
+            },
+            "What features does the system consider?": 
+            {
+                "answer": "The system considers a range of features which can be categorised into protected (e.g. sex, age), behavioural (e.g. social distancing, mask wearing), opinion (h1n1 concern, doctor reccomendation), health (e.g. chronic medial conditions, health insurance) and demographic (e.g. geographical region, employment industry) characteristics.",
+                "domain_relevance": ""
+            },
+            "What is the system's overall logic?": 
+            {
+                "answer": "To generate predictions and explain them on a global and local level. Allowing the user to generate new predictions.",
+                "domain_relevance": ""
+            },
+            "How does it weigh different features?": 
+            {
+                "answer": "Feature weights are not assigned when using a RandomForestClassifier(). Instead, Gini (impurity) is used to measure the quality of a split in a decision tree, which is how 'mixed' the classes are in a node. Lower impurity means the node is more pure (mostly one class). For a binary classifier, this impurity is measured from [0, 0.5].",
+                "domain_relevance": ""
+            },
+            "What kind of rules does it follow?": 
+            {
+                "answer": "The modelling is performed using a pipeline. First, columns are transformed to handle missing values in the data. Missing numerical features are imputed with the most frequent observation (i.e. mode). Missing categorical categorical features are replaced with the value 'missing.' Categorical variables are then one-hot encoded. This pre-processed data is then used to train a RandomForestClassifier() model.",
+                "domain_relevance": ""
+            },
+            "What are the top rules/features that determine its predictions?": 
+            {
+                "answer": "Top features are if the doctor reccomends the H1N1 vaccine, if they believe the vaccine is effective, and how much of a risk they believe H1N1 is.",
+                "domain_relevance": ""
+            },
+            "What kind of algorithm is used?": 
+            {
+                "answer": "The algorithm is a RandomForestClassifier() model, with a random state assigned for reproduceability.",
+                "domain_relevance": ""
+            },
+            "How were the parameters set?": 
+            {
+                "answer": "Hyperparameter tuning was performed using a RandomizedSearchCV() with a range of values provided for n_estimators, max_depth, min_samples_split, min_samples_leaf, max_features, bootstrap, criterion, and class_weight",
+                "domain_relevance": ""
+            }
+        }
+    },
+    "Others": {
+        "question_answer": {
+            "How have updates affected the system?": 
+            {
+                "answer": "Updates are provided in the form of manual input by the user, changing certain characterisitcs to acquire a new probability and explanation metrics.",
+                "domain_relevance": ""
+            },
+            "Does the system learn specifically from my interaction?": 
+            {
+                "answer": "No. Once the model has been trained this is then used for all successive predictions.",
+                "domain_relevance": ""
+            },
+            "Why is the system using or not using a given algorithm/feature/rule/dataset?": 
+            {
+                "answer": "Different algorithms were tested, and the RandomForest was selected. All features were used. Imputations...",
+                "domain_relevance": ""
+            },
+            "What are the results of other people using the system?": 
+            {
+                "answer": "The AI system is fixed. Other people can use this system to generate custom predictions for obervations of interest to them.",
+                "domain_relevance": ""
+            }
+        }
+    },
+    "UI": {
+        "question_answer": {
+            "What are the affordances of the system?": 
+            {
+                "answer": "The AI system allows users to input values of certain characteristics to assess what the likelihood is that the observation is vaccinated or not.",
+                "domain_relevance": ""
+            },
+            "What does this UI element do?": 
+            {
+                "answer": "The sliders and drop-down boxes allow the user to select and change feature values. This generates a new prediction for this obervation and produces local explinability metrics.",
+                "domain_relevance": ""
+            }
+        }
+    }
+}

@@ -1,0 +1,160 @@
+{
+  "questions": {
+    "Data": {
+      "What kind of data was the system trained on?": {
+        "question_interpretation": "What type of information does the AI use to learn?",
+        "answer": "The system was trained on data from the National 2009 H1N1 Flu Survey (NHFS), which includes information about 26,707 respondents. This data covers social, economic, and demographic factors, as well as behavioural opinions and health data such as chronic medical conditions and health worker status."
+      },
+      "What is the source of the training data?": {
+        "question_interpretation": "Where does the data come from originally?",
+        "answer": "The data originates from the National 2009 H1N1 Flu Survey (NHFS), sponsored by the National Center for Immunization and Respiratory Diseases (NCIRD) and conducted by the CDC. It was accessed via DrivenData's 'Flu Shot Learning' competition."
+      },
+      "How were the labels/ground-truth produced?": {
+        "question_interpretation": "How do we know if the patients actually got the vaccine in the training data?",
+        "answer": "The ground truth labels were determined by whether the survey respondents self-reported receiving the H1N1 flu vaccine. This is a binary outcome where 'Yes' indicates vaccination and 'No' indicates no vaccination."
+      },
+      "What is the sample size of the training data?": {
+        "question_interpretation": "How many patient records were used to train the system?",
+        "answer": "The training dataset consists of 26,707 individual observations (survey respondents)."
+      },
+      "What dataset(s) is the system NOT using?": {
+        "question_interpretation": "Was any available data intentionally excluded?",
+        "answer": "The system intentionally excludes the 'seasonal flu vaccine' target variable and related features to avoid 'feature leakage,' ensuring the model predicts H1N1 uptake based on independent factors rather than correlation with other vaccines. It also drops the unique `respondent_id` as it has no predictive value."
+      },
+      "What are the potential limitations/biases of the data?": {
+        "question_interpretation": "Are there any known issues with the data that might affect safety or fairness?",
+        "answer": "The data is from a telephone survey conducted in 2009-2010, meaning it may not fully reflect current population demographics or behaviours. Additionally, as a self-reported survey, it relies on the honesty and memory of respondents, which can introduce recall bias."
+      }
+    },
+    "Output": {
+      "What kind of output does the system give?": {
+        "question_interpretation": "What does the result look like?",
+        "answer": "The system outputs a probability score (between 0 and 1) indicating the likelihood of a patient receiving the H1N1 vaccine. This probability is also converted into a binary classification (Vaccinated/Not Vaccinated) based on a threshold (default is 0.5)."
+      },
+      "What does the system output mean?": {
+        "question_interpretation": "How should I interpret the prediction?",
+        "answer": "A higher probability score means the model estimates the patient is more likely to accept the H1N1 vaccine based on their profile. If the score exceeds the set threshold (e.g., 0.5), the system predicts the patient 'Did' or 'Will' get the vaccine."
+      },
+      "What is the scope of the system's capability? Can it do...?": {
+        "question_interpretation": "What specific task is this AI designed to perform?",
+        "answer": "The system is capable of predicting the likelihood of H1N1 vaccine uptake for individuals based on their demographic and behavioural inputs. It is not designed to predict seasonal flu uptake or other health outcomes."
+      },
+      "How is the output used for other system component(s)?": {
+        "question_interpretation": "Does this output feed into other software tools?",
+        "answer": "The model's probability outputs are fed into a 'What-If?' dashboard. This dashboard allows users to manipulate input variables and see visualisations (like waterfall plots) of how those changes impact the vaccination probability."
+      },
+      "How should I best utilize the output of the system?": {
+        "question_interpretation": "How can this help in a clinical or public health setting?",
+        "answer": "Healthcare professionals can use this output to identify patients who are hesitant or unlikely to get vaccinated. By understanding the specific drivers (e.g., lack of doctor recommendation), targeted interventions or counselling can be applied."
+      },
+      "How should the output fit in my workflow?": {
+        "question_interpretation": "When should I use this tool?",
+        "answer": "This tool fits best during patient triage or public health planning. It can screen patient lists to prioritise outreach resources towards those with lower predicted uptake who might benefit from a doctor's recommendation."
+      },
+      "What is the source of the information object(s)?": {
+        "question_interpretation": "Where does the prediction come from?",
+        "answer": "The prediction comes from a hyperparameter-tuned XGBoost machine learning model trained on the NHFS dataset."
+      },
+      "What is the scope of the output data?": {
+        "question_interpretation": "Does the output apply to groups or individuals?",
+        "answer": "The output applies to individual patients or survey respondents, providing a personalised likelihood of vaccination."
+      },
+      "What is the amount of the output data?": {
+        "question_interpretation": "How much data do I get per patient?",
+        "answer": "For each patient, the system provides a single probability value and a corresponding binary label (0 or 1)."
+      },
+      "What logic is used for the initial output/recommendation?": {
+        "question_interpretation": "How does the model decide on the output?",
+        "answer": "The logic is derived from an ensemble of decision trees (XGBoost) that weighs features like doctor recommendations and personal opinions to calculate a final probability score."
+      }
+    },
+    "Performance": {
+      "How accurate/precise/reliable are the predictions?": {
+        "question_interpretation": "How well does the system perform statistically?",
+        "answer": "The system has an overall accuracy of 84%. However, it is more reliable at predicting who will *not* get vaccinated (Precision 0.87) than who *will* (Precision 0.68)."
+      },
+      "How often does the system make mistakes?": {
+        "question_interpretation": "What is the error rate?",
+        "answer": "The system makes incorrect predictions in approximately 16% of cases. It is more prone to missing actual vaccination cases (Recall 0.46) than falsely predicting vaccination."
+      },
+      "In what situations is the system likely to be correct/incorrect?": {
+        "question_interpretation": "Where does the model struggle?",
+        "answer": "The system is highly likely to be correct when predicting that someone will *not* get the vaccine (high specificity). It is more likely to be incorrect (false negatives) when predicting that someone *did* get the vaccine, missing about half of the actual vaccinated cases."
+      },
+      "What are the limitations of the system?": {
+        "question_interpretation": "What are the known weaknesses?",
+        "answer": "A major limitation is the low recall (46%) for the vaccinated class, meaning the system fails to identify a significant portion of people who actually accept the vaccine. It relies heavily on just a few features like doctor recommendations."
+      },
+      "What kind of mistakes is the system likely to make?": {
+        "question_interpretation": "Does it tend to over-predict or under-predict vaccination?",
+        "answer": "The system is likely to make false negative errors, meaning it often predicts a patient will not get the vaccine when they actually would."
+      }
+    },
+    "How (global model-wide explanation)": {
+      "How does the system make predictions?": {
+        "question_interpretation": "What mechanism generates the result?",
+        "answer": "The system uses an XGBoost Classifier, which is a machine learning algorithm that builds many decision trees to vote on the final classification."
+      },
+      "What features does the system consider?": {
+        "question_interpretation": "What patient information is used?",
+        "answer": "It considers 30+ features including behavioral factors (e.g., mask usage, hand washing), opinions (e.g., vaccine effectiveness, risk concern), and demographics (e.g., age, race, sex, employment)."
+      },
+      "What is the system's overall logic?": {
+        "question_interpretation": "How does it combine these features?",
+        "answer": "The system weighs different patient responses to calculate a risk score. It prioritises strong indicators like professional medical advice and personal risk perception over demographic factors."
+      },
+      "How does it weigh different features?": {
+        "question_interpretation": "Which information is most important?",
+        "answer": "The three most significant features influencing the model are: whether a doctor recommended the H1N1 vaccine, the patient's opinion on H1N1 risk, and their opinion on the vaccine's effectiveness."
+      },
+      "What kind of rules does it follow?": {
+        "question_interpretation": "Can we summarise the decision making in simple rules?",
+        "answer": "While complex, the underlying rules generally follow: If a doctor recommends the vaccine AND the patient perceives high risk/effectiveness, the probability of uptake increases significantly."
+      },
+      "What are the top rules/features that determine its predictions?": {
+        "question_interpretation": "What are the biggest drivers of the prediction?",
+        "answer": "The top drivers are `doctor_recc_h1n1` (Doctor recommendation), `opinion_h1n1_risk` (Perceived risk), and `opinion_h1n1_vacc_effective` (Perceived effectiveness)."
+      },
+      "What kind of algorithm is used?": {
+        "question_interpretation": "What is the technical name of the AI model?",
+        "answer": "The algorithm used is the XGBoost Classifier (Extreme Gradient Boosting)."
+      },
+      "How were the parameters set?": {
+        "question_interpretation": "How was the model tuned?",
+        "answer": "The model parameters were set using a technique called RandomizedSearchCV, which tests various combinations of settings to find the best performance."
+      }
+    },
+    "Others": {
+      "How have updates affected the system?": {
+        "question_interpretation": "Has the system changed over time?",
+        "answer": "Information regarding updates or version history is not present in the provided files. The system appears to be a static trained model saved as a pickle file."
+      },
+      "Does the system learn specifically from my interaction?": {
+        "question_interpretation": "Does it adapt to individual users?",
+        "answer": "No, the system does not learn from real-time interactions. It uses a pre-trained model loaded from a file (`modelling_output.pickle`)."
+      },
+      "Why is the system using or not using a given algorithm/feature/rule/dataset?": {
+        "question_interpretation": "Why were specific choices made?",
+        "answer": "The system uses H1N1-specific data and excludes seasonal flu targets to ensure the model focuses purely on the H1N1 pandemic response without data leakage. XGBoost was likely chosen for its robustness in classification tasks."
+      },
+      "What are the results of other people using the system?": {
+        "question_interpretation": "Is there evidence of external validation?",
+        "answer": "The provided files do not contain information about external users or real-world clinical deployment results."
+      },
+      "Who is responsible for this system? Who are the authors?": {
+        "question_interpretation": "Who built this AI?",
+        "answer": "The system was developed by Henry El-Jawhari at the Freie Universität (FU) Berlin and Robert Koch Institute (RKI)."
+      }
+    },
+    "UI": {
+      "What are the affordances of the system?": {
+        "question_interpretation": "What controls does the user have?",
+        "answer": "The dashboard provides interactive widgets including toggle buttons for key features (Doctor recommendation, Opinions, Demographics) and a slider to adjust the prediction threshold."
+      },
+      "What does this UI element do?": {
+        "question_interpretation": "How do the widgets affect the output?",
+        "answer": "The UI elements allow the user to define a hypothetical patient profile. When the 'Run What-If? Dashboard' button is clicked, the system calculates a new prediction probability and visualizes the contribution of each feature via a waterfall plot."
+      }
+    }
+  }
+}

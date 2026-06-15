@@ -1,0 +1,63 @@
+{
+    "Global": {
+        "Data": {
+            "question_answer": {
+                "What kind of data was the system trained on?": "",
+                "What is the source of the training data?": "",
+                "How were the labels/ground-truth produced?": "",
+                "What is the sample size of the training data?": "",
+                "What dataset(s) is the system NOT using?": "",
+                "What are the potential limitations/biases of the data?": ""
+            }
+        },
+        "Output": {
+            "question_answer": {
+                "What kind of output does the system give?": "",
+                "What does the system output mean?": "",
+                "What is the scope of the system's capability? Can it do...?": "",
+                "How is the output used for other system component(s)?": "",
+                "How should I best utilize the output of the system?": "",
+                "How should the output fit in my workflow?": "",
+                "What is the source of the information object(s)?": "",
+                "What is the scope of the output data?": "",
+                "What is the amount of the output data?": "",
+                "What logic is used for the initial output/recommendation?": ""
+                }
+        },
+        "Performance": {
+            "question_answer": {
+                "How accurate/precise/reliable are the predictions?": "",
+                "How often does the system make mistakes?": "",
+                "In what situations is the system likely to be correct/incorrect?": "",
+                "What are the limitations of the system?": "",
+                "What kind of mistakes is the system likely to make?": ""
+            }
+        },
+        "How (global model-wide explanation)": {
+            "question_answer": {
+                "How does the system make predictions?": "",
+                "What features does the system consider?": "",
+                "What is the system's overall logic?": "",
+                "How does it weigh different features?": "",
+                "What kind of rules does it follow?": "",
+                "What are the top rules/features that determine its predictions?": "",
+                "What kind of algorithm is used?": "",
+                "How were the parameters set?": ""
+            }
+        },
+        "Others": {
+            "question_answer": {
+                "How have updates aﬀected the system?": "",
+                "Does the system learn specifically from my interaction?": "",
+                "Why is the system using or not using a given algorithm/feature/rule/dataset?": "",
+                "What are the results of other people using the system?": ""
+            }
+        },
+        "UI": {
+            "question_answer": {
+                "What are the aﬀordances of the system?": "",
+                "What does this UI element do?": ""
+            }
+        }
+    }
+}

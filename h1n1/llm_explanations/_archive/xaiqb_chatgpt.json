@@ -1,0 +1,63 @@
+{
+    "Global": {
+      "Data": {
+        "question_answer": {
+          "What kind of data was the system trained on?": "Survey data on H1N1 and seasonal flu vaccine uptake collected from U.S. respondents, containing behavioral actions (e.g., mask use, hand washing), health-related variables (e.g., chronic conditions, health insurance, healthcare worker status), opinions about vaccine effectiveness and risk, and demographic/protected attributes (e.g., age group, sex, race, income, marital status, geography). The target outcome is whether the respondent received the H1N1 vaccine (binary).",
+          "What is the source of the training data?": "DrivenData's “Flu Shot Learning: Predict H1N1 and Seasonal Flu Vaccines” competition dataset (publicly available).",
+          "How were the labels/ground-truth produced?": "Self-reported survey responses indicating whether each respondent received the H1N1 vaccine (0 = No, 1 = Yes).",
+          "What is the sample size of the training data?": "After joining features and labels, the working dataset contains 26,707 rows and 37 columns. For modeling focused on H1N1 (excluding seasonal features), the predictors dataset has 32 columns; the train/test split uses 80/20, with the test set size of 5,342 instances.",
+          "What dataset(s) is the system NOT using?": "Seasonal flu outcome and opinion variables were excluded for the H1N1-focused modeling. External clinical datasets (e.g., EHRs, lab results, imaging) are not used.",
+          "What are the potential limitations/biases of the data?": "Self-report bias and recall error in survey responses. Missingness in key variables (e.g., health_insurance has substantial missing values). Class imbalance (fewer positive H1N1 vaccinations vs negatives). Socio-demographic confounding: protected attributes (age, race, sex, income) may correlate with uptake and risk introducing fairness concerns. Non-clinical nature: survey data may not reflect clinical contraindications or vaccine eligibility nuance."
+        }
+      },
+      "Output": {
+        "question_answer": {
+          "What kind of output does the system give?": "A predicted probability (0–1) that an individual received or would receive the H1N1 vaccine, and a binary classification (vaccinated vs not) using a threshold (default 0.5).",
+          "What does the system output mean?": "The probability estimates how likely the respondent’s profile aligns with vaccine uptake patterns learned from the dataset. Binary output converts that probability into a yes/no classification.",
+          "What is the scope of the system's capability? Can it do...?": "It predicts H1N1 vaccine uptake from survey features. It does not: diagnose disease, recommend vaccines clinically, assess individual medical eligibility, or forecast vaccine effectiveness.",
+          "How is the output used for other system component(s)?": "Outputs feed explanation modules: model performance (ROC curve, metrics), global feature importance (permutation/dropout loss), grouped-variable importance, and model profiles (partial dependence/accumulated local effects) for interpretability.",
+          "How should I best utilize the output of the system?": "Use probabilities to prioritize outreach or hypothesis generation (e.g., identify groups with lower predicted uptake). Treat classifications as screening signals, not clinical directives. Combine with clinical judgment, local policies, and equity considerations.",
+          "How should the output fit in my workflow?": "Population-level planning: segment and target communications. Quality improvement: explore drivers of uptake (e.g., doctor recommendation, risk perception). Research: support observational analyses, then confirm with prospective or clinical data. Do not use as sole basis for patient-specific clinical decisions.",
+          "What is the source of the information object(s)?": "Information objects (features and labels) originate from the DrivenData survey dataset; engineered groupings (behavioral/health/opinion/protected/demographic) are derived from those variables.",
+          "What is the scope of the output data?": "Outputs cover the test set (5,342 instances) and can be produced for any subset shaped like the original feature matrix after preprocessing (imputation + one-hot encoding).",
+          "What is the amount of the output data?": "For the evaluation, predictions are generated for 5,342 test instances across multiple models, with probability and binary outputs per instance.",
+          "What logic is used for the initial output/recommendation?": "A hyperparameter-tuned Random Forest classifier trained on imputed and one-hot encoded features. Feature importance is assessed via permutation (dropout loss), and grouped-dropout analyses summarize domains (opinion, health, etc.)."
+        }
+      },
+      "Performance": {
+        "question_answer": {
+          "How accurate/precise/reliable are the predictions?": "On the held-out test set, the tuned Random Forest achieves accuracy ≈ 0.83, AUC ≈ 0.83, precision (positive class) ≈ 0.62, recall ≈ 0.54, and F1 ≈ 0.57.",
+          "How often does the system make mistakes?": "Confusion Matrix on the test set: TN = 3,835, FP = 377, FN = 523, TP = 607. Misclassifications occur as both false positives and false negatives, with more false negatives than false positives for the positive class.",
+          "In what situations is the system likely to be correct/incorrect?": "Correctness improves when high-importance features (e.g., physician recommendation, strong belief in vaccine effectiveness, higher risk perception) align with uptake. Errors increase when these signals are absent, ambiguous, or missing, and in borderline probability cases near the threshold.",
+          "What are the limitations of the system?": "Generalizes from survey data, not clinical records. Sensitive to missingness and class imbalance. Limited causal interpretability; associations may reflect confounding. The 0.5 threshold may not optimize your operational objective (e.g., recall vs precision trade-offs).",
+          "What kind of mistakes is the system likely to make?": "False negatives: people predicted as not vaccinated who actually are (when key signals like doctor recommendation are missing). False positives: predicted vaccinated due to strong opinion/behavior signals that do not translate into uptake (e.g., high concern without access)."
+        }
+      },
+      "How (global model-wide explanation)": {
+        "question_answer": {
+          "How does the system make predictions?": "It uses a Random Forest classifier trained on preprocessed variables (numeric imputed by mode; categorical imputed with “missing” and one-hot encoded). The forest aggregates many decision trees; each tree votes, and the average vote gives the probability.",
+          "What features does the system consider?": "Behavioral (antiviral meds, avoidance, mask, hand-washing, gatherings, outside home, touch face), health (H1N1 concern/knowledge, doctor recommendation, chronic condition, child under 6 months, health worker, health insurance), opinions (effectiveness, risk, sick-from-vacc), protected (age, education, race, sex, income, marital status), demographics (housing tenure, employment status, HHS region, Census MSA, household counts, employment industry/occupation).",
+          "What is the system's overall logic?": "Learned patterns map combinations of behaviors, health signals, and beliefs to uptake probabilities. Features like physician recommendation and perceived risk/effectiveness exert the largest influence on predictions.",
+          "How does it weigh different features?": "Permutation-based dropout loss ranks features: doctor recommendation, H1N1 risk opinion, and H1N1 vaccine effectiveness opinion are top drivers. Group importance shows opinion and health domains contribute the largest loss increases when permuted.",
+          "What kind of rules does it follow?": "Tree-based splits on encoded features (e.g., ‘doctor recommended’ = Yes leads to higher predicted uptake; higher risk/effectiveness opinions shift probabilities upward).",
+          "What are the top rules/features that determine its predictions?": "Doctor recommendation (Yes vs No). Opinion: risk of getting H1N1 without vaccine. Opinion: H1N1 vaccine effectiveness. Secondary contributors include employment industry/occupation, health worker status, age group, and H1N1 concern.",
+          "What kind of algorithm is used?": "Random Forest classifier (with hyperparameters tuned via RandomizedSearchCV; other baselines include Logistic Regression and XGBoost).",
+          "How were the parameters set?": "RandomizedSearchCV over n_estimators, max_depth, min_samples_split, min_samples_leaf, max_features, bootstrap, criterion, and class_weight. Best configuration included 500 trees, min_samples_split=5, min_samples_leaf=2, max_features='sqrt', bootstrap=True, criterion='entropy', and class_weight='balanced'."
+        }
+      },
+      "Others": {
+        "question_answer": {
+          "How have updates aﬀected the system?": "Hyperparameter tuning improved AUC relative to the baseline Random Forest. Grouped-variable analysis and model profiling were added for interpretability.",
+          "Does the system learn specifically from my interaction?": "No. It is trained offline on the provided dataset. It does not adapt in real time to individual clinician usage without retraining.",
+          "Why is the system using or not using a given algorithm/feature/rule/dataset?": "Random Forest was selected for strong performance and interpretability via permutation importance and profiles; seasonal flu-related variables were excluded to focus the task on H1N1 uptake; protected and demographic variables are retained for analysis but warrant fairness review.",
+          "What are the results of other people using the system?": "Baseline performance comparisons show similar accuracy across models (Logistic Regression ≈ 0.838, Random Forest ≈ 0.834, XGBoost ≈ 0.830), with the tuned Random Forest achieving AUC ≈ 0.831 on cross-validation and accuracy ≈ 0.83 on the held-out test set."
+        }
+      },
+      "UI": {
+        "question_answer": {
+          "What are the aﬀordances of the system?": "View model performance (classification report, confusion matrix, ROC curve). Inspect global feature importance (dropout loss), including grouped-domain importance. Explore model profiles (partial dependence, accumulated local effects) for top numeric variables. Review predictions per instance for each model.",
+          "What does this UI element do?": "“Model performance”: displays metrics and ROC curve for the selected model. “Variable importance”: ranks features by dropout loss and shows grouped-domain impacts. “Profiles (PDP/ALE)”: visualizes how varying a feature affects predicted probability. “Predictions table”: lists actual outcomes, predicted probabilities, and binary classifications."
+        }
+      }
+    }
+  }

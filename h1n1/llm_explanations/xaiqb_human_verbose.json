@@ -1,0 +1,268 @@
+{
+    "questions": {
+        "Data": {
+                "What kind of data was the system trained on?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What type(s) of data is being used by the system? Text, images, audio, video, and sensor readings?",
+                    "include_terms": "['Survey data']",
+                    "answer": "The data the system was trained on is tabular survey data provided in two csv files. One file contains the features including protected (e.g. sex, age, education, employment), behavioural (e.g. social distancing, mask wearing, hand washing), opinion (H1N1 concern, doctor vaccine recommendation), health (e.g. chronic medial conditions, health insurance) and sociodemographic (e.g. geographical region, employment industry) characteristics. The other file contains their labels/ground-truth which indicate if a respondent received the H1N1 vaccination or not (Yes = 1, No = 0)."
+                },
+                "What is the source of the training data?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "Where does the training data come from? What is the origin?",
+                    "include_terms": "['DrivenData', 'Flu Shot Learning: Predict H1N1 and Seasonal Flu Vaccines', 'US National 2009 H1N1 Flu Survey (NHFS)']",
+                    "answer": "Data is sourced from DrivenData's 'Flu Shot Learning: Predict H1N1 and Seasonal Flu Vaccines' competition and originates from the US National 2009 H1N1 Flu Survey (NHFS). This survey was conducted between October 2009 and June 2010 as a one-time telephone survey of households to monitor vaccinations during the 2009-2010 flu season in response to the 2009 H1N1 pandemic."
+                },
+                "How were the labels/ground-truth produced?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "Where have the target variables come from? How were they created?",
+                    "include_terms": "['Telephone survey', 'Self reported']",
+                    "answer": "As part of the US National 2009 H1N1 Flu Survey (NHFS) a telephone survey was conducted. Respondents self reported if they had received the H1N1 vaccination. This is a binary feature indicating if they received the H1N1 vaccination or not (Yes = 1, No = 0)."
+                },
+                "What is the sample size of the training data?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "How much data is being used to train the system?",
+                    "include_terms": "['21,365', '37']",
+                    "answer": "There are a total of 26,707 observations with 37 features. This was split into training and testing data using an 80:20 split. Training data is 21,365 rows, testing data is 5,342 rows."
+                },
+                "What dataset(s) is the system NOT using?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What data is the system limited to using?",
+                    "include_terms": "['Public heath datasets', 'Clinical data', 'Electronic health and medical records']",
+                    "answer": "The system is not using any additional data such as public health datasets, clinical data, or electronic health and/or medical records. Only the survey data provided by the US National 2009 H1N1 Flu Survey (NHFS) is being used by the system."
+                },
+                "What are the potential limitations/biases of the data?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What considerations need to be made when using this data, which may (negatively) effect system performance?",
+                    "include_terms": "['Telephone survey', 'Self reporting', 'Limited transferability', 'Sociodemographics', 'Under represented']",
+                    "answer": "The interviews were conducted as a telephone survey for people aged 6 months or older living in the United States. This limits the sociodemographic representation of the overall (global) population and the attitudes towards the H1N1 vaccination. This means the data has limited transferability, and cannot be used to effectively model other countries and/or demographics, which may be under represented in the data. These respondents were self reporting on their vaccination status of the H1N1 vaccine, so there may be inaccuracies."
+                }
+        },
+        "Output": {
+                "What kind of output does the system give?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What type(s) of data is being produced by the system? Text, images, audio, video, and sensor readings?",
+                    "include_terms": "['Probabilities', 'Predictions', 'Data analysis', 'Tables', 'Plots', 'Explanations', 'Interactive What-If? dashboard']",
+                    "answer": "The system generates many outputs in tabular and graphical form. The main output is a numerical array of predicted probabilities on the interval [0, 1]. Exploratory data analysis, model performance, and explanations are presented in tables and plots. The system also outputs an interactive What-If? dashboard."
+                },
+                "What does the system output mean?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "How can the system output be interpreted?",
+                    "include_terms": "['Probability, likelihood, confidence', 'Data analysis', 'Model performance', 'Global and local model behaviour', 'Feature importance', 'Explanations']",
+                    "answer": "The main system output represents a predicted probability on the interval [0, 1]. This is the likelihood, or confidence, that an observation receives the H1N1 vaccination. A higher probability indicates the model has a higher confidence that the observation will receive the H1N1 vaccination. Plots describe the data, visualising the distribution of the target variable (i.e. is the respondent receives the H1N1 vaccine). Tabular data (classification report, confusion matrix) explains model performance. Graphical plots (AUC-ROC, feature importance, partial dependence, accumulated local effect) provide detailed explanations about global and local model behaviour, such as the features that influence predictions, and how they influence these predictions. The interactive What-If? dashboard allows new predictions to be generated, with graphical plots (breakdown, Shapley values, ceteris paribus) explaining how this prediction was calculated."
+                },
+                "What is the scope of the system's capability? Can it do...?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What is the extent of the systems abilities? What can the system do? What can the system not do?",
+                    "include_terms": "['New', 'Prediction', 'Explanations', 'Dashboard']",
+                    "answer": "The system acts as a prediction tool and explanation interface for H1N1 vaccination uptake. The system's What-If? dashboard allows the user to create new observations by changing a selection of the most important numerical and categorical features, generating a prediction for this observation. Explanations are provided which show the feature contributions to this prediction (breakdown, Shapley values, partial dependence, accumulated local effects, ceteris paribus plots)."
+                },
+                "How is the output used for other system component(s)?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "Does the output from the system feed into other parts of the system?",
+                    "include_terms": "['Predictions', 'Model performance', 'Explanations']",
+                    "answer": "The labels/ground-truth and predictions are used to evaluate model performance using metrics such as recall, precision, F1, accuracy, and AUC scores. They also produce a confusion matrix and classification report, which shows how accurately the model predicts the actual vaccination status of an observation. An explanation object is created in DALEX using the model and data it was trained/tested on. This produces explanations on a global and local level, and determines which features are used for the What-If? dahboard."
+                },
+                "How should I best utilize the output of the system?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "How can the output be used practically and effectively?",
+                    "include_terms": "['AI assisted decision making', 'Identify characteristics', 'Vaccination campaigns', 'Targeting strategies']",
+                    "answer": "The output of the system can be utilised for AI assisted decision making when evaluating H1N1 vaccination uptake. The output can also be used to identify important features and characteristics that influence the likelihood of receiving the H1N1 vaccine, which helps to inform best practices when conducting a population-wide vaccination campaigns and targeting strategies."
+                },
+                "How should the output fit in my workflow?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "When and where should the output be used in a practical setting?",
+                    "include_terms": "['Pre-consultation', 'Recommendations', 'Analysis']",
+                    "answer": "The output can used pre-consultation with patients in order to assess their initial level of vaccine hesitancy, and what characteristics influence this. It can also provide insight into the most effective changes to make in order to promote the H1N1 vaccination. The output can also be used in a wider consultation setting when making recommendations about public health and vaccines, providing insight and analysis about overall attitudes towards the H1N1 vaccine, and what influences these attitudes"
+                },
+                "What is the source of the information object(s)?": 
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "Asking about the source of the recommended information object(s), i.e. a well-defined identifiable instance of an output. What inputs are being used to create what the system is showing?",
+                    "include_terms": "['XGBoost', 'DALEX']",
+                    "answer": "The information objects are the predictions and explanation interface (i.e. What-If? dashboard). These predictions are generated from a XGBoost classifier model which has been hyperparameter tuned and trained on protected (e.g. sex, age, education, employment), behavioural (e.g. social distancing, mask wearing, hand washing), opinion (H1N1 concern, doctor vaccine recommendation), health (e.g. chronic medial conditions, health insurance) and sociodemographic (e.g. geographical region, employment industry) characteristics from the National 2009 H1N1 Flu Survey (NHFS) data. The explanation interface is produced from DALEX, which uses the XGBoost classifier model and its training/testing data. This produces an explanation object which creates global (AUC_ROC, feature importance, partial dependence, accumulated local effects) and local (breakdown, Shapley values, ceteris paribus) explanations."
+                },
+                "What is the scope of the output data?": 
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "What area/subject matter does the output data relate to?",
+                    "include_terms": "['H1N1 vaccine']",
+                    "answer": "The scope of the output data relates to vaccine hesitancy and the overall uptake of the H1N1 vaccine. The output predicts if observations with receive the H1N1 vaccine and provides explanations about the features which contribute to these predictions. This is using data from the National 2009 H1N1 Flu Survey (NHFS), which has various protected (e.g. sex, age, education, employment), behavioural (e.g. social distancing, mask wearing, hand washing), opinion (H1N1 concern, doctor vaccine recommendation), health (e.g. chronic medial conditions, health insurance) and sociodemographic (e.g. geographical region, employment industry) characteristics."
+                },
+                "What is the amount of the output data?": 
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "How much data is being produced by the system?",
+                    "include_terms": "['Prediction', 'Per observation, respondent, row', 'Performance metrics', 'Explanations']",
+                    "answer": "The system outputs a single prediction per observation as a predicted probability on the interval [0, 1]. Performance metrics are presented in tabular form through a classification report and confusion matrix. Explanations show global and local model behaviour. These are displayed in graphical form such as ROC-AUC, feature importance, partial dependence, accumulated local effects, breakdown plots, Shapley values, and ceteris paribus plots."
+                },
+                "What logic is used for the initial output/recommendation?": 
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "Asking about why a specific recommendation was shown before the user interacted with the system. What further rules are applied to the output data to provide a recommendation?",
+                    "include_terms": "['Prediction', 'Binary', 'Threshold 0.5']",
+                    "answer": "The prediction is a probability on the interval [0, 1], which is converted into a binary Yes = 1, No = 1 value based on a selected threshold. This was initially set to 0.5, where every predicted probability greater than or equal to 0.5 was expected to have received the H1N1 vaccine."
+                }
+        },
+        "Performance": {
+                "How accurate/precise/reliable are the predictions?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "How is the system evaluated? What are key performance metrics?",
+                    "include_terms": "['Recall 0.464', 'Precision 0.677', 'F1 0.55', 'Accuracy 0.84', 'AUC = 0.838']",
+                    "answer": "Key performance metrics for the XGBoost classifier model are: Recall = 0.464, Precision = 0.677, F1 = 0.55, Accuracy = 0.84, AUC = 0.838. This means the system is good at identifying if an observation will receive the H1N1 vaccination or not."
+                },
+                "How often does the system make mistakes?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What is the error rate of the system?",
+                    "include_terms": "['16%']",
+                    "answer": "The system has an accuracy of 0.84 (i.e. 84% of observations were correctly classified). This means the system makes mistakes 16% of the time."
+                },
+                "In what situations is the system likely to be correct/incorrect?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What conditions cause the system to make mistakes?",
+                    "include_terms": "['Overpredicts not get vaccine', 'False negative', 'Recall 0.46']",
+                    "answer": "On the test data, the model predicts 250 false positives (i.e. the model predicts the individual will receive the vaccination, but they do not), and 606 false negatives (i.e. the model predicts the individual will not receive the vaccination, but they do). Due to the dataset being imbalanced towards the negative class (i.e. No = 0), the model overpredicts an observation will not get the vaccine, which is shown with a positive class (i.e. Yes = 1) recall score of 0.46."
+                },
+                "What are the limitations of the system?":
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What are the weaknesses/vulnerabilities of the system?",
+                    "include_terms": "['Limited data', 'Does not update', 'Does not learn']",
+                    "answer": "The system is limited to only the training data provided, which may be biased or under represent certain sociodemographics. It does not have access to real-time or supplementary data, such as public health datasets or electronic health records. It is a static prediction tool and explanation interface which does not update or learn from interactions."
+                },
+                "What kind of mistakes is the system likely to make?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What type of errors are possible by the system?",
+                    "include_terms": "['False positives', 'False negative', 'Incorrect explanations']",
+                    "answer": "The system will incorrectly identify if an individual receives the vaccine or not (i.e. false positive or false negative). The explanation interface explains the global and local model behaviour, so if the model poorly represents the data or incorrectly identifies patterns and trends in the data, this will be reflected through misleading and incorrect explanations."
+                }
+        },
+        "How (global model-wide explanation)": {
+                "How does the system make predictions?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What process does the system use to generate predictions?",
+                    "include_terms": "['XGBoost']",
+                    "answer": "The system makes predictions using a hyperparameter tuned XGBoost classifier model. This produces a predicted probability on the interval [0, 1]."
+                },
+                "What features does the system consider?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What part of the input data is the system using to generate predictions?",
+                    "include_terms": "['Protected', 'Behavioural', 'Opinion', 'Health', 'SociodemogrWhaaphic']",
+                    "answer": "The system considers a range of features including protected (e.g. sex, age, education, employment), behavioural (e.g. social distancing, mask wearing, hand washing), opinion (H1N1 concern, doctor vaccine recommendation), health (e.g. chronic medial conditions, health insurance) and sociodemographic (e.g. geographical region, employment industry) characteristics collected from the US National 2009 H1N1 Flu Survey (NHFS)."
+                },
+                "What is the system's overall logic?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What is the aim/objective of the system?",
+                    "include_terms": "['H1N1 vaccine', 'Predictions', 'Performance', 'Explanations']",
+                    "answer": "The overall logic of the system is to generate individual level predictions for H1N1 vaccine uptake, and provide explanations through the What-If? dashboard. Model performance is evaluated, and explanations are provided on both a global (model) and local (prediction) level."
+                },
+                "How does it weigh different features?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "Does the system assign greater importance to certain features over others?",
+                    "include_terms": "['Split nodes', 'Reduce error (loss function)', 'Gain']",
+                    "answer": "XGBoost splits nodes by maximising gain, which measures how much a split reduces the prediction error (loss function). Each feature's usefulness is measured by how often and how effectively it is chosen to split nodes during tree construction. Features that produce greater reductions in loss get selected more often. Internally, each split's 'gain' (improvement in the objective) is stored - this can be viewed as a weight for that feature."
+                },
+                "What kind of rules does it follow?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What is the workflow of the system?",
+                    "include_terms": "['Pipeline', 'Missing values', 'One-hot', 'XGBoost', 'Binary prediction threshold']",
+                    "answer": "The system uses a pipeline for processing data. Columns are transformed to handle missing values in the data. Missing numerical features are imputed with the most frequent observation (i.e. mode). Missing categorical categorical features are replaced with the string value 'missing.' Categorical variables are then one-hot encoded into a binary matrix. This processed data is used to train and hyperparameter tune a XGBoost classifier model. The predictions are then converted into a binary Yes = 1, No = 0 value based on a certain threshold (i.e. 0.5)."
+                },
+                "What are the top rules/features that determine its predictions?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What are the most influential features in the modelling?",
+                    "include_terms": "['Doctor recommends vaccine', 'H1N1 risk', 'Effective vaccine']",
+                    "answer": "There are three features which are significantly more influential than others. These are: if the doctor recommends the H1N1 vaccine (doctor_recc_h1n1), how much of a risk the individual considers the H1N1 virus (opinion_h1n1_risk), and if the individual believes the vaccine is effective (opinion_h1n1_vacc_effective). This means an observation is more likely to get the vaccine if a doctor recommends the vaccine, they view the H1N1 as a high risk, and they believe the H1N1 vaccine is effective."
+                },
+                "What kind of algorithm is used?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "Describe the process or set of instructions the system is using to generate predictions.",
+                    "include_terms": "['XGBoost']",
+                    "answer": "The algorithm is a hyperparameter tuned XGBoost classifier model used to generate predictions. This is an ensemble method using many individual decision trees, sequentially learning from the previous one."
+                },
+                "How were the parameters set?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "What parameters were changed (if any), and how were they changed?",
+                    "include_terms": "['Hyperparameter tuning', 'AUC-ROC score']",
+                    "answer": "Hyperparameter tuning was performed on an XGBoost model using a randomised 5 fold cross validation search, with a range of values provided for the parameters: n_estimators, max_depth, learning_rate, subsample, colsample_bytree, gamma, reg_alpha, reg_lambda, scale_pos_weight, min_child_weight. 50 parameter settings were sampled across 5 folds, totalling 250 fits. The objective was to maximise the ROC-AUC score."
+                }
+        },
+        "Others": {
+                "How have updates affected the system?": 
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "What changes have taken place if/when the system has been updated?",
+                    "include_terms": "['System does not receive updates']",
+                    "answer": "This is a static prediction tool and explanation interface which does not receive updates once it has been deployed. The input data has not been not updated, as this would require retraining of the model and producing new explanations."
+                },
+                "Does the system learn specifically from my interaction?": 
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "Is the system is using this specific user's interaction to change/adapt/improve the system over time?",
+                    "include_terms": "['System does not learn from interactions']",
+                    "answer": "Once the model has been trained and deployed, it is used for all subsequent predictions end explanations. The What-If? dashboard accepts manual inputs by the user which allows them to change the most important characteristics of an obervation, generating new predictions and explanations. The system does not learn from these interactions."
+                },
+                "Why is the system using or not using a given algorithm/feature/rule/dataset?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "Justify the decisions made for the system design.",
+                    "include_terms": "['Model selection', 'XGBoost', 'Feature selection', 'H1N1 Vaccine', 'Missing data', 'US National 2009 H1N1 Flu Survey (NHFS)']",
+                    "answer": "Different algorithms were trained and tested for model selection. The XGBoost classifier model was chosen because it had the best performance for mean accuracy and ROC-AUC values compared to the Logistic Regression, Random Forest and Multi-layer Perceptron models. Feature selection was performed and the H1N1 vaccination status was chosen as the target variable in order to model the response to the H1N1 pandemic outbreak. Seasonal vaccination features were excluded to avoid any feature leakage, and no additional data was used to avoid introducing noise into the modelling process, which would unfairly or negatively effect model performance. Only data provided by the US National 2009 H1N1 Flu Survey (NHFS) was used. Imputations were made on missing values in order to use as much data as possible for training."
+                },
+                "What are the results of other people using the system?": 
+                {
+                    "source": "XAIQB", 
+                    "question_interpretation": "Are you able to see how the system is being used by other people? Does this change the system?",
+                    "include_terms": "['No results']",
+                    "answer": "There are no results of other people using the system. People can use and operate this system independently, with the results are isolated to their own instance. These results do not influence other users or how the system works, and they are not stored/shared in any capacity."
+                },
+                "Who is responsible for this system? Who are the authors?":
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "Background information on the system.",
+                    "include_terms": "['Henry El-Jawhari', 'Freie Universität Berlin', 'Robert Koch Institute']",
+                    "answer": "Henry El-Jawhari is the author and developed this AI system in conjunction with the Freie Universität Berlin and Robert Koch Institute."
+                }
+        },
+        "UI": {
+                "What are the affordances of the system?": 
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "Asking about possible actions of the system. What are the characteristics or properties of the system that suggest how it can be used?",
+                    "include_terms": "['What-If? dashboard', 'Change characteristics', 'New', 'Prediction', 'Explanations']",
+                    "answer": "The What-If? dashboard enables users to generate new predictions and explanations, allowing them to change the input values of important characteristics for an observation. The user can investigate explanations of this prediction through breakdown, Shapley values, and ceteris paribus plots."
+                },
+                "What does this UI element do?": 
+                {
+                    "source": "Extended XAIQB", 
+                    "question_interpretation": "Asking about the functionality of a specific UI element. What are the interactive elements of the system and how can they be used/what do they produce?",
+                    "include_terms": "['Toggle button', 'Change feature values', 'Float slider', 'Change prediction threshold']",
+                    "answer": "Using the What-If? dashboard, the toggle buttons allow the user to select and change the most important characteristics an observation. A float slider allows the user to change the prediction threshold, making their predictions of H1N1 vaccine uptake more/less conservative."
+                }
+        }
+    }
+}

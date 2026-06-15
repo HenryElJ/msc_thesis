@@ -1,0 +1,160 @@
+{
+"questions": {
+"Data": {
+"What kind of data was the system trained on?": {
+"question_interpretation": "This is asking what type of information the model learns from (for example, survey answers versus clinical records), which determines what it can and cannot safely be applied to.",
+"answer": "The system was trained on responses from a household telephone survey about the 2009-10 influenza season in the United States. The inputs include respondents' behaviours (e.g., mask use and hand washing), opinions and perceived risk about H1N1, health factors (e.g., chronic conditions, insurance, health-worker status), and demographics (e.g., age group, sex, race, education, employment and household composition). The outcome it learns to predict is whether the respondent received the H1N1 flu vaccine."
+},
+"What is the source of the training data?": {
+"question_interpretation": "This asks where the data come from and who collected it, which matters for credibility, governance, and whether it reflects your patient population.",
+"answer": "The training data come from the National 2009 H1N1 Flu Survey (NHFS), a list-assisted random-digit-dialling telephone survey conducted between October 2009 and June 2010. The NHFS was sponsored by the National Center for Immunization and Respiratory Diseases and conducted jointly with the National Center for Health Statistics at the US Centers for Disease Control and Prevention. The dataset was distributed via the “Flu Shot Learning” competition hosted by DrivenData."
+},
+"How were the labels/ground-truth produced?": {
+"question_interpretation": "This is asking what the system treats as the 'correct answer' during training and how that reference standard was obtained, because label quality directly affects patient-safety risk.",
+"answer": "Ground truth labels are binary indicators recorded in the survey for whether a respondent received the H1N1 vaccine (Yes/No). These labels are taken from the NHFS training labels file and are linked to each respondent's survey features. No additional adjudication process beyond the survey-recorded vaccination status is described."
+},
+"What is the sample size of the training data?": {
+"question_interpretation": "This asks how many individuals the model was trained and tested on, which helps you judge statistical stability and how much uncertainty to expect.",
+"answer": "There are 26,707 respondents in the combined training dataset. For modelling, the data were split 80:20 into 21,365 training records and 5,342 test records. Model performance figures reported for the system are based on that held-out test set."
+},
+"What dataset(s) is the system NOT using?": {
+"question_interpretation": "This asks which data sources or variables were intentionally excluded, which is important for understanding what information the system ignores and for checking for data leakage.",
+"answer": "The system does not use the respondent identifier. It also excludes all seasonal influenza-related variables (any features containing “seas”, including the seasonal vaccine target) so that the H1N1 uptake prediction is not contaminated by seasonal vaccine information. No other external datasets are described as inputs."
+},
+"What are the potential limitations/biases of the data?": {
+"question_interpretation": "This asks what aspects of the data might limit fairness, generalisability, or clinical usefulness, so you can anticipate where the system might underperform or mislead.",
+"answer": "The data reflect a one-off US telephone survey from October 2009 to June 2010, so patterns may not generalise to different countries, healthcare systems, or current vaccination programmes. H1N1 uptake is relatively uncommon in this dataset (about 21%), which creates class imbalance and can make 'vaccinated' cases harder to detect. Several predictors have substantial missingness (for example, employment industry and occupation are missing for about half of respondents), requiring imputation that can dilute patient-specific signal. Some variables are anonymised categorical codes (e.g., geographic region, industry, occupation), which limits interpretability and subgroup assessment using those fields."
+}
+},
+"Output": {
+"What kind of output does the system give?": {
+"question_interpretation": "This asks what you will actually receive from the system (numbers, categories, or explanations), which determines how you can use it in practice.",
+"answer": "For each individual, the system outputs a predicted probability of receiving the H1N1 vaccine and, if you apply a probability threshold (default 0.50), a corresponding binary prediction (will/will not vaccinate). In the interactive what-if interface, it also generates local explanation visuals, including a breakdown plot, Shapley value plot (top contributors), and ceteris paribus profiles showing how predictions change when selected inputs vary."
+},
+"What does the system output mean?": {
+"question_interpretation": "This is asking how to interpret the output clinically—what the probability and any classification are intended to represent—so you avoid treating it as something it is not.",
+"answer": "The probability is the model's estimate of how likely a person with the entered characteristics is to have received the H1N1 vaccine in the survey context. The binary output is simply that probability compared with a chosen threshold, not a medical diagnosis or a recommendation to vaccinate. The explanation plots describe which input factors are driving the model's prediction for that specific individual, which can support transparency and review."
+},
+"What is the scope of the system's capability? Can it do...?": {
+"question_interpretation": "This asks what the system is designed to do and, importantly, what it is not designed to do, so it is not misapplied in clinical care or public health.",
+"answer": "The system is designed to predict H1N1 vaccine uptake (Yes/No) from survey-style behavioural, attitudinal, health, and demographic inputs. It is not a diagnostic tool for influenza, a predictor of vaccine effectiveness or adverse events, or a substitute for eligibility assessment and shared decision-making. Its outputs should be interpreted within the limits of the original survey population and time period."
+},
+"How is the output used for other system component(s)?": {
+"question_interpretation": "This asks whether the system's predictions feed into other tools (for example, explanation or what-if modules), which matters for traceability and error propagation.",
+"answer": "The predicted probabilities are used to compute performance summaries and to support explainability methods (variable importance and patient-level attributions). The what-if dashboard takes user-selected feature values, generates a new prediction, and then produces explanation plots (breakdown, Shapley, and ceteris paribus) based on the same underlying model."
+},
+"How should I best utilize the output of the system?": {
+"question_interpretation": "This asks how to use the output in a way that supports safe clinical or public-health decisions rather than replacing professional judgement.",
+"answer": "Use the probability as a decision-support signal for identifying who may be less likely to be vaccinated, for example to prioritise outreach or tailor counselling messages. Choose the classification threshold deliberately: a lower threshold will flag more potential vaccinators but increases false alarms, whereas a higher threshold is more conservative. Use the explanation plots to understand what is driving the prediction and to sanity-check whether the model is relying on plausible information for the individual. Do not use the output as the sole basis for patient-level decisions."
+},
+"How should the output fit in my workflow?": {
+"question_interpretation": "This asks where the system should sit in day-to-day work (e.g., triage, counselling, programme planning), so that the output is acted on appropriately and documented.",
+"answer": "The output is best treated as an adjunct for planning and communication—such as targeting public health messaging or preparing for vaccine-hesitancy discussions—rather than as a definitive determination. If used at an individual level, it should trigger review of the underlying inputs and discussion of modifiable factors (e.g., clinician recommendation) rather than automatic action. Any operational use should include governance around threshold choice, monitoring for performance drift, and clear documentation that the model predicts uptake, not clinical need."
+},
+"What is the source of the information object(s)?": {
+"question_interpretation": "This asks where the numbers and explanations originate, which is essential for auditing, accountability, and understanding limitations.",
+"answer": "Predicted probabilities and classifications are produced by a trained XGBoost classifier applied to the provided feature values after preprocessing (imputation and one-hot encoding). The explanation objects (variable importance, breakdown, Shapley values, and ceteris paribus profiles) are generated by the DALEX explainer using the trained model together with the held-out test dataset as the reference."
+},
+"What is the scope of the output data?": {
+"question_interpretation": "This asks whether outputs are available for single individuals, groups, or datasets, which affects how you can use results (patient-level versus population-level).",
+"answer": "Outputs can be generated per individual (as in the what-if dashboard) or in batch form across a dataset (as in the stored test-set predictions). For each record, the core outputs are a probability of H1N1 vaccination and (if thresholded) a binary classification, with optional explanation outputs for transparency."
+},
+"What is the amount of the output data?": {
+"question_interpretation": "This asks how much output the system produces per run, which matters for integration (e.g., dashboards, reports, or downstream analytics).",
+"answer": "In the reported evaluation, predictions were produced for 5,342 test-set records, each with a predicted probability and a thresholded binary label. In the interactive dashboard, one customised 'patient' scenario is evaluated at a time, producing one probability, one binary interpretation (given the chosen threshold), and a small set of explanation plots."
+},
+"What logic is used for the initial output/recommendation?": {
+"question_interpretation": "This asks what decision rule turns model calculations into the displayed result, which matters because changing that rule changes the safety profile (misses versus false alarms).",
+"answer": "The model first computes a probability of vaccination. A binary output is then created by comparing that probability to a user-set threshold (default 0.50 in the dashboard). All inputs are passed through the same preprocessing steps (missing-value imputation and one-hot encoding for categorical variables) before the probability is calculated."
+}
+},
+"Performance": {
+"How accurate/precise/reliable are the predictions?": {
+"question_interpretation": "This asks how well the system performs, in terms clinicians recognise (overall correctness and how well it identifies true cases), so you can judge whether it is fit for purpose.",
+"answer": "On the held-out test set, the model achieved an accuracy of 0.84 and an AUC of 0.838. For identifying vaccinated individuals, precision was 0.677 and recall (sensitivity) was 0.464, with an F1 score of 0.55. This means the system is substantially better at identifying non-vaccination than at reliably finding all true vaccinators at the default threshold."
+},
+"How often does the system make mistakes?": {
+"question_interpretation": "This asks how frequently the model's outputs are wrong, which helps you anticipate operational risk and the need for human oversight.",
+"answer": "On the 5,342-person test set, there were 856 misclassifications (about 16%). These errors comprised 250 false positives (predicting vaccination when the person was not vaccinated) and 606 false negatives (missing a true vaccinated case). The error pattern is therefore dominated by missed vaccinated cases at the default threshold."
+},
+"In what situations is the system likely to be correct/incorrect?": {
+"question_interpretation": "This asks when you can trust the system more or less, which is crucial for setting guardrails and deciding when to override or seek additional information.",
+"answer": "At the default threshold, the system is much more reliable for identifying non-vaccinated individuals (94% recall for the 'not vaccinated' class) than for identifying vaccinated individuals (46% recall for the 'vaccinated' class). It is likely to be most informative when key attitudinal and recommendation variables (e.g., whether a doctor recommended vaccination, perceived vaccine effectiveness and risk) are available, because these are among the strongest drivers. Where many inputs are missing and have to be imputed—particularly employment industry/occupation—the individual-level reliability may be reduced, and the explanation outputs should be checked carefully."
+},
+"What are the limitations of the system?": {
+"question_interpretation": "This asks what the system cannot do well or what constraints apply, so you can avoid unsafe use and decide what extra validation is needed.",
+"answer": "The system has limited sensitivity for vaccinated cases at the default threshold, meaning it will miss a substantial proportion of true vaccinators. It was trained on a US survey from 2009-2010 and is only evaluated on an internal 80:20 split, so external validity in other settings is unknown. The model outputs describe associations in the training data and do not establish causal drivers of vaccination behaviour. Operational deployment would require careful threshold selection and ongoing monitoring."
+},
+"What kind of mistakes is the system likely to make?": {
+"question_interpretation": "This asks about the direction of errors (missing true cases versus false alarms), because different error types have different consequences in patient care and public health.",
+"answer": "The most common error is a false negative for vaccination—predicting someone will not vaccinate when they actually did (606 cases on the test set). Put differently, at the default threshold it missed about 54% of true vaccinated individuals (606 out of 1,130). False positives were less frequent (250 cases), corresponding to roughly a 6% false-positive rate among those who were not vaccinated. Adjusting the probability threshold can shift this trade-off, but it will not remove it."
+}
+},
+"How (global model-wide explanation)": {
+"How does the system make predictions?": {
+"question_interpretation": "This is asking, at a high level, how the system turns patient or respondent characteristics into a prediction, which supports transparency and appropriate clinical trust.",
+"answer": "The system preprocesses inputs by imputing missing values and one-hot encoding categorical variables, then applies a gradient-boosted decision-tree model (XGBoost) to estimate a probability of H1N1 vaccination. The probability can be thresholded to produce a Yes/No prediction. Explanation modules can then attribute how individual inputs contributed to the prediction for review."
+},
+"What features does the system consider?": {
+"question_interpretation": "This asks which patient/respondent characteristics the model looks at, which matters for data collection burden, interpretability, and assessing whether any important clinical factors are missing.",
+"answer": "The model uses a mix of behavioural variables (e.g., avoidance behaviours, mask use, hand washing), opinion/risk perception variables (e.g., perceived H1N1 risk, belief that the vaccine is effective, worry about getting sick from the vaccine, and whether a doctor recommended vaccination), and health factors (e.g., chronic medical condition, insurance, health-worker status, having a child under 6 months). It also includes demographic and socio-economic characteristics such as age group, sex, race, education, income poverty category, marital status, housing, employment status, household adults/children, and location indicators (HHS region and census MSA). Seasonal flu-related variables are explicitly excluded."
+},
+"What is the system's overall logic?": {
+"question_interpretation": "This asks for the model's 'clinical reasoning' in plain terms—what patterns it is using—so clinicians can judge whether they are plausible and ethically acceptable.",
+"answer": "Overall, the system combines signals about access and recommendation (especially whether a doctor recommended vaccination) with attitudes and perceived risk about H1N1 to estimate uptake. It also incorporates background health and demographic context that may correlate with vaccination behaviour. The logic is probabilistic and pattern-based: it learns combinations of factors that were associated with vaccination in the survey data, rather than applying explicit clinical guidelines."
+},
+"How does it weigh different features?": {
+"question_interpretation": "This asks whether some factors matter more than others, which helps clinicians understand what the model is 'paying attention' to and where to focus review.",
+"answer": "Because the model is tree-based, it does not assign a single fixed weight to each feature in the way a simple score would; importance can vary by individual and by feature interactions. Global importance assessed by dropout loss shows that some variables have a much larger influence than others, with clinician recommendation and key beliefs about vaccine effectiveness and risk among the strongest drivers. For individual cases, the system can display local attributions (breakdown and Shapley plots) showing which inputs increased or decreased the predicted probability for that person."
+},
+"What kind of rules does it follow?": {
+"question_interpretation": "This asks whether the system uses human-readable rules, which affects explainability and the ability to create safe operating procedures.",
+"answer": "The model follows a large set of learned decision-tree split rules (a sequence of 'if-then' style checks) that collectively produce a probability estimate. These rules are not presented as a small, fixed set of clinical criteria, and they may involve interactions between variables. The accompanying explanation tools summarise the impact of variables rather than listing every internal rule."
+},
+"What are the top rules/features that determine its predictions?": {
+"question_interpretation": "This asks which factors most strongly drive predictions overall, which is important for clinical plausibility checks and for identifying where bias or confounding might enter.",
+"answer": "Global variable-importance results indicate the strongest drivers include whether a doctor recommended the H1N1 vaccine, belief that the H1N1 vaccine is effective, and perceived risk from H1N1. Other influential factors include being a health worker and age group, followed by variables such as employment industry, level of H1N1 concern, geographic region, and worry about becoming sick from the vaccine. These factors should be interpreted as influential predictors in the survey data, not as causal determinants."
+},
+"What kind of algorithm is used?": {
+"question_interpretation": "This asks what modelling approach underpins the system, which matters for interpretability, stability, and how it should be validated.",
+"answer": "The deployed model is an XGBoost classifier, which is an ensemble of gradient-boosted decision trees. In practical terms, it combines many simple decision rules into a single probability estimate and can capture non-linear relationships and interactions between factors."
+},
+"How were the parameters set?": {
+"question_interpretation": "This asks how the model was tuned (or not tuned), which affects reproducibility, overfitting risk, and whether performance claims are likely to hold up.",
+"answer": "Model hyperparameters were selected using RandomizedSearchCV with 5-fold cross-validation, optimising the ROC AUC. The selected XGBoost configuration included 200 trees, max depth 5, learning rate 0.1, subsample 0.8, colsample_bytree 1.0, min_child_weight 3, gamma 0, and regularisation terms reg_alpha 0.1 and reg_lambda 100 (scale_pos_weight 1). The final tuned model was then fitted within the same preprocessing pipeline and evaluated on the held-out test set."
+}
+},
+"Others": {
+"How have updates affected the system?": {
+"question_interpretation": "This asks whether the system has changed over time and whether those changes altered behaviour or safety, which is essential for governance and audit trails.",
+"answer": "No update history, version changes, or post-deployment modifications are described. The materials present a single trained model and its evaluation on a fixed train/test split. If the system is updated in practice, additional information would be needed to assess the impact on performance and safety."
+},
+"Does the system learn specifically from my interaction?": {
+"question_interpretation": "This asks whether your use of the system feeds back into the model (online learning), which matters for privacy, consent, and consistency of outputs.",
+"answer": "No. The model is trained offline and the interactive dashboard only changes the inputs used for prediction; it does not retrain or adapt the model based on user interactions. There is no mechanism described for storing user interactions as new training data."
+},
+"Why is the system using or not using a given algorithm/feature/rule/dataset?": {
+"question_interpretation": "This asks for the rationale behind design choices, which helps clinicians judge whether the system is appropriately constructed and whether exclusions create blind spots.",
+"answer": "Multiple baseline algorithms were tested (logistic regression, random forest, XGBoost, and a multilayer perceptron), and the hyperparameter-tuned XGBoost model was selected because it achieved the highest mean accuracy on the test set. Seasonal influenza-related variables were removed to avoid information leakage when predicting H1N1 uptake. The respondent identifier was excluded because it is only a unique ID and does not carry clinically meaningful information."
+},
+"What are the results of other people using the system?": {
+"question_interpretation": "This asks whether there is evidence from real-world use or external evaluations, which would increase confidence in clinical applicability.",
+"answer": "No real-world usage results, external validations, or user studies are reported. The only reported results are the internal performance metrics on the held-out test split of the survey dataset."
+},
+"Who is responsible for this system? Who are the authors?": {
+"question_interpretation": "This asks who developed the system and who is accountable for it, which is important for governance, clinical safety review, and escalation pathways.",
+"answer": "The system was developed by Henry El-Jawhari at the Freie Universität (FU) Berlin and the Robert Koch Institute (RKI). No additional organisational owner, clinical sponsor, or regulatory responsible party is specified in the available materials."
+}
+},
+"UI": {
+"What are the affordances of the system?": {
+"question_interpretation": "This asks what the user interface allows you to do (beyond simply getting a prediction), which matters for safe use, review, and communication with colleagues.",
+"answer": "The system provides an interactive what-if dashboard that lets you set values for key influential factors (doctor recommendation, beliefs about vaccine effectiveness and risk, plus age group, race, and sex) and adjust the prediction threshold. On demand, it produces a predicted probability and a thresholded Yes/No output, alongside patient-level explanation plots (breakdown and Shapley) and sensitivity analyses (ceteris paribus profiles). These affordances are intended to support transparency and exploration of how particular inputs drive the model's output."
+},
+"What does this UI element do?": {
+"question_interpretation": "This asks what a specific control in the interface changes, which matters because interface choices (e.g., thresholds) can materially alter error rates and downstream decisions.",
+"answer": "Toggle buttons set the value of a selected feature for the hypothetical individual being evaluated, and the threshold slider changes the probability cut-off used to convert the prediction into a Yes/No output. The “Run What-If? Dashboard” button executes the prediction with the chosen settings and refreshes the displayed probability, binary interpretation, and explanation/sensitivity plots. The output area is where the system prints the selected characteristics and summarises the prediction."
+}
+}
+}
+}

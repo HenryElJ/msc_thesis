@@ -1,0 +1,160 @@
+{
+  "questions": {
+    "Data": {
+      "What kind of data was the system trained on?": {
+        "question_interpretation": "This asks about the type of information used to teach the AI system to make predictions about vaccine uptake.",
+        "answer": "The system was trained on survey data from the National 2009 H1N1 Flu Survey, which includes patient demographic information (age, sex, race, education, income), behavioural responses to the pandemic (hand washing, mask wearing, social distancing), clinical factors (chronic medical conditions, health worker status, health insurance), and patient attitudes towards H1N1 and vaccination (perceived risk, vaccine effectiveness beliefs, doctor recommendations)."
+      },
+      "What is the source of the training data?": {
+        "question_interpretation": "This identifies where the data originated and who collected it, which helps assess its credibility and relevance to your patient population.",
+        "answer": "The data originates from the National 2009 H1N1 Flu Survey (NHFS), a telephone survey conducted jointly by the National Center for Immunization and Respiratory Diseases (NCIRD) and the National Center for Health Statistics (NCHS) at the Centers for Disease Control and Prevention (CDC) between October 2009 and June 2010. The survey targeted all persons aged 6 months or older living in the United States at the time of interview."
+      },
+      "How were the labels/ground-truth produced?": {
+        "question_interpretation": "This explains how we know whether someone actually received the H1N1 vaccine, which is what the AI is trying to predict.",
+        "answer": "The vaccination status labels were obtained through direct self-reporting during telephone interviews. Respondents were asked whether they had received the H1N1 vaccine, producing a binary outcome (vaccinated or not vaccinated). This ground truth reflects patient-reported vaccination status rather than medical record verification."
+      },
+      "What is the sample size of the training data?": {
+        "question_interpretation": "This tells you how many patient cases the AI learned from, which affects the reliability and generalisability of its predictions.",
+        "answer": "The system was trained on survey responses from thousands of individuals, with the data split into training and test sets. The specific numbers indicate a substantial sample size typical of national public health surveys, providing adequate statistical power for identifying vaccination patterns across diverse demographic groups."
+      },
+      "What dataset(s) is the system NOT using?": {
+        "question_interpretation": "This clarifies what information was deliberately excluded, helping you understand the system's limitations.",
+        "answer": "The system does not use seasonal flu vaccination data as an input feature, despite this information being available in the survey. This was removed to prevent feature leakage, as seasonal flu vaccine uptake is highly correlated with H1N1 vaccine uptake and would artificially inflate the model's apparent accuracy whilst reducing its practical utility for predicting H1N1 vaccination independently."
+      },
+      "What are the potential limitations/biases of the data?": {
+        "question_interpretation": "This identifies inherent weaknesses in the training data that could affect how well the system works for your patients.",
+        "answer": "The data has several important limitations: it relies on self-reported vaccination status rather than verified medical records, which may introduce recall bias; it represents only the 2009-2010 H1N1 pandemic period and may not generalise to other vaccination contexts; it is limited to telephone survey respondents, potentially underrepresenting populations without landline access; and geographic regions are anonymised, limiting the ability to account for local public health infrastructure or regional vaccination campaigns. These factors mean the system may perform differently across different patient populations or healthcare settings."
+      }
+    },
+    "Output": {
+      "What kind of output does the system give?": {
+        "question_interpretation": "This describes the format and type of information the AI provides when you use it.",
+        "answer": "The system provides two types of output for each patient: a probability score (ranging from 0 to 1) indicating the likelihood that the patient will accept H1N1 vaccination, and a binary classification (will vaccinate or will not vaccinate) based on whether the probability exceeds a specified threshold. The probability allows you to gauge confidence in the prediction, whilst the binary classification provides a clear decision point."
+      },
+      "What does the system output mean?": {
+        "question_interpretation": "This explains how to interpret the numbers and classifications the AI produces in clinical terms.",
+        "answer": "The probability score represents the system's estimated likelihood that a patient with the given characteristics would choose to receive the H1N1 vaccine. For example, a probability of 0.75 suggests the patient has a 75% likelihood of accepting vaccination based on patterns observed in similar patients during the 2009-2010 pandemic. The binary classification (vaccinate/not vaccinate) is determined by comparing this probability to a threshold (typically 0.50), which can be adjusted based on your clinical priorities."
+      },
+      "What is the scope of the system's capability? Can it do...?": {
+        "question_interpretation": "This clarifies what the system can and cannot predict, preventing misuse beyond its intended purpose.",
+        "answer": "The system can predict the likelihood that a patient will accept H1N1 vaccination based on their demographic characteristics, health status, behavioural patterns, and attitudes towards vaccination. It cannot predict vaccine effectiveness for individual patients, identify optimal timing for vaccination, forecast community-level vaccination rates, determine medical eligibility for vaccination, or make predictions for vaccines other than H1N1. It is specifically designed for understanding vaccination acceptance, not clinical outcomes or public health resource allocation."
+      },
+      "How is the output used for other system component(s)?": {
+        "question_interpretation": "This asks whether the AI's predictions feed into other systems or decision-making processes.",
+        "answer": "The current system operates as a standalone predictive tool. The probability outputs and binary classifications are not automatically fed into other clinical systems or used to trigger automated interventions. They are intended to inform healthcare provider decision-making regarding vaccination counselling approaches and resource allocation for patient education efforts."
+      },
+      "How should I best utilize the output of the system?": {
+        "question_interpretation": "This provides guidance on integrating the AI's predictions into your clinical workflow effectively and safely.",
+        "answer": "Use the probability scores to identify patients who may benefit most from targeted vaccination counselling. Patients with mid-range probabilities (0.3-0.7) represent opportunities for intervention, as they are neither firmly decided for nor against vaccination. High-probability patients may still need logistical support to complete vaccination, whilst low-probability patients may require more intensive education about vaccine benefits and safety. Always combine the AI prediction with your clinical judgement, patient preferences, and knowledge of individual circumstances."
+      },
+      "How should the output fit in my workflow?": {
+        "question_interpretation": "This explains where in your clinical process you should use the AI system and how it complements your existing practices.",
+        "answer": "The system functions best as a pre-consultation planning tool. Review predictions before patient encounters to tailor your vaccination discussion strategy. For patients predicted to be vaccine-hesitant, prepare targeted educational materials addressing common concerns about vaccine effectiveness and safety. For patients predicted to be receptive, focus the consultation on logistical arrangements and addressing specific questions. The system should inform, not replace, shared decision-making conversations with patients."
+      },
+      "What is the source of the information object(s)?": {
+        "question_interpretation": "This asks where the data used to make predictions about a specific patient comes from.",
+        "answer": "The system makes predictions based on patient information you provide as inputs, including demographic details (age group, sex, race), clinical characteristics (chronic medical conditions, health worker status, health insurance coverage), and patient-reported attitudes (perceived H1N1 risk, beliefs about vaccine effectiveness, whether their doctor recommended the vaccine). This information would typically be gathered through patient interviews, medical records, or screening questionnaires."
+      },
+      "What is the scope of the output data?": {
+        "question_interpretation": "This clarifies the range and extent of predictions the system can produce.",
+        "answer": "The system produces patient-level predictions for individual vaccination likelihood. Each prediction is specific to a single patient profile and represents that patient's estimated probability of vaccine acceptance. The system does not provide population-level forecasts, temporal predictions about when vaccination might occur, or predictions about multiple vaccines simultaneously. The scope is limited to binary H1N1 vaccination acceptance at the individual level."
+      },
+      "What is the amount of the output data?": {
+        "question_interpretation": "This describes how much information the system generates per prediction.",
+        "answer": "For each patient input, the system generates a single probability value, a single binary classification, and optionally, explanatory visualisations showing which patient characteristics most influenced the prediction. The core output is minimal and focused, comprising just two numerical values per patient, though the what-if dashboard can generate additional analytical outputs when exploring different scenarios."
+      },
+      "What logic is used for the initial output/recommendation?": {
+        "question_interpretation": "This explains the basic decision rule the system applies to generate its recommendations.",
+        "answer": "The system applies a threshold-based classification rule: if the predicted probability exceeds the threshold (typically 0.50), the patient is classified as likely to vaccinate; otherwise, as likely not to vaccinate. This threshold is adjustable, allowing you to make the system more or less conservative depending on your clinical context. For example, raising the threshold to 0.70 would classify only patients with strong vaccination likelihood as 'will vaccinate,' reducing false positives but potentially missing some receptive patients."
+      }
+    },
+    "Performance": {
+      "How accurate/precise/reliable are the predictions?": {
+        "question_interpretation": "This asks about the system's overall correctness when tested on patients it hasn't seen before, helping you understand how much to trust its predictions.",
+        "answer": "The system achieves 84% accuracy on held-out test data, meaning it correctly predicts vaccination status for approximately 4 out of 5 patients. However, accuracy alone doesn't tell the complete story—the system's performance varies depending on whether it's predicting vaccination (sensitivity) or non-vaccination (specificity). You should consider both the probability score and your clinical assessment when making decisions, as the system will be wrong approximately 16% of the time."
+      },
+      "How often does the system make mistakes?": {
+        "question_interpretation": "This quantifies the error rate and helps you understand the clinical implications of the system getting predictions wrong.",
+        "answer": "The system makes incorrect predictions approximately 16% of the time overall. These errors include both false positives (predicting a patient will vaccinate when they won't) and false negatives (predicting a patient won't vaccinate when they will). The distribution between these error types matters clinically: false negatives represent missed opportunities for vaccination, whilst false positives may lead to inefficient allocation of counselling resources. The specific error rates for each type can be examined through the confusion matrix."
+      },
+      "In what situations is the system likely to be correct/incorrect?": {
+        "question_interpretation": "This identifies patient characteristics or scenarios where the AI's predictions are more or less trustworthy.",
+        "answer": "The system performs most reliably when strong predictive factors are present, particularly when patients have a clear doctor recommendation (or lack thereof), strongly held beliefs about H1N1 risk and vaccine effectiveness, and consistent demographic patterns. Predictions are less reliable for patients with conflicting indicators (e.g., high perceived risk but low confidence in vaccine effectiveness), missing data on key features, or characteristics underrepresented in the 2009-2010 survey population. Patients whose circumstances differ substantially from the pandemic-era training data may receive less accurate predictions."
+      },
+      "What are the limitations of the system?": {
+        "question_interpretation": "This outlines what the AI cannot do and situations where it should not be relied upon, preventing inappropriate use.",
+        "answer": "The system has several critical limitations: it is trained on 2009-2010 pandemic data and may not generalise to current vaccination contexts; it cannot account for changes in public health messaging, vaccine availability, or emerging safety data; it relies on patient-reported attitudes that may change over time; it cannot predict actual vaccination behaviour versus stated intentions; it does not incorporate social determinants of health beyond those captured in the survey; and it cannot replace clinical judgement about individual patient circumstances, contraindications, or the appropriateness of vaccination for specific medical conditions."
+      },
+      "What kind of mistakes is the system likely to make?": {
+        "question_interpretation": "This describes the patterns in the AI's errors, helping you anticipate when to be especially cautious.",
+        "answer": "The system is most likely to make mistakes in several scenarios: misclassifying patients with moderate vaccine hesitancy (probability scores near 0.50) who could go either way; failing to account for time-sensitive factors like recent news about vaccine safety or local outbreak severity; overrelying on demographic patterns that may not hold for individual patients; missing nuanced patient concerns not captured in the survey questions; and incorrectly predicting behaviour for patients whose social or cultural context differs significantly from the 2009-2010 US population. Errors are more common when key predictive features like doctor recommendations are missing or when patients report inconsistent attitudes."
+      }
+    },
+    "How (global model-wide explanation)": {
+      "How does the system make predictions?": {
+        "question_interpretation": "This explains the underlying method the AI uses to arrive at its predictions, from a clinical perspective.",
+        "answer": "The system uses an XGBoost algorithm, which works by learning patterns from thousands of patient cases to identify which combinations of characteristics are associated with vaccine acceptance. It examines patient features in sequence, building a decision-making pathway similar to how a clinician might consider multiple factors. The algorithm weighs the importance of different patient attributes (doctor recommendations, risk perceptions, demographics) and combines them to estimate vaccination likelihood. Unlike simple rule-based systems, it can capture complex interactions between factors."
+      },
+      "What features does the system consider?": {
+        "question_interpretation": "This lists the patient information the AI examines when making predictions.",
+        "answer": "The system considers 31 different patient features across several categories: clinical factors (chronic medical conditions, health worker status, health insurance, having children under 6 months); demographic characteristics (age group, sex, race, education, income, marital status, employment); behavioural patterns during the pandemic (hand washing, mask wearing, avoiding large gatherings, social distancing); and attitudes towards H1N1 and vaccination (perceived disease risk, beliefs about vaccine effectiveness and safety, whether their doctor recommended vaccination). All features are weighted according to their predictive importance."
+      },
+      "What is the system's overall logic?": {
+        "question_interpretation": "This describes the general strategy or reasoning pattern the AI follows across all predictions.",
+        "answer": "The system's core logic prioritises three key factors above all others: whether the patient's doctor recommended the H1N1 vaccine, the patient's perception of H1N1 as a health risk, and the patient's belief in the vaccine's effectiveness. These three factors account for the majority of predictive power. The system then refines predictions using demographic factors (particularly age) and considers secondary behavioural and clinical factors. Essentially, it identifies that vaccination decisions are primarily driven by trust in medical advice, risk perception, and confidence in vaccine efficacy."
+      },
+      "How does it weigh different features?": {
+        "question_interpretation": "This explains which patient characteristics have the strongest influence on predictions and which matter less.",
+        "answer": "Doctor recommendation for H1N1 vaccination carries the highest weight, followed closely by patient opinions about H1N1 risk level and vaccine effectiveness. These three features dominate the prediction. Age group has moderate influence, with older patients generally more likely to vaccinate. Race and sex show smaller but measurable effects. Other behavioural and demographic factors have relatively minor impact. This weighting reflects that vaccination decisions are primarily attitude-driven rather than purely demographic, though demographic factors modulate the baseline probability."
+      },
+      "What kind of rules does it follow?": {
+        "question_interpretation": "This asks whether the system uses simple if-then rules or more complex decision patterns.",
+        "answer": "Rather than following simple if-then rules, the system uses a gradient boosting approach that builds complex, non-linear decision pathways. It can capture interactions between features—for example, the effect of age may differ depending on whether the patient has a doctor recommendation. The system learned these patterns empirically from the training data through sequential refinement, creating a series of decision trees that each contribute to the final prediction. This allows it to handle nuanced scenarios that wouldn't fit into rigid rule-based classification."
+      },
+      "What are the top rules/features that determine its predictions?": {
+        "question_interpretation": "This identifies the most critical decision points the AI uses to classify patients.",
+        "answer": "The dominant predictive pattern centres on three features: first, whether the patient's doctor recommended H1N1 vaccination (strongest predictor); second, the patient's assessment of personal H1N1 risk (moderate to high perceived risk increases vaccination likelihood); and third, the patient's belief in vaccine effectiveness (higher confidence in effectiveness strongly predicts vaccination). These three features form the core decision pathway, with age group serving as an important modifier—older patients show higher baseline vaccination rates across all combinations of attitudes."
+      },
+      "What kind of algorithm is used?": {
+        "question_interpretation": "This names the technical approach and explains why it was chosen for this clinical application.",
+        "answer": "The system uses XGBoost (eXtreme Gradient Boosting), a machine learning algorithm selected after comparing multiple approaches including logistic regression, random forests, and neural networks. XGBoost was chosen because it achieved the highest accuracy (84%) on test data whilst maintaining interpretability through feature importance analysis. It is particularly well-suited for this application because it handles both numerical and categorical patient data, manages missing values automatically, and provides probability outputs rather than just binary classifications."
+      },
+      "How were the parameters set?": {
+        "question_interpretation": "This explains how the AI's internal settings were tuned to optimise its performance for vaccine prediction.",
+        "answer": "The algorithm's parameters were optimised through randomised search with cross-validation, a systematic process that tested different parameter combinations to identify the configuration yielding the best predictive accuracy. This tuning process adjusted settings controlling the model's complexity, learning rate, and other technical aspects to prevent both underfitting (too simple to capture patterns) and overfitting (memorising training data rather than learning generalisable patterns). The final parameter set was selected based on performance across multiple held-out data samples."
+      }
+    },
+    "Others": {
+      "How have updates affected the system?": {
+        "question_interpretation": "This asks whether the AI's performance or behaviour has changed since it was initially deployed.",
+        "answer": "The current system represents a single trained model without subsequent updates. No retraining or parameter adjustments have been made since the initial development phase. This means the system's predictions remain consistent but also that it has not adapted to any changes in vaccination attitudes, public health messaging, or population characteristics that may have occurred since the 2009-2010 pandemic data collection period. Future updates would require retraining with more recent data."
+      },
+      "Does the system learn specifically from my interaction?": {
+        "question_interpretation": "This clarifies whether the AI adapts based on your feedback or the outcomes you observe with your patients.",
+        "answer": "No, the system does not learn from individual interactions or patient outcomes. It remains static after training, meaning your use of the system does not modify its predictions for future patients. If you observe that the system consistently mispredicts for certain patient types in your practice, this valuable feedback cannot be incorporated without formal model retraining. The system does not implement any form of continuous learning or personalisation based on your clinical context or patient population."
+      },
+      "Why is the system using or not using a given algorithm/feature/rule/dataset?": {
+        "question_interpretation": "This explains the rationale behind key design choices, helping you understand the system's construction.",
+        "answer": "XGBoost was selected over simpler algorithms because it provided superior predictive accuracy whilst maintaining interpretability through feature importance metrics, which are essential for clinical trust and understanding. Seasonal flu vaccination data was deliberately excluded despite being available to prevent feature leakage that would inflate apparent accuracy without providing practical utility. The 2009-2010 NHFS dataset was chosen as it represents the most comprehensive US survey of pandemic vaccination attitudes and behaviours, though this temporal limitation is acknowledged as a constraint on current applicability."
+      },
+      "What are the results of other people using the system?": {
+        "question_interpretation": "This asks about real-world experience with the system beyond the initial testing phase.",
+        "answer": "This system was developed as a research demonstration at Freie Universität Berlin and Robert Koch Institute and does not have documented clinical deployment or real-world validation beyond the test dataset performance. No data are available on how healthcare providers in actual clinical settings have used the system or whether its predictions have proven accurate in live practice. Any deployment would require prospective validation in your specific clinical context to confirm that test set performance translates to real-world utility."
+      },
+      "Who is responsible for this system? Who are the authors?": {
+        "question_interpretation": "This identifies who developed the AI and who should be contacted for questions or issues.",
+        "answer": "The system was developed by Henry El-Jawhari at Freie Universität (FU) Berlin and Robert Koch Institute (RKI). These institutions are responsible for the model's design, training, and initial validation. However, responsibility for appropriate clinical use, interpretation of predictions, and patient care decisions remains with the healthcare provider using the system. The developers are responsible for technical accuracy of the implementation, whilst clinicians are responsible for integrating predictions appropriately into patient care."
+      }
+    },
+    "UI": {
+      "What are the affordances of the system?": {
+        "question_interpretation": "This describes the interactive features available and what actions you can take with the interface.",
+        "answer": "The system provides a what-if dashboard allowing you to adjust key patient characteristics and immediately see how predictions change. You can modify the three most influential numerical features (doctor recommendation, risk perception, vaccine effectiveness beliefs) and three demographic factors (age group, race, sex) using slider controls and dropdown menus. The interface also allows you to adjust the prediction threshold to make classifications more or less conservative based on your clinical priorities. After selecting patient characteristics, you can generate predictions and view explanatory visualisations showing which factors most influenced the specific prediction."
+      },
+      "What does this UI element do?": {
+        "question_interpretation": "This explains the function of specific interactive components in the system's interface.",
+        "answer": "The dashboard contains several functional elements: slider controls for numerical features allow you to specify patient attitudes on ordered scales (e.g., level of concern about H1N1 risk); dropdown menus for categorical features let you select demographic characteristics; the prediction threshold slider adjusts the cut-off point for classifying patients as likely or unlikely to vaccinate; the 'Run What-If Dashboard' button triggers new predictions and explanations based on your selected inputs; and the output area displays the probability score, binary classification, and explanatory visualisations including feature importance breakdowns and ceteris paribus profiles showing how predictions would change if individual features were different."
+      }
+    }
+  }
+}

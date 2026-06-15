@@ -1,0 +1,206 @@
+{
+  "Data": {
+    "question_answer": {
+      "What kind of data was the system trained on?": {
+        "question_interpretation": "This question asks about the type and nature of the data used to train the AI system.",
+        "answer": "The system was trained on data from the National 2009 H1N1 Flu Survey (NHFS), which includes demographic, behavioral, and opinion-based features related to vaccine uptake. The dataset contains information such as age group, education, race, sex, income, marital status, health worker status, and various behavioral and opinion metrics regarding flu vaccines.",
+        "domain_relevance": "Understanding the type of data used is crucial for assessing the system's applicability and potential biases in a clinical or public health setting. It helps healthcare professionals evaluate whether the data is representative of their patient population."
+      },
+      "What is the source of the training data?": {
+        "question_interpretation": "This question seeks the origin and collection method of the training data.",
+        "answer": "The training data comes from the National 2009 H1N1 Flu Survey (NHFS), sponsored by the National Center for Immunization and Respiratory Diseases (NCIRD) and conducted jointly with the National Center for Health Statistics (NCHS), Centers for Disease Control and Prevention (CDC). The survey was a list-assisted random-digit-dialing telephone survey of households in the United States.",
+        "domain_relevance": "Knowing the source of the data helps healthcare professionals assess its reliability, relevance, and potential biases, which are essential for trust and safe application in clinical decision-making."
+      },
+      "How were the labels/ground-truth produced?": {
+        "question_interpretation": "This question asks how the target variable (labels) was determined or measured in the dataset.",
+        "answer": "The labels for H1N1 vaccine uptake were self-reported by respondents during the NHFS telephone survey, indicating whether they received the H1N1 vaccine or not.",
+        "domain_relevance": "Understanding how labels were produced is important for evaluating the accuracy and reliability of the model's predictions, as self-reported data may be subject to recall bias or misreporting."
+      },
+      "What is the sample size of the training data?": {
+        "question_interpretation": "This question asks for the number of observations used to train the AI system.",
+        "answer": "The sample size is not explicitly stated in the provided files, but the dataset is representative of the US population during the 2009-10 flu season.",
+        "domain_relevance": "The sample size impacts the generalisability and robustness of the model. A larger sample size generally increases confidence in the model's predictions."
+      },
+      "What dataset(s) is the system NOT using?": {
+        "question_interpretation": "This question asks about any relevant datasets that were excluded from the training process.",
+        "answer": "The system does not use data from ongoing annual flu vaccination surveys conducted by the CDC, nor does it include the seasonal flu vaccine uptake as a feature to avoid leakage.",
+        "domain_relevance": "Exclusion of certain datasets can affect the model's scope and potential biases, which is important for understanding its limitations in clinical practice."
+      },
+      "What are the potential limitations/biases of the data?": {
+        "question_interpretation": "This question asks about any known issues or biases in the training data.",
+        "answer": "Potential limitations include self-reporting bias, underrepresentation of certain demographic groups, and the one-time nature of the survey. The data may not fully capture changes in behavior or opinions over time or in different geographical regions.",
+        "domain_relevance": "Awareness of data limitations helps healthcare professionals interpret the model's predictions cautiously and consider additional context when making clinical decisions."
+      }
+    }
+  },
+  "Output": {
+    "question_answer": {
+      "What kind of output does the system give?": {
+        "question_interpretation": "This question asks about the format and type of predictions or recommendations provided by the system.",
+        "answer": "The system outputs a probability score indicating the likelihood of an individual receiving the H1N1 vaccine, as well as a binary prediction (yes/no).",
+        "domain_relevance": "Knowing the type of output helps healthcare professionals understand how to integrate the system's predictions into their workflow and decision-making process."
+      },
+      "What does the system output mean?": {
+        "question_interpretation": "This question asks for an explanation of the meaning and interpretation of the system's output.",
+        "answer": "The probability score represents the model's confidence that an individual received the H1N1 vaccine. The binary prediction is a simplified output indicating whether the model predicts the individual received the vaccine or not.",
+        "domain_relevance": "Clear interpretation of the output ensures that healthcare professionals use the predictions appropriately and understand their implications for patient care."
+      },
+      "What is the scope of the system's capability? Can it do...?": {
+        "question_interpretation": "This question asks about the range of tasks or predictions the system is designed to perform.",
+        "answer": "The system is designed to predict H1N1 vaccine uptake based on demographic, behavioral, and opinion-based features. It does not predict seasonal flu vaccine uptake or other health outcomes.",
+        "domain_relevance": "Understanding the scope helps prevent misuse of the system and ensures it is applied only in appropriate clinical or public health contexts."
+      },
+      "How is the output used for other system component(s)?": {
+        "question_interpretation": "This question asks how the system's output interacts with or informs other parts of a larger system or workflow.",
+        "answer": "The output can be used to identify populations at risk of low vaccine uptake, inform targeted public health interventions, and support resource allocation decisions.",
+        "domain_relevance": "Integration with other systems or workflows can enhance the overall effectiveness of public health strategies and clinical decision-making."
+      },
+      "How should I best utilize the output of the system?": {
+        "question_interpretation": "This question asks for guidance on the optimal use of the system's predictions.",
+        "answer": "The output should be used as a decision-support tool, complementing clinical judgment and other relevant data. It is not intended to replace professional medical advice or individual patient assessment.",
+        "domain_relevance": "Proper utilization ensures that the system enhances, rather than undermines, patient safety and public health outcomes."
+      },
+      "How should the output fit in my workflow?": {
+        "question_interpretation": "This question asks how the system's predictions can be incorporated into existing clinical or public health workflows.",
+        "answer": "The output can be integrated into electronic health records or public health dashboards to support population health management, patient triage, and targeted outreach programs.",
+        "domain_relevance": "Seamless integration into workflows maximizes the system's utility and minimizes disruption to existing processes."
+      },
+      "What is the source of the information object(s)?": {
+        "question_interpretation": "This question asks about the origin of the data or information used to generate the system's output.",
+        "answer": "The output is generated from the NHFS dataset and the trained XGBoost model, which uses features such as demographic information, behavioral factors, and opinions about vaccines.",
+        "domain_relevance": "Knowing the source of the output information helps healthcare professionals assess its reliability and relevance to their specific context."
+      },
+      "What is the scope of the output data?": {
+        "question_interpretation": "This question asks about the range or coverage of the data provided by the system's output.",
+        "answer": "The output data pertains to individuals represented in the NHFS dataset, primarily the US population during the 2009-10 flu season.",
+        "domain_relevance": "Understanding the scope ensures that the output is applied appropriately and not extrapolated to unrelated populations or contexts."
+      },
+      "What is the amount of the output data?": {
+        "question_interpretation": "This question asks about the volume or quantity of data generated by the system.",
+        "answer": "The system generates one probability score and one binary prediction per individual in the dataset.",
+        "domain_relevance": "The amount of output data affects how it can be used for analysis, reporting, and decision-making in clinical or public health settings."
+      },
+      "What logic is used for the initial output/recommendation?": {
+        "question_interpretation": "This question asks about the reasoning or algorithmic process behind the system's predictions.",
+        "answer": "The system uses a hyperparameter-tuned XGBoost classifier, which considers the importance of various features to generate predictions about H1N1 vaccine uptake.",
+        "domain_relevance": "Understanding the logic behind the output builds trust and allows healthcare professionals to critically evaluate the system's recommendations."
+      }
+    }
+  },
+  "Performance": {
+    "question_answer": {
+      "How accurate/precise/reliable are the predictions?": {
+        "question_interpretation": "This question asks about the overall quality and dependability of the system's predictions.",
+        "answer": "The accuracy and reliability of the predictions are evaluated using a confusion matrix and classification report. The model's performance metrics (e.g., precision, recall, F1-score) are derived from the test dataset.",
+        "domain_relevance": "Knowing the accuracy and reliability helps healthcare professionals gauge the trustworthiness of the system's predictions and their suitability for clinical use."
+      },
+      "How often does the system make mistakes?": {
+        "question_interpretation": "This question asks about the frequency and nature of errors made by the system.",
+        "answer": "The system's error rate can be inferred from the confusion matrix, which shows the number of false positives and false negatives. The exact rate depends on the threshold used for binary classification.",
+        "domain_relevance": "Awareness of error rates is essential for managing risk and ensuring patient safety when using the system's predictions."
+      },
+      "In what situations is the system likely to be correct/incorrect?": {
+        "question_interpretation": "This question asks about the contexts or conditions under which the system performs well or poorly.",
+        "answer": "The system is likely to be more accurate for individuals with clear patterns of behavior and opinions related to vaccine uptake. It may be less accurate for individuals with unique or inconsistent profiles.",
+        "domain_relevance": "Understanding these situations helps healthcare professionals identify when to trust or question the system's predictions."
+      },
+      "What are the limitations of the system?": {
+        "question_interpretation": "This question asks about the boundaries or constraints of the system's capabilities.",
+        "answer": "The system is limited by the quality and representativeness of the training data. It may not perform well for populations or contexts not represented in the NHFS dataset.",
+        "domain_relevance": "Recognizing limitations prevents over-reliance on the system and encourages the use of complementary information in decision-making."
+      },
+      "What kind of mistakes is the system likely to make?": {
+        "question_interpretation": "This question asks about the types of errors or biases the system is prone to.",
+        "answer": "The system may misclassify individuals with atypical profiles or those from underrepresented groups. It is also susceptible to biases present in the training data.",
+        "domain_relevance": "Anticipating potential mistakes allows healthcare professionals to mitigate risks and use the system more effectively."
+      }
+    }
+  },
+  "How (global model-wide explanation)": {
+    "question_answer": {
+      "How does the system make predictions?": {
+        "question_interpretation": "This question asks for a high-level explanation of the system's decision-making process.",
+        "answer": "The system uses an XGBoost classifier, which combines the predictions of multiple decision trees to estimate the probability of H1N1 vaccine uptake. It considers the relative importance of features such as demographic information, behavioral factors, and opinions about vaccines.",
+        "domain_relevance": "A global explanation helps healthcare professionals understand the system's logic and build trust in its predictions."
+      },
+      "What features does the system consider?": {
+        "question_interpretation": "This question asks about the input variables or factors that influence the system's predictions.",
+        "answer": "The system considers features such as age group, education, race, sex, income, marital status, health worker status, behavioral factors, and opinions about the effectiveness and risk of vaccines.",
+        "domain_relevance": "Knowing the features used helps healthcare professionals assess the relevance and potential biases of the model in their specific context."
+      },
+      "What is the system's overall logic?": {
+        "question_interpretation": "This question asks for a summary of the system's reasoning or algorithmic approach.",
+        "answer": "The system's logic is based on gradient boosting, where decision trees are sequentially added to correct the errors of previous trees. The final prediction is a weighted combination of all trees' outputs.",
+        "domain_relevance": "Understanding the overall logic provides insight into the system's strengths and weaknesses, aiding in its appropriate use."
+      },
+      "How does it weigh different features?": {
+        "question_interpretation": "This question asks about the relative importance or influence of different features on the system's predictions.",
+        "answer": "Feature importance is determined during model training, with more influential features contributing more to the final prediction. Tools like SHAP values can be used to explain individual predictions.",
+        "domain_relevance": "Knowing how features are weighted helps healthcare professionals interpret the system's output and identify potential biases."
+      },
+      "What kind of rules does it follow?": {
+        "question_interpretation": "This question asks about any explicit rules or guidelines the system adheres to.",
+        "answer": "The system follows the rules of gradient boosting, where each decision tree is trained to improve the overall model's accuracy. There are no explicit if-then rules, but feature importance can be analyzed.",
+        "domain_relevance": "Understanding the rules helps healthcare professionals evaluate the transparency and fairness of the system's predictions."
+      },
+      "What are the top rules/features that determine its predictions?": {
+        "question_interpretation": "This question asks about the most influential factors or decision criteria in the system's predictions.",
+        "answer": "The top features are likely to include doctor recommendations, concerns about H1N1, knowledge of the vaccine, and behavioral factors such as hand washing and avoidance of large gatherings.",
+        "domain_relevance": "Identifying top features helps healthcare professionals focus on the most relevant information when using the system's output."
+      },
+      "What kind of algorithm is used?": {
+        "question_interpretation": "This question asks about the specific type of machine learning algorithm employed by the system.",
+        "answer": "The system uses XGBoost (Extreme Gradient Boosting), a powerful and flexible algorithm for classification tasks.",
+        "domain_relevance": "Knowing the algorithm helps healthcare professionals understand the system's capabilities and limitations, as well as its suitability for different tasks."
+      },
+      "How were the parameters set?": {
+        "question_interpretation": "This question asks about the process of selecting or tuning the system's algorithmic parameters.",
+        "answer": "The model's hyperparameters were tuned using RandomizedSearchCV to optimize performance on the training data.",
+        "domain_relevance": "Understanding parameter tuning ensures that the system is configured for optimal performance and reliability in clinical applications."
+      }
+    }
+  },
+  "Others": {
+    "question_answer": {
+      "How have updates affected the system?": {
+        "question_interpretation": "This question asks about the impact of recent changes or improvements on the system's performance or functionality.",
+        "answer": "The provided files do not mention specific updates, but ongoing monitoring and retraining with new data could improve the system's accuracy and relevance over time.",
+        "domain_relevance": "Awareness of updates helps healthcare professionals stay informed about the system's evolution and any changes in its behavior or output."
+      },
+      "Does the system learn specifically from my interaction?": {
+        "question_interpretation": "This question asks whether the system adapts or improves based on user feedback or interaction.",
+        "answer": "The current system does not learn from individual user interactions. It is a static model trained on the NHFS dataset.",
+        "domain_relevance": "Knowing whether the system learns from interaction affects how healthcare professionals engage with it and manage expectations about its adaptability."
+      },
+      "Why is the system using or not using a given algorithm/feature/rule/dataset?": {
+        "question_interpretation": "This question asks for the rationale behind the system's design choices, such as the selection of algorithms, features, or datasets.",
+        "answer": "XGBoost was chosen for its performance and interpretability. The seasonal flu vaccine feature was excluded to avoid leakage, and the NHFS dataset was used for its relevance to the task.",
+        "domain_relevance": "Understanding design choices helps healthcare professionals evaluate the system's suitability and trustworthiness for their specific needs."
+      },
+      "What are the results of other people using the system?": {
+        "question_interpretation": "This question asks about the experiences or outcomes reported by other users of the system.",
+        "answer": "The provided files do not include information about other users' results, but the model's performance metrics suggest it is useful for predicting H1N1 vaccine uptake in similar contexts.",
+        "domain_relevance": "Knowing others' results can provide additional context and confidence in the system's utility and reliability."
+      },
+      "Who is responsible for this system? Who are the authors?": {
+        "question_interpretation": "This question asks about the individuals or organizations accountable for the system's development and maintenance.",
+        "answer": "The system was developed by Henry El-Jawhari at the Freie Universität Berlin and the Robert Koch Institute (RKI).",
+        "domain_relevance": "Knowing the responsible parties helps healthcare professionals address any concerns or questions about the system's use and performance."
+      }
+    }
+  },
+  "UI": {
+    "question_answer": {
+      "What are the affordances of the system?": {
+        "question_interpretation": "This question asks about the user interface features or capabilities that facilitate interaction with the system.",
+        "answer": "The system's affordances include visualizations such as confusion matrices, classification reports, and feature importance plots, which help users interpret the model's predictions and performance.",
+        "domain_relevance": "User-friendly affordances enhance the system's usability and effectiveness in clinical and public health settings."
+      },
+      "What does this UI element do?": {
+        "question_interpretation": "This question asks for an explanation of the function or purpose of a specific user interface component.",
+        "answer": "UI elements such as confusion matrices and feature importance plots provide insights into the model's accuracy and the factors influencing its predictions.",
+        "domain_relevance": "Clear explanations of UI elements ensure that healthcare professionals can effectively use and interpret the system's output."
+      }
+    }
+  }
+}

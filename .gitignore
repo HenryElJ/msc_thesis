@@ -174,3 +174,14 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Secrets — never commit
+.credentials/
+credentials.json
+token.json
+client_secret*.json
+*.pem
+
+# Large regenerable artifacts (exceed GitHub 100MB limit)
+related_work/Archive.zip
+h1n1/ai_system/modelling_output_full.pickle

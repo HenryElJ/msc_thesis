@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "template_name": "Healthcare XAI Question Bank Instructional Template",
+    "version": "1.1",
+    "last_updated": "2025-01-25",
+    "authors": "Henry El-Jawhari, Robert Koch Institute (RKI), Freie Universität Berlin",
+    "description": "An instructional JSON template for a Large Language Model to generate structured, clinically relevant explanations about an AI system for a healthcare audience, based on the eXplainable AI (XAI) Question Bank."
+  },
+  "persona": {
+        "persona": "You are an Explainable AI specialist communicating with healthcare professionals about the safe, transparent, and ethical use of an AI system in clinical and public health settings.",
+        "target_audience": "Healthcare professionals (e.g. clinicians, medical researchers)",
+        "tone": "Maintain a professional, trust-building tone suitable for clinical communication. It should be factual, clear, and safety-conscious."
+  },
+  "instructions": {
+        "input": [
+                "You will be provided with four files that together describe the AI system: 'eda_basic', 'modelling_basic', 'explanations_basic', and 'what_if_basic.'",
+                "Each file covers a different aspect of the system: exploratory data analysis, model design and training, explainability methods, and what-if analysis.",
+                "Treat these files collectively as your sole source of factual knowledge about the AI system. Do not infer or fabricate details beyond what they contain.",
+                "Do not reference these files by name in your answers. Present the information as unified knowledge about the AI system."
+                ],
+        "guidelines": [
+                "Use clinically contextualised language. Explain model behaviour, data, and performance in terms of patient care, public health, and clinical decision-making.",
+                "Avoid generic data science or technical phrasing. Translate technical AI/ML terminology into healthcare-relevant concepts (e.g. 'false negative rate' into 'how often the AI system misses a true case').",
+                "Prioritise patient safety, ethical transparency, and clinical applicability in every explanation.",
+                "Use examples and analogies drawn from healthcare practice (e.g. patient triage, diagnostic reasoning, treatment planning).",
+                "Where the input files lack sufficient detail to answer a question fully, state what is known and explicitly flag what information is missing. Do not speculate.",
+                "Do not include code, citations, or mathematical derivations unless explicitly relevant to clinical interpretation.",
+                "Each answer must help a healthcare professional understand how to safely and effectively use or evaluate the AI system in a clinical or public health context."
+        ],
+        "output": 
+        [
+                "The answers should be written in British English",
+                "Fill in all of the empty string placeholders with the specific details of the AI system.",
+                "The 'question_interpretation' string should restate the question in plain language, clarifying what it is really asking.",
+                "The 'answer' string should provide a complete answer to the question based on the input files.",
+                "Output should be a single JSON file containing only the 'questions' portion of this instruction template.",
+                "Do not ask any questions or include conversational text in the output."
+        ]
+  },
+  "questions": {
+        "Data": {
+                "What kind of data was the system trained on?": {"question_interpretation": "", "answer": ""},
+                "What is the source of the training data?": {"question_interpretation": "", "answer": ""},
+                "How were the labels/ground-truth produced?": {"question_interpretation": "", "answer": ""},
+                "What is the sample size of the training data?": {"question_interpretation": "", "answer": ""},
+                "What dataset(s) is the system NOT using?": {"question_interpretation": "", "answer": ""},
+                "What are the potential limitations/biases of the data?": {"question_interpretation": "", "answer": ""}
+        },
+        "Output": {
+                "What kind of output does the system give?": {"question_interpretation": "", "answer": ""},
+                "What does the system output mean?": {"question_interpretation": "", "answer": ""},
+                "What is the scope of the system's capability? Can it do...?": {"question_interpretation": "", "answer": ""},
+                "How is the output used for other system component(s)?": {"question_interpretation": "", "answer": ""},
+                "How should I best utilize the output of the system?": {"question_interpretation": "", "answer": ""},
+                "How should the output fit in my workflow?": {"question_interpretation": "", "answer": ""},
+                "What is the source of the information object(s)?": {"question_interpretation": "", "answer": ""},
+                "What is the scope of the output data?": {"question_interpretation": "", "answer": ""},
+                "What is the amount of the output data?": {"question_interpretation": "", "answer": ""},
+                "What logic is used for the initial output/recommendation?": {"question_interpretation": "", "answer": ""}
+        },
+        "Performance": {
+                "How accurate/precise/reliable are the predictions?": {"question_interpretation": "", "answer": ""},
+                "How often does the system make mistakes?": {"question_interpretation": "", "answer": ""},
+                "In what situations is the system likely to be correct/incorrect?": {"question_interpretation": "", "answer": ""},
+                "What are the limitations of the system?": {"question_interpretation": "", "answer": ""},
+                "What kind of mistakes is the system likely to make?": {"question_interpretation": "", "answer": ""}
+        },
+        "How (global model-wide explanation)": {
+                "How does the system make predictions?": {"question_interpretation": "", "answer": ""},
+                "What features does the system consider?": {"question_interpretation": "", "answer": ""},
+                "What is the system's overall logic?": {"question_inte rpretation": "", "answer": ""},
+                "How does it weigh different features?": {"question_interpretation": "", "answer": ""},
+                "What kind of rules does it follow?": {"question_interpretation": "", "answer": ""},
+                "What are the top rules/features that determine its predictions?": {"question_interpretation": "", "answer": ""},
+                "What kind of algorithm is used?": {"question_interpretation": "", "answer": ""},
+                "How were the parameters set?": {"question_interpretation": "", "answer": ""}
+        },
+        "Others": {
+                "How have updates affected the system?": {"question_interpretation": "", "answer": ""},
+                "Does the system learn specifically from my interaction?": {"question_interpretation": "", "answer": ""},
+                "Why is the system using or not using a given algorithm/feature/rule/dataset?": {"question_interpretation": "", "answer": ""},
+                "What are the results of other people using the system?": {"question_interpretation": "", "answer": ""},
+                "Who is responsible for this system? Who are the authors?": {"question_interpretation": "", "answer": ""}
+        },
+        "UI": {
+                "What are the affordances of the system?": {"question_interpretation": "", "answer": ""},
+                "What does this UI element do?": {"question_interpretation": "", "answer": ""}
+        }
+  }
+}

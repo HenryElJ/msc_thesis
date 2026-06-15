@@ -1,0 +1,52 @@
+{
+    "Regulation": {
+        "questions": [
+            "Which regulation should be specified for this AI workflow?",
+            "Which country has specified this regulation?",
+            "Can you list out the key requirements setup by the regulation?",
+            "Can you categorize the guidelines into ethical and technical ones?",
+            "Who are the stakeholders involved in this AI workflow?"
+        ]
+    },
+    "Domain": {
+        "questions": [
+            "What are the specific requirements within the domain?",
+            "Does the domain encompass high-stakes areas such as healthcare or finance?",
+            "What are the potential risks associated with the domain?",
+            "Are there any pre-existing assumptions that are necessary?",
+            "Is feedback from domain experts a requirement for this process?"
+        ]
+    },
+    "Data": {
+        "questions": [
+            "What type of information is contained within the data?",
+            "What inferences can be drawn from this data?",
+            "Which aspects of thedata are the most significant?",
+            "How is the information distributed within the data?",
+            "Is it feasible to enhance the model's performance byreducing the number of dimensions?",
+            "Could the use of data summarization techniques provide a more effective explanation?"
+        ]
+    },
+    "Model": {
+        "questions": [
+            "What attributes rendera parameter, objective, or action important to the system?",
+            "At what point did the system assess a parameter, objective, or action, and when was it disregarded by the model?",
+            "What are the repercussions of altering a decision or modifying a parameter?",
+            "How was a specific action executed by the system?",
+            "How are these model parameters, objectives, or actions interconnected?",
+            "What elements does the system consider (or exclude) when makinga decision?",
+            "What methods does the system employ or avoid to accomplish a goal or inference?"
+        ]
+    },
+    "Prediction": {
+       "questions": [
+           "What factors contribute to the importance of a parameter, objective, or action within the system?",
+           "When was a parameter, objective, or action evaluated by the system, and when was it rejected by the model?",
+           "What are the consequences of changing a decision or adjusting a parameter?",
+           "How was a specific action carried out by the system?",
+           "How are the parameters, objectives, or actions within the model interconnected?",
+           "What elements does the system take into account (or disregard) when making a decision?",
+           "What methods does the system utilize or avoid to achieve a specific goalor inference?"
+        ]
+    }
+}
