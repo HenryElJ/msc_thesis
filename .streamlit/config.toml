@@ -1,9 +1,0 @@
-[client]
-showSidebarNavigation = false
-
-[theme]
-base = "dark"
-primaryColor = "#B2A8D3"
-
-[theme.sidebar]
-primaryColor = "#FF4B4B"
