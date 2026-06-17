@@ -3,9 +3,9 @@
 # Unnecessary Folders
 *_archive/
 *run_0/
-related_work/
-documents/
-thesis_examples/
+/related_work/
+/documents/
+/thesis_examples/
 
 # Secrets — never commit
 .credentials/
