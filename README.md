@@ -1,7 +1,7 @@
 # Conversational Explanations using Large Language Models on top of the eXplainable AI Question Bank
-## Freie Universität Berlin, Department of Mathematics and Computer Science
-## Center for Artificial Intelligence in Public Health Research (ZKI-PH) at Robert Koch Institute (RKI)
-### Henry Khalil El-Jawhari (5566377)
+## Henry Khalil El-Jawhari (5566377)
+### Freie Universität Berlin, Department of Mathematics and Computer Science
+### Center for Artificial Intelligence in Public Health Research (ZKI-PH) at Robert Koch Institute (RKI)
 ##### February 26, 2026
 
 The proliferation and widespread adoption of AI systems into our everyday lives poses a significant risk when these systems behave unexpectedly, or make decisions which unfairly target people/groups of people. AI systems need to be transparent, interpretable, and understandable, in order for them to be trustworthy. Central to achieving this is the field of explainable AI (XAI), where Large Language Models (LLMs) present a valuable opportunity as conversational explanatory agents, transforming complex topics into accessible narratives. These LLMs offer personalised learning, refining the user’s mental models, and filling in knowledge gaps.
